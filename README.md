@@ -56,20 +56,10 @@ export ADMIN_SECRET="my-admin-secret"
 ./privacy-gateway
 
 # 或者一行命令设置环境变量
-GATEWAY_PORT=9090 ADMIN_SECRET="my-admin-secret" ./privacy-gateway
+GATEWAY_PORT=8080 ADMIN_SECRET="my-admin-secret" ./privacy-gateway
 ```
 
-##### Windows 用户
 
-```cmd
-# 构建
-go build -o privacy-gateway .
-
-# 设置环境变量并运行
-set GATEWAY_PORT=9090
-set ADMIN_SECRET=my-admin-secret
-privacy-gateway
-```
 
 ### 方式二：Docker 容器化部署
 
