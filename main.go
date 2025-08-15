@@ -19,7 +19,7 @@ func main() {
 
 	// 创建访问日志记录器
 	var recorder *accesslog.Recorder
-	if cfg.LogViewSecret != "" {
+	if cfg.AdminSecret != "" {
 		var err error
 		recorder, err = accesslog.NewRecorder(cfg, log)
 		if err != nil {
@@ -47,15 +47,15 @@ func main() {
 	// 设置日志查看路由
 	if recorder != nil {
 		// 先验证密钥
-		if _, err := logviewer.CreateAuthenticator(cfg.LogViewSecret); err != nil {
+		if _, err := logviewer.CreateAuthenticator(cfg.AdminSecret); err != nil {
 			log.Error("log viewer configuration error", "error", err.Error())
 			log.Info("log viewer disabled", "reason", "invalid secret configuration")
 			// 即使配置错误，也要注册路由来显示错误页面
-			logHandler := logviewer.CreateLogViewHandler(recorder, cfg.LogViewSecret, log)
+			logHandler := logviewer.CreateLogViewHandler(recorder, cfg.AdminSecret, log)
 			http.HandleFunc("/logs", logHandler)
 			http.HandleFunc("/logs/", logHandler)
 		} else {
-			logHandler := logviewer.CreateLogViewHandler(recorder, cfg.LogViewSecret, log)
+			logHandler := logviewer.CreateLogViewHandler(recorder, cfg.AdminSecret, log)
 			http.HandleFunc("/logs", logHandler)
 			http.HandleFunc("/logs/", logHandler)
 			log.Info("log viewer enabled", "path", "/logs")

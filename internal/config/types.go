@@ -22,8 +22,8 @@ type Config struct {
 	ProxyWhitelist   []string     // 代理白名单
 	AllowPrivateIP   bool         // 是否允许私有IP代理
 
-	// 日志相关配置
-	LogViewSecret     string  // 日志查看密钥
+	// 管理相关配置
+	AdminSecret       string  // 管理功能访问密钥
 	LogMaxEntries     int     // 最大日志条数
 	LogMaxBodySize    int     // 响应体最大记录大小（字节）
 	LogRetentionHours int     // 日志保留时间（小时）

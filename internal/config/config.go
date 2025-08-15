@@ -40,8 +40,8 @@ func Load() *Config {
 	// 是否允许私有IP代理（用于开发测试）
 	allowPrivateIP := os.Getenv("ALLOW_PRIVATE_PROXY") == "true"
 
-	// 加载日志相关配置
-	logViewSecret := os.Getenv("LOG_VIEW_SECRET")
+	// 加载管理相关配置
+	adminSecret := os.Getenv("ADMIN_SECRET")
 
 	logMaxEntries := 1000
 	if val := os.Getenv("LOG_MAX_ENTRIES"); val != "" {
@@ -78,8 +78,8 @@ func Load() *Config {
 		ProxyWhitelist:   proxyWhitelist,
 		AllowPrivateIP:   allowPrivateIP,
 
-		// 日志配置
-		LogViewSecret:     logViewSecret,
+		// 管理配置
+		AdminSecret:       adminSecret,
 		LogMaxEntries:     logMaxEntries,
 		LogMaxBodySize:    logMaxBodySize,
 		LogRetentionHours: logRetentionHours,

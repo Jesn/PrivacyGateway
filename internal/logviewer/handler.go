@@ -439,10 +439,10 @@ func renderConfigErrorPage(w http.ResponseWriter, err error) {
 
         <div class="solution">
             <h3>解决方案：</h3>
-            <p>请确保环境变量 <code>LOG_VIEW_SECRET</code> 设置正确：</p>
+            <p>请确保环境变量 <code>ADMIN_SECRET</code> 设置正确：</p>
             <p>• 密钥长度至少8个字符</p>
             <p>• 密钥长度不超过256个字符</p>
-            <p>• 示例：<code>LOG_VIEW_SECRET=mylogviewer123</code></p>
+            <p>• 示例：<code>ADMIN_SECRET=myadminsecret123</code></p>
         </div>
 
         <div class="footer">
