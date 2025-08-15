@@ -220,7 +220,7 @@ docker run -d \
   -p 8080:8080 \
   -e GATEWAY_PORT=8080 \
   -e SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via" \
-  --name privacy-gateway-container \
+  --name privacy-gateway \
   privacygateway
 
 # 带代理和日志功能的完整配置
@@ -232,7 +232,7 @@ docker run -d \
   -e PROXY_WHITELIST="proxy1.example.com,proxy2.example.com" \
   -e ADMIN_SECRET="your-admin-secret" \
   -e LOG_MAX_ENTRIES=2000 \
-  --name privacy-gateway-container \
+  --name privacy-gateway \
   privacygateway
 ```
 
