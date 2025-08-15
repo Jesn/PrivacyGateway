@@ -3,6 +3,7 @@ package config
 import (
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -39,12 +40,50 @@ func Load() *Config {
 	// 是否允许私有IP代理（用于开发测试）
 	allowPrivateIP := os.Getenv("ALLOW_PRIVATE_PROXY") == "true"
 
+	// 加载日志相关配置
+	logViewSecret := os.Getenv("LOG_VIEW_SECRET")
+
+	logMaxEntries := 1000
+	if val := os.Getenv("LOG_MAX_ENTRIES"); val != "" {
+		if parsed, err := strconv.Atoi(val); err == nil && parsed > 0 {
+			logMaxEntries = parsed
+		}
+	}
+
+	logMaxBodySize := 1024
+	if val := os.Getenv("LOG_MAX_BODY_SIZE"); val != "" {
+		if parsed, err := strconv.Atoi(val); err == nil && parsed > 0 {
+			logMaxBodySize = parsed
+		}
+	}
+
+	logRetentionHours := 24
+	if val := os.Getenv("LOG_RETENTION_HOURS"); val != "" {
+		if parsed, err := strconv.Atoi(val); err == nil && parsed > 0 {
+			logRetentionHours = parsed
+		}
+	}
+
+	logMaxMemoryMB := 50.0
+	if val := os.Getenv("LOG_MAX_MEMORY_MB"); val != "" {
+		if parsed, err := strconv.ParseFloat(val, 64); err == nil && parsed > 0 {
+			logMaxMemoryMB = parsed
+		}
+	}
+
 	return &Config{
 		Port:             port,
 		SensitiveHeaders: strings.Split(strings.ToLower(sensitiveHeadersStr), ","),
 		DefaultProxy:     defaultProxy,
 		ProxyWhitelist:   proxyWhitelist,
 		AllowPrivateIP:   allowPrivateIP,
+
+		// 日志配置
+		LogViewSecret:     logViewSecret,
+		LogMaxEntries:     logMaxEntries,
+		LogMaxBodySize:    logMaxBodySize,
+		LogRetentionHours: logRetentionHours,
+		LogMaxMemoryMB:    logMaxMemoryMB,
 	}
 }
 
@@ -53,18 +92,18 @@ func parseSimpleProxy(proxyURL string) (*ProxyConfig, error) {
 	if proxyURL == "" {
 		return nil, nil
 	}
-	
+
 	u, err := url.Parse(proxyURL)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	config := &ProxyConfig{
 		URL:     proxyURL,
 		Type:    u.Scheme,
 		Timeout: 30, // 默认30秒超时
 	}
-	
+
 	// 解析认证信息
 	if u.User != nil {
 		config.Auth = &ProxyAuth{
@@ -74,6 +113,6 @@ func parseSimpleProxy(proxyURL string) (*ProxyConfig, error) {
 			config.Auth.Password = password
 		}
 	}
-	
+
 	return config, nil
 }
