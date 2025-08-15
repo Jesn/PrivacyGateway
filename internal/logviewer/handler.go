@@ -42,6 +42,16 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 路由处理
+	path := strings.TrimPrefix(r.URL.Path, "/logs")
+
+	// logout路径不需要认证，直接处理
+	if path == "/logout" {
+		h.handleLogout(w, r)
+		return
+	}
+
+	// 其他路径需要认证
 	authResult := h.authenticator.Authenticate(r)
 	if !authResult.Authenticated {
 		if secretAuth, ok := h.authenticator.(*SecretAuthenticator); ok {
@@ -63,8 +73,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// 路由处理
-	path := strings.TrimPrefix(r.URL.Path, "/logs")
+	// 处理需要认证的路由
 	switch {
 	case path == "" || path == "/":
 		h.handleLogView(w, r)
@@ -72,8 +81,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.handleAPI(w, r)
 	case path == "/stats":
 		h.handleStats(w, r)
-	case path == "/logout":
-		h.handleLogout(w, r)
 	default:
 		h.handleError(w, r, "Not found", http.StatusNotFound)
 	}
@@ -83,7 +90,25 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleLogView(w http.ResponseWriter, r *http.Request) {
 	// 如果是POST请求，重定向到GET请求，避免重复提交
 	if r.Method == "POST" {
-		http.Redirect(w, r, "/logs", http.StatusSeeOther)
+		// 添加一个特殊的重定向页面，用于清除重试计数
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		html := `<!DOCTYPE html>
+<html>
+<head>
+    <title>登录成功</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <script>
+        // 清除重试计数，表示登录成功
+        sessionStorage.removeItem('login_retry_count');
+        // 立即重定向到日志页面
+        window.location.href = '/logs';
+    </script>
+    <p>登录成功，正在跳转...</p>
+</body>
+</html>`
+		w.Write([]byte(html))
 		return
 	}
 
@@ -454,8 +479,27 @@ func (h *Handler) handleLogout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 重定向到登录页面
-	http.Redirect(w, r, "/logs", http.StatusSeeOther)
+	// 返回包含清除localStorage的页面，然后重定向到登录页面
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	html := `<!DOCTYPE html>
+<html>
+<head>
+    <title>退出登录</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <script>
+        // 清除所有本地存储
+        localStorage.removeItem('log_viewer_secret');
+        sessionStorage.removeItem('login_retry_count');
+
+        // 立即重定向到登录页面
+        window.location.href = '/logs';
+    </script>
+    <p>正在退出登录...</p>
+</body>
+</html>`
+	w.Write([]byte(html))
 }
 
 // HealthCheck 健康检查处理器

@@ -173,16 +173,26 @@ func (sa *SecretAuthenticator) isAPIRequest(r *http.Request) bool {
 
 // handleAPIAuthFailure 处理 API 认证失败
 func (sa *SecretAuthenticator) handleAPIAuthFailure(w http.ResponseWriter, result *AuthResult) {
+	// 立即清除服务器端的Cookie
+	sa.clearServerCookie(w)
+
 	w.Header().Set("Content-Type", "application/json")
+	// 添加清除存储的指示头
+	w.Header().Set("X-Clear-Auth-Storage", "true")
 	w.WriteHeader(http.StatusUnauthorized)
 
 	// 简单的 JSON 响应
-	w.Write([]byte(`{"error":"` + result.Error + `","message":"Authentication required","method":"` + result.Method + `"}`))
+	w.Write([]byte(`{"error":"` + result.Error + `","message":"Authentication required","method":"` + result.Method + `","clear_storage":true}`))
 }
 
 // handleWebAuthFailure 处理 Web 页面认证失败
 func (sa *SecretAuthenticator) handleWebAuthFailure(w http.ResponseWriter, r *http.Request, result *AuthResult) {
+	// 立即清除服务器端的Cookie
+	sa.clearServerCookie(w)
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	// 添加自定义头，指示前端清除localStorage
+	w.Header().Set("X-Clear-Auth-Storage", "true")
 	w.WriteHeader(http.StatusUnauthorized)
 
 	// 美观的中文认证页面
@@ -192,6 +202,7 @@ func (sa *SecretAuthenticator) handleWebAuthFailure(w http.ResponseWriter, r *ht
     <title>访问日志 - 身份验证</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="clear-auth" content="true">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -349,6 +360,9 @@ func (sa *SecretAuthenticator) handleWebAuthFailure(w http.ResponseWriter, r *ht
             const encoded = btoa(secret + ':' + Date.now());
             localStorage.setItem('log_viewer_secret', encoded);
 
+            // 清除重试计数，因为这是用户手动输入的新密钥
+            sessionStorage.removeItem('login_retry_count');
+
             // 使用POST方式提交到服务器，让服务器设置Cookie
             const form = document.createElement('form');
             form.method = 'POST';
@@ -375,6 +389,25 @@ func (sa *SecretAuthenticator) handleWebAuthFailure(w http.ResponseWriter, r *ht
             return true;
         }
 
+        // 立即检查并清除无效的认证信息（在页面加载时立即执行）
+        (function() {
+            // 立即清除所有认证信息，因为这是401页面
+            // 清除localStorage
+            if (localStorage.getItem('log_viewer_secret')) {
+                localStorage.removeItem('log_viewer_secret');
+            }
+
+            // 清除sessionStorage
+            if (sessionStorage.getItem('login_retry_count')) {
+                sessionStorage.removeItem('login_retry_count');
+            }
+
+            // 清除URL参数，避免循环
+            if (window.location.search) {
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        })();
+
         // 页面加载时的初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 聚焦到密钥输入框
@@ -395,35 +428,60 @@ func (sa *SecretAuthenticator) handleWebAuthFailure(w http.ResponseWriter, r *ht
                 return;
             }
 
-            // 只有在没有URL参数的情况下，才检查localStorage自动登录
+            // 检查localStorage是否已被清除（说明认证失败）
             const savedSecret = localStorage.getItem('log_viewer_secret');
-            if (savedSecret) {
-                try {
-                    const decoded = atob(savedSecret);
-                    const secret = decoded.split(':')[0];
-                    if (secret && validateSecret(secret)) {
-                        // 使用POST方式提交，避免URL参数
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = '/logs';
+            if (!savedSecret) {
+                // localStorage已被清除，不进行自动登录
+                return;
+            }
 
-                        const secretInput = document.createElement('input');
-                        secretInput.type = 'hidden';
-                        secretInput.name = 'secret';
-                        secretInput.value = secret;
+            // 检查是否有重试计数，防止无限循环
+            const retryCount = parseInt(sessionStorage.getItem('login_retry_count') || '0');
+            const maxRetries = 3;
 
-                        form.appendChild(secretInput);
-                        document.body.appendChild(form);
-                        form.submit();
-                        return;
-                    } else {
-                        // 清除无效的密钥
-                        localStorage.removeItem('log_viewer_secret');
-                    }
-                } catch (e) {
-                    // 如果解码失败，清除无效的密钥
+            if (retryCount >= maxRetries) {
+                sessionStorage.removeItem('login_retry_count');
+                localStorage.removeItem('log_viewer_secret');
+                return;
+            }
+
+            // 检查是否有错误信息，如果有则不进行自动登录
+            const hasError = document.querySelector('.error');
+            if (hasError) {
+                return;
+            }
+
+            // 只有在没有URL参数、没有错误、localStorage有效的情况下，才进行自动登录
+            try {
+                const decoded = atob(savedSecret);
+                const secret = decoded.split(':')[0];
+                if (secret && validateSecret(secret)) {
+                    // 增加重试计数
+                    sessionStorage.setItem('login_retry_count', (retryCount + 1).toString());
+
+                    // 使用POST方式提交，避免URL参数
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/logs';
+
+                    const secretInput = document.createElement('input');
+                    secretInput.type = 'hidden';
+                    secretInput.name = 'secret';
+                    secretInput.value = secret;
+
+                    form.appendChild(secretInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                    return;
+                } else {
+                    // 清除无效的密钥
                     localStorage.removeItem('log_viewer_secret');
+                    sessionStorage.removeItem('login_retry_count');
                 }
+            } catch (e) {
+                // 如果解码失败，清除无效的密钥
+                localStorage.removeItem('log_viewer_secret');
+                sessionStorage.removeItem('login_retry_count');
             }
         });
 
@@ -551,6 +609,20 @@ func (sa *SecretAuthenticator) SetSecureCookie(w http.ResponseWriter, secret str
 		MaxAge:   86400, // 24小时
 	}
 
+	http.SetCookie(w, cookie)
+}
+
+// clearServerCookie 清除服务器端Cookie
+func (sa *SecretAuthenticator) clearServerCookie(w http.ResponseWriter) {
+	cookie := &http.Cookie{
+		Name:     "log_secret",
+		Value:    "",
+		Path:     "/logs",
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteStrictMode,
+		MaxAge:   -1, // 立即过期
+	}
 	http.SetCookie(w, cookie)
 }
 
