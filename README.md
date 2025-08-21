@@ -1,376 +1,124 @@
 # 隐私网关 (Privacy Gateway)
 
-这是一个简单的反向代理服务，旨在通过隐藏原始请求中的敏感头信息来增强隐私。
+一个轻量级的反向代理服务，通过过滤敏感头信息来增强隐私保护，支持HTTP/HTTPS、WebSocket代理，并提供完整的访问日志管理功能。
 
-## 构建与运行
+## ✨ 主要功能
 
-本项目支持两种构建和运行方式：本地构建和 Docker 容器化部署。
+- 🔒 **隐私保护** - 自动过滤敏感请求头信息
+- 🌐 **多协议支持** - HTTP/HTTPS/WebSocket代理
+- 🚀 **代理支持** - 支持设置上游代理（HTTP/HTTPS/SOCKS5）
+- 📊 **访问日志** - 实时日志查看和管理
+- 🔍 **智能搜索** - 多维度日志筛选和搜索
+- 📋 **curl生成** - 自动生成等效curl命令
+- 🎯 **请求类型识别** - 自动识别HTTP、HTTPS、WebSocket、SSE
+- 🔧 **灵活配置** - 支持环境变量和配置文件
 
-### 方式一：本地构建和运行
+## 🚀 快速开始
 
-#### 前置要求
-
-- Go 1.19 或更高版本
-- Git（用于克隆代码）
-
-#### 1. 克隆项目
+### Docker 部署（推荐）
 
 ```bash
+# 1. 克隆项目
 git clone <repository-url>
 cd PrivacyGateway
-```
 
-#### 2. 本地构建
-
-在项目根目录下运行：
-
-```bash
-# 构建可执行文件
-go build -o privacy-gateway .
-
-# 或者直接运行（不生成可执行文件）
-go run .
-```
-
-#### 3. 本地运行
-
-##### 基础运行（使用默认配置）
-
-```bash
-# 运行构建好的可执行文件
-./privacy-gateway
-
-# 或者直接运行源码
-go run .
-```
-
-服务将在 `http://localhost:10805` 启动。
-
-##### 自定义配置运行
-
-```bash
-# 设置环境变量并运行
-export GATEWAY_PORT=9090
-export SENSITIVE_HEADERS="cf-,x-forwarded,proxy"
-export ADMIN_SECRET="my-admin-secret"
-./privacy-gateway
-
-# 或者一行命令设置环境变量
-GATEWAY_PORT=10805 ADMIN_SECRET="my-admin-secret" ./privacy-gateway
-```
-
-
-
-### 方式二：Docker 容器化部署
-
-#### 1. 构建 Docker 镜像
-
-在项目根目录下，运行以下命令来构建镜像：
-
-```bash
-docker build -t privacygateway .
-```
-
-#### 2. 运行 Docker 容器
-
-使用以下命令来启动容器。这会将容器的 `10805` 端口映射到你本机的 `10805` 端口。
-
-```bash
-docker run -d -p 10805:10805 --name privacy-gateway-container privacygateway
-```
-
-#### 3. 使用 Docker Compose（推荐）
-
-项目提供了 `docker-compose.yml` 文件，可以更方便地管理配置：
-
-```bash
-# 启动默认配置
+# 2. 使用 Docker Compose 启动
 docker-compose up -d
 
-# 启动开发环境配置（包含完整日志功能）
-docker-compose --profile dev up -d
-
-# 查看日志
-docker-compose logs -f
-
-# 停止服务
-docker-compose down
-```
-
-你可以编辑 `docker-compose.yml` 文件来自定义配置，或者创建 `.env` 文件来设置环境变量：
-
-```bash
-# 复制环境变量模板
+# 3. 自定义配置（可选）
 cp .env.example .env
-
-# 编辑配置文件
-nano .env
-
-# 使用自定义配置启动
+# 编辑 .env 文件设置参数
 docker-compose up -d
 ```
 
-## 如何使用
-
-网关通过 `/proxy` 端点提供服务。你需要通过 `target` 查询参数来指定你想要访问的目标 URL。
-
-### 基本格式
-
-```
-http://localhost:10805/proxy?target=<你的目标URL>
-```
-
-### 使用示例
-
-网关会自动转发原始请求的 HTTP 方法（GET, POST, PUT, DELETE 等）以及请求体（Body）。
-
-#### 1. GET 请求 (获取数据)
-
-这是最常见的用法，用于从服务器获取数据。
+### 本地运行
 
 ```bash
-# 示例: 获取你的 IP 地址信息
-curl "http://localhost:10805/proxy?target=http://iprust.io/ip.json"
+# 构建并运行
+go build -o privacy-gateway .
+./privacy-gateway
 
-# 示例: 获取一个网页
-curl "http://localhost:10805/proxy?target=http://example.com"
+# 或直接运行
+go run .
 ```
 
-#### 2. POST 请求 (提交数据)
+## 📖 使用方法
 
-用于向服务器提交数据，例如发送一个 JSON 对象。
+### HTTP/HTTPS 代理
 
 ```bash
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"name":"test", "value":123}' \
+# 基本格式
+http://localhost:10805/proxy?target=<目标URL>
+
+# GET 请求示例
+curl "http://localhost:10805/proxy?target=https://httpbin.org/get"
+
+# POST 请求示例
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"key":"value"}' \
   "http://localhost:10805/proxy?target=https://httpbin.org/post"
 ```
-*httpbin.org 会将你发送的数据原样返回在响应的 `json` 字段中。*
 
-#### 3. PUT 请求 (更新数据)
-
-用于更新或替换服务器上的资源。
+### WebSocket 代理
 
 ```bash
-curl -X PUT \
-  -H "Content-Type: application/json" \
-  -d '{"id": 1, "status":"updated"}' \
-  "http://localhost:10805/proxy?target=https://httpbin.org/put"
-```
+# WebSocket 连接格式
+ws://localhost:10805/ws?target=<目标WebSocket地址>
 
-#### 4. DELETE 请求 (删除数据)
-
-用于请求服务器删除指定的资源。
-
-```bash
-curl -X DELETE "http://localhost:10805/proxy?target=https://httpbin.org/delete"
-```
-
-#### 5. WebSocket 代理
-
-网关还支持代理 WebSocket 连接，使用 `/ws` 端点。
-
-**连接格式:**
-```
-ws://localhost:10805/ws?target=<你的目标ws或wss地址>
-```
-
-**示例:**
-连接到一个公共的回显服务器。
-```bash
-# 你可以使用任何支持 WebSocket 的客户端工具, 例如 wscat
-# npm install -g wscat
+# 使用 wscat 测试
 wscat -c "ws://localhost:10805/ws?target=wss://echo.websocket.events"
 ```
-连接成功后，你发送的任何消息都会被服务器原样返回。
 
-## 配置参数
-
-隐私网关支持通过环境变量进行配置，以下是所有可用的配置选项：
-
-### 基础配置
-
-| 环境变量 | 默认值 | 说明 |
-|---------|--------|------|
-| `GATEWAY_PORT` | `10805` | 网关监听的端口号 |
-| `SENSITIVE_HEADERS` | `cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlation-id,x-country,x-region,x-city` | 要过滤的敏感头信息关键字，用逗号分隔 |
-
-### 代理配置
-
-| 环境变量 | 默认值 | 说明 |
-|---------|--------|------|
-| `DEFAULT_PROXY` | 无 | 默认上游代理服务器URL，支持 HTTP/HTTPS/SOCKS5 |
-| `PROXY_WHITELIST` | 无 | 允许使用的代理服务器白名单，用逗号分隔 |
-| `ALLOW_PRIVATE_PROXY` | `false` | 是否允许使用私有IP地址的代理（用于开发测试） |
-
-### 管理功能配置
-
-| 环境变量 | 默认值 | 说明 |
-|---------|--------|------|
-| `ADMIN_SECRET` | 无 | 管理功能访问密钥，设置后可通过 `/logs` 端点查看访问日志等管理功能 |
-| `LOG_MAX_ENTRIES` | `1000` | 内存中保存的最大日志条数 |
-| `LOG_MAX_BODY_SIZE` | `1024` | 记录的响应体最大大小（字节） |
-| `LOG_RETENTION_HOURS` | `24` | 日志保留时间（小时） |
-| `LOG_MAX_MEMORY_MB` | `50.0` | 日志功能最大内存使用量（MB） |
-| `LOG_RECORD_200` | `false` | 是否记录200状态码的详细信息（响应体、请求体等） |
-
-### 配置示例
-
-#### 本地运行配置
+### 管理界面
 
 ```bash
-# 基础配置 - Linux/macOS
-export GATEWAY_PORT=10805
-export SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via"
-./privacy-gateway
-
-# 完整配置 - Linux/macOS
-export GATEWAY_PORT=10805
-export SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via,x-request-id"
-export DEFAULT_PROXY="http://proxy.example.com:10805"
-export PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"
-export ADMIN_SECRET="your-admin-secret"
-export LOG_MAX_ENTRIES=2000
-export LOG_RECORD_200=true
-./privacy-gateway
-
-# 一行命令运行 - Linux/macOS
-GATEWAY_PORT=10805 ADMIN_SECRET="your-admin-secret" ./privacy-gateway
-
-# Windows 配置
-set GATEWAY_PORT=10805
-set SENSITIVE_HEADERS=cf-,x-forwarded,proxy,via
-set ADMIN_SECRET=your-admin-secret
-privacy-gateway.exe
+# 访问日志管理页面（需要设置 ADMIN_SECRET）
+http://localhost:10805/logs
 ```
 
-#### Docker 运行配置
+## ⚙️ 配置
+
+项目支持通过环境变量进行配置。详细的配置参数说明请查看 `.env.example` 文件。
+
+主要配置项：
+- `GATEWAY_PORT` - 服务端口（默认10805）
+- `ADMIN_SECRET` - 管理界面密钥
+- `LOG_RECORD_200` - 是否记录成功请求详情（默认false）
+- `SENSITIVE_HEADERS` - 要过滤的敏感头信息
 
 ```bash
-# 基础配置
-docker run -d \
-  -p 10805:10805 \
-  -e GATEWAY_PORT=10805 \
-  -e SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via" \
-  --name privacy-gateway \
-  privacygateway
-
-# 带代理和日志功能的完整配置
-docker run -d \
-  -p 10805:10805 \
-  -e GATEWAY_PORT=10805 \
-  -e SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via,x-request-id" \
-  -e DEFAULT_PROXY="http://proxy.example.com:10805" \
-  -e PROXY_WHITELIST="proxy1.example.com,proxy2.example.com" \
-  -e ADMIN_SECRET="your-admin-secret" \
-  -e LOG_MAX_ENTRIES=2000 \
-  -e LOG_RECORD_200=true \
-  --name privacy-gateway \
-  privacygateway
+# 复制配置模板并自定义
+cp .env.example .env
+nano .env
 ```
 
-## 高级用法
+## 📸 功能展示
 
-### 代理配置
+### 管理界面登录
 
-除了通过环境变量设置默认代理外，还可以通过以下方式为单个请求指定代理：
+当设置了 `ADMIN_SECRET` 后，首次访问管理页面需要进行身份验证：
 
-#### 1. 查询参数方式
+![管理界面登录](images/login.jpg)
 
-```bash
-# 使用 HTTP 代理
-curl "http://localhost:10805/proxy?target=http://example.com&proxy=http://proxy.example.com:10805"
+### 访问日志列表
 
-# 使用 SOCKS5 代理（带认证）
-curl "http://localhost:10805/proxy?target=http://example.com&proxy=socks5://user:pass@proxy.example.com:1080"
-```
+登录后可以查看实时的访问日志，支持多维度筛选和搜索：
 
-#### 2. 请求头方式
+![访问日志列表](images/logs.jpg)
 
-通过 `X-Proxy-Config` 请求头传递 Base64 编码的 JSON 配置：
+*日志列表展示了请求方法、类型、目标地址、状态码、耗时等关键信息，不同的请求类型用不同颜色的标签区分。*
 
-```bash
-# 创建代理配置 JSON
-proxy_config='{"url":"http://proxy.example.com:10805","timeout":30}'
+### 请求详情查看
 
-# Base64 编码
-proxy_config_b64=$(echo -n "$proxy_config" | base64)
+点击日志条目可以查看完整的请求和响应详情，包括自动生成的curl命令：
 
-# 发送请求
-curl -H "X-Proxy-Config: $proxy_config_b64" \
-     "http://localhost:10805/proxy?target=http://example.com"
-```
+![请求详情](images/details.jpg)
 
-代理配置 JSON 格式：
-```json
-{
-  "url": "http://proxy.example.com:10805",
-  "type": "http",
-  "timeout": 30,
-  "auth": {
-    "username": "user",
-    "password": "pass"
-  }
-}
-```
+*详情页面提供了完整的请求信息、响应内容，以及可一键复制的等效curl命令，方便调试和重现请求。*
 
-### 支持的代理协议
+## 📝 注意事项
 
-- **HTTP/HTTPS**: `http://proxy.example.com:10805`
-- **SOCKS5**: `socks5://proxy.example.com:1080`
-- **带认证的代理**: `http://user:pass@proxy.example.com:10805`
-
-### 日志查看
-
-如果设置了 `ADMIN_SECRET` 环境变量，可以通过以下方式查看访问日志：
-
-```bash
-# 访问日志查看页面
-http://localhost:10805/logs?secret=your-admin-secret
-```
-
-日志功能提供：
-- **实时访问日志查看** - 支持自动刷新和分页
-- **多维度筛选** - 按域名、状态码、时间范围、关键词搜索
-- **请求类型识别** - 自动识别HTTP、HTTPS、WebSocket、SSE请求类型
-- **详细信息查看** - 点击日志条目查看完整的请求和响应详情
-- **curl命令生成** - 自动生成等效的curl命令，支持一键复制
-- **灵活的记录控制** - 通过 `LOG_RECORD_200` 控制是否记录成功请求的详细信息
-
-#### 日志记录模式
-
-隐私网关支持两种日志记录模式：
-
-**默认模式** (`LOG_RECORD_200=false`)：
-- 只记录非200状态码请求的详细信息（响应体、请求体等）
-- 200状态码请求只记录基本信息（时间、方法、目标、耗时等）
-- 节省内存和存储空间，适合生产环境
-
-**完整记录模式** (`LOG_RECORD_200=true`)：
-- 记录所有状态码请求的详细信息
-- 包括200状态码请求的响应体、请求体、请求头等
-- 便于调试和完整的请求追踪，适合开发环境
-
-```bash
-# 启用完整记录模式
-export LOG_RECORD_200=true
-./privacy-gateway
-
-# 或者在Docker中
-docker run -d -p 10805:10805 -e LOG_RECORD_200=true -e ADMIN_SECRET="your-secret" privacygateway
-```
-
-#### 日志查看界面功能
-
-- **请求类型标识**：不同颜色标签显示HTTP、HTTPS、WebSocket、SSE类型
-- **智能点击**：根据记录模式自动判断哪些日志可以点击查看详情
-- **搜索功能**：支持在目标URL、方法、IP、User-Agent等字段中搜索
-- **curl命令复制**：点击详情页面的复制按钮一键复制等效curl命令
-
-### 注意事项
-
-- **URL 编码**: 如果你的目标 URL 包含特殊字符（如 `&`），请确保对其进行正确的 URL 编码。
-- **HTTPS**: 网关会直接请求你在 `target` 参数中提供的 URL，无论是 `http` 还是 `https`。
-- **代理优先级**: 请求头配置 > 查询参数配置 > 默认环境变量配置
-- **安全性**: 生产环境中建议设置代理白名单，避免被滥用
+- 目标URL包含特殊字符时需要进行URL编码
+- 生产环境建议设置 `ADMIN_SECRET` 和代理白名单
+- 支持HTTP/HTTPS/WebSocket/SSE等多种协议
+- 详细配置说明请参考 `.env.example` 文件
