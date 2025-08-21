@@ -18,14 +18,14 @@ func HTTPProxy(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *
 	var capture *accesslog.ResponseCapture
 
 	if recorder != nil {
-		capture = accesslog.NewResponseCapture(w, true, cfg.LogMaxBodySize)
+		capture = accesslog.NewResponseCapture(w, true, cfg.LogMaxBodySize, cfg.LogRecord200)
 		w = capture
 	}
 
 	// 确保在函数结束时记录日志
 	defer func() {
 		if recorder != nil && capture != nil {
-			recorder.RecordFromCapture(r, capture)
+			recorder.RecordFromCapture(r, capture, "/proxy")
 		}
 	}()
 

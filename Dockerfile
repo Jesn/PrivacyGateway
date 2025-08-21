@@ -29,14 +29,22 @@ WORKDIR /app
 COPY --from=builder /app/privacy-gateway .
 COPY --from=builder /app/index.html .
 
-# 暴露网关将要监听的端口 (默认 8080)
+# 暴露网关将要监听的端口 (默认 10805)
 # 这只是元数据，实际端口由 GATEWAY_PORT 环境变量决定
-EXPOSE 8080
+EXPOSE 10805
 
 # 设置默认的环境变量
 # 用户可以在 docker run 时覆盖这些变量
-ENV GATEWAY_PORT=8080
+ENV GATEWAY_PORT=10805
 ENV SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlation-id,x-country,x-region,x-city"
+
+# 日志相关配置（可选）
+# ENV ADMIN_SECRET=""
+# ENV LOG_MAX_ENTRIES=1000
+# ENV LOG_MAX_BODY_SIZE=1024
+# ENV LOG_RETENTION_HOURS=24
+# ENV LOG_MAX_MEMORY_MB=50.0
+# ENV LOG_RECORD_200=false
 
 # 容器启动时运行的命令
 CMD ["./privacy-gateway"]

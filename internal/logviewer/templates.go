@@ -18,6 +18,7 @@ type TemplateData struct {
 	Stats        *accesslog.StorageStats `json:"stats"`
 	StatusGroups map[string][]int        `json:"status_groups"`
 	Error        string                  `json:"error,omitempty"`
+	LogRecord200 bool                    `json:"log_record_200"` // 是否记录200状态码详情
 }
 
 // PaginationData 分页数据
@@ -73,6 +74,11 @@ const LogViewTemplate = `<!DOCTYPE html>
         .status-4xx { background: #f8d7da; color: #721c24; }
         .status-5xx { background: #f5c6cb; color: #721c24; }
         .method-badge { padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; background: #e9ecef; color: #495057; }
+        .type-badge { padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+        .type-HTTP { background: #d1ecf1; color: #0c5460; }
+        .type-HTTPS { background: #d4edda; color: #155724; }
+        .type-WebSocket { background: #fff3cd; color: #856404; }
+        .type-SSE { background: #e2e3ff; color: #383d41; }
         .clickable-target { cursor: pointer; color: #007bff; text-decoration: none; }
         .clickable-target:hover { text-decoration: underline; }
         .non-clickable { color: #333; }
@@ -98,6 +104,9 @@ const LogViewTemplate = `<!DOCTYPE html>
         .detail-label { font-weight: bold; color: #555; margin-bottom: 5px; }
         .detail-value { background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; word-break: break-all; }
         .status-detail { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+        .copy-btn { background: #007bff; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; transition: background-color 0.2s; }
+        .copy-btn:hover { background: #0056b3; }
+        .copy-btn:active { background: #004085; }
 
         @media (max-width: 768px) {
             .filter-row { flex-direction: column; }
@@ -200,6 +209,7 @@ const LogViewTemplate = `<!DOCTYPE html>
                 <thead>
                     <tr>
                         <th>方法</th>
+                        <th>类型</th>
                         <th>目标</th>
                         <th>状态码</th>
                         <th>耗时</th>
@@ -211,8 +221,9 @@ const LogViewTemplate = `<!DOCTYPE html>
                     {{range .Logs}}
                     <tr>
                         <td><span class="method-badge">{{.Method}}</span></td>
+                        <td><span class="type-badge type-{{getTypeClass .RequestType}}">{{.RequestType}}</span></td>
                         <td>
-                            {{if ne .StatusCode 200}}
+                            {{if or (ne .StatusCode 200) $.LogRecord200}}
                             <a href="#" class="clickable-target" onclick="showLogDetailById('{{.ID}}'); return false;">
                                 {{.TargetHost}}{{.TargetPath}}
                             </a>
@@ -308,7 +319,10 @@ const LogViewTemplate = `<!DOCTYPE html>
                     <div class="detail-value" id="detail-response"></div>
                 </div>
                 <div class="detail-row">
-                    <div class="detail-label">等效curl命令</div>
+                    <div class="detail-label" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>等效curl命令</span>
+                        <button onclick="copyCurlCommand()" class="copy-btn" title="复制命令">📋</button>
+                    </div>
                     <div class="detail-value" id="detail-curl" style="background: #f8f9fa; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all;"></div>
                 </div>
             </div>
@@ -567,6 +581,75 @@ const LogViewTemplate = `<!DOCTYPE html>
             return month + '-' + day + ' ' + hours + ':' + minutes;
         }
 
+        // 复制curl命令到剪贴板
+        function copyCurlCommand() {
+            const curlElement = document.getElementById('detail-curl');
+            const curlCommand = curlElement.textContent;
+
+            // 使用现代的Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(curlCommand).then(() => {
+                    showCopySuccess();
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopyTextToClipboard(curlCommand);
+                });
+            } else {
+                // 降级方案
+                fallbackCopyTextToClipboard(curlCommand);
+            }
+        }
+
+        // 降级复制方案
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess();
+                } else {
+                    showCopyError();
+                }
+            } catch (err) {
+                console.error('降级复制失败:', err);
+                showCopyError();
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // 显示复制成功提示
+        function showCopySuccess() {
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✅';
+            btn.style.background = '#28a745';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#007bff';
+            }, 1500);
+        }
+
+        // 显示复制失败提示
+        function showCopyError() {
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '❌';
+            btn.style.background = '#dc3545';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#007bff';
+            }, 1500);
+        }
+
         // 自动刷新功能
         function autoRefresh() {
             const refreshInterval = 30000; // 30秒
@@ -620,6 +703,20 @@ func GetTemplate() *template.Template {
 				return "other"
 			}
 		},
+		"getTypeClass": func(requestType string) string {
+			switch requestType {
+			case "HTTP":
+				return "HTTP"
+			case "HTTPS":
+				return "HTTPS"
+			case "WebSocket":
+				return "WebSocket"
+			case "SSE":
+				return "SSE"
+			default:
+				return "HTTP"
+			}
+		},
 		"eq": func(a, b interface{}) bool {
 			return fmt.Sprintf("%v", a) == fmt.Sprintf("%v", b)
 		},
@@ -630,13 +727,14 @@ func GetTemplate() *template.Template {
 }
 
 // CreateTemplateData 创建模板数据
-func CreateTemplateData(title string, logs []accesslog.AccessLog, filter *FilterParams, response *accesslog.LogResponse, stats *accesslog.StorageStats) *TemplateData {
+func CreateTemplateData(title string, logs []accesslog.AccessLog, filter *FilterParams, response *accesslog.LogResponse, stats *accesslog.StorageStats, logRecord200 bool) *TemplateData {
 	data := &TemplateData{
 		Title:        title,
 		Logs:         logs,
 		Filter:       filter,
 		Stats:        stats,
 		StatusGroups: GetStatusCodeGroups(),
+		LogRecord200: logRecord200,
 	}
 
 	if response != nil {

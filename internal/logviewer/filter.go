@@ -44,61 +44,61 @@ func NewFilterBuilder() *FilterBuilder {
 // FromRequest 从HTTP请求构建筛选器
 func (fb *FilterBuilder) FromRequest(r *http.Request) *FilterBuilder {
 	query := r.URL.Query()
-	
+
 	// 域名筛选
 	if domain := query.Get("domain"); domain != "" {
 		fb.params.Domain = strings.TrimSpace(domain)
 	}
-	
+
 	// 状态码筛选
 	if statusStr := query.Get("status"); statusStr != "" {
 		fb.params.StatusCode = parseStatusCodes(statusStr)
 	}
-	
+
 	// 时间范围筛选
 	if fromStr := query.Get("from"); fromStr != "" {
 		if fromTime, err := parseTime(fromStr); err == nil {
 			fb.params.FromTime = fromTime
 		}
 	}
-	
+
 	if toStr := query.Get("to"); toStr != "" {
 		if toTime, err := parseTime(toStr); err == nil {
 			fb.params.ToTime = toTime
 		}
 	}
-	
+
 	// 分页参数
 	if pageStr := query.Get("page"); pageStr != "" {
 		if page, err := strconv.Atoi(pageStr); err == nil && page > 0 {
 			fb.params.Page = page
 		}
 	}
-	
+
 	if limitStr := query.Get("limit"); limitStr != "" {
 		if limit, err := strconv.Atoi(limitStr); err == nil && limit > 0 && limit <= 1000 {
 			fb.params.Limit = limit
 		}
 	}
-	
+
 	// 排序参数
 	if sortBy := query.Get("sort_by"); sortBy != "" {
 		if isValidSortField(sortBy) {
 			fb.params.SortBy = sortBy
 		}
 	}
-	
+
 	if sortOrder := query.Get("sort_order"); sortOrder != "" {
 		if sortOrder == "asc" || sortOrder == "desc" {
 			fb.params.SortOrder = sortOrder
 		}
 	}
-	
+
 	// 搜索关键词
 	if search := query.Get("search"); search != "" {
 		fb.params.Search = strings.TrimSpace(search)
 	}
-	
+
 	return fb
 }
 
@@ -163,6 +163,7 @@ func (fb *FilterBuilder) Build() *accesslog.LogFilter {
 		ToTime:     fb.params.ToTime,
 		Page:       fb.params.Page,
 		Limit:      fb.params.Limit,
+		Search:     fb.params.Search,
 	}
 }
 
@@ -174,11 +175,11 @@ func (fb *FilterBuilder) GetParams() *FilterParams {
 // ToQueryString 转换为查询字符串
 func (fb *FilterBuilder) ToQueryString() string {
 	values := url.Values{}
-	
+
 	if fb.params.Domain != "" {
 		values.Set("domain", fb.params.Domain)
 	}
-	
+
 	if len(fb.params.StatusCode) > 0 {
 		statusStrs := make([]string, len(fb.params.StatusCode))
 		for i, code := range fb.params.StatusCode {
@@ -186,35 +187,35 @@ func (fb *FilterBuilder) ToQueryString() string {
 		}
 		values.Set("status", strings.Join(statusStrs, ","))
 	}
-	
+
 	if !fb.params.FromTime.IsZero() {
 		values.Set("from", fb.params.FromTime.Format(time.RFC3339))
 	}
-	
+
 	if !fb.params.ToTime.IsZero() {
 		values.Set("to", fb.params.ToTime.Format(time.RFC3339))
 	}
-	
+
 	if fb.params.Page != 1 {
 		values.Set("page", strconv.Itoa(fb.params.Page))
 	}
-	
+
 	if fb.params.Limit != 50 {
 		values.Set("limit", strconv.Itoa(fb.params.Limit))
 	}
-	
+
 	if fb.params.SortBy != "timestamp" {
 		values.Set("sort_by", fb.params.SortBy)
 	}
-	
+
 	if fb.params.SortOrder != "desc" {
 		values.Set("sort_order", fb.params.SortOrder)
 	}
-	
+
 	if fb.params.Search != "" {
 		values.Set("search", fb.params.Search)
 	}
-	
+
 	return values.Encode()
 }
 
@@ -223,16 +224,16 @@ func parseStatusCodes(statusStr string) []int {
 	if statusStr == "" {
 		return nil
 	}
-	
+
 	var codes []int
 	parts := strings.Split(statusStr, ",")
-	
+
 	for _, part := range parts {
 		part = strings.TrimSpace(part)
 		if part == "" {
 			continue
 		}
-		
+
 		// 处理状态码范围
 		switch part {
 		case "2xx":
@@ -260,7 +261,7 @@ func parseStatusCodes(statusStr string) []int {
 			}
 		}
 	}
-	
+
 	return codes
 }
 
@@ -275,13 +276,13 @@ func parseTime(timeStr string) (time.Time, error) {
 		"2006-01-02 15:04",
 		"2006-01-02",
 	}
-	
+
 	for _, format := range formats {
 		if t, err := time.Parse(format, timeStr); err == nil {
 			return t, nil
 		}
 	}
-	
+
 	return time.Time{}, fmt.Errorf("invalid time format: %s", timeStr)
 }
 
@@ -295,13 +296,13 @@ func isValidSortField(field string) bool {
 		"duration",
 		"client_ip",
 	}
-	
+
 	for _, validField := range validFields {
 		if field == validField {
 			return true
 		}
 	}
-	
+
 	return false
 }
 
@@ -332,24 +333,24 @@ func ValidateFilter(params *FilterParams) error {
 	if params.Page < 1 {
 		return fmt.Errorf("page must be greater than 0")
 	}
-	
+
 	if params.Limit < 1 || params.Limit > 1000 {
 		return fmt.Errorf("limit must be between 1 and 1000")
 	}
-	
+
 	if !params.FromTime.IsZero() && !params.ToTime.IsZero() {
 		if params.FromTime.After(params.ToTime) {
 			return fmt.Errorf("from_time must be before to_time")
 		}
 	}
-	
+
 	if params.SortBy != "" && !isValidSortField(params.SortBy) {
 		return fmt.Errorf("invalid sort field: %s", params.SortBy)
 	}
-	
+
 	if params.SortOrder != "" && params.SortOrder != "asc" && params.SortOrder != "desc" {
 		return fmt.Errorf("sort order must be 'asc' or 'desc'")
 	}
-	
+
 	return nil
 }

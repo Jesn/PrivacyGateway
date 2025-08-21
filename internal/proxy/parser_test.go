@@ -27,7 +27,7 @@ func TestParseSimple(t *testing.T) {
 		},
 		{
 			name:        "HTTP Proxy",
-			proxyURL:    "http://proxy.example.com:8080",
+			proxyURL:    "http://proxy.example.com:10805",
 			expectError: false,
 			expectType:  "http",
 			expectAuth:  false,
@@ -41,7 +41,7 @@ func TestParseSimple(t *testing.T) {
 		},
 		{
 			name:        "Proxy with Auth",
-			proxyURL:    "http://user:pass@proxy.example.com:8080",
+			proxyURL:    "http://user:pass@proxy.example.com:10805",
 			expectError: false,
 			expectType:  "http",
 			expectAuth:  true,
@@ -115,7 +115,7 @@ func TestParseHeader(t *testing.T) {
 
 	t.Run("Valid JSON Config", func(t *testing.T) {
 		proxyConfig := config.ProxyConfig{
-			URL:     "http://proxy.example.com:8080",
+			URL:     "http://proxy.example.com:10805",
 			Type:    "http",
 			Timeout: 60,
 			Auth: &config.ProxyAuth{
@@ -179,13 +179,13 @@ func TestParseHeader(t *testing.T) {
 
 func TestGetConfig(t *testing.T) {
 	defaultProxy := &config.ProxyConfig{
-		URL:  "http://default.proxy.com:8080",
+		URL:  "http://default.proxy.com:10805",
 		Type: "http",
 	}
 
 	t.Run("Header Priority", func(t *testing.T) {
 		proxyConfig := config.ProxyConfig{
-			URL:  "http://header.proxy.com:8080",
+			URL:  "http://header.proxy.com:10805",
 			Type: "http",
 		}
 		jsonData, _ := json.Marshal(proxyConfig)
@@ -196,7 +196,7 @@ func TestGetConfig(t *testing.T) {
 				"X-Proxy-Config": []string{encoded},
 			},
 			URL: &url.URL{
-				RawQuery: "proxy=http://query.proxy.com:8080",
+				RawQuery: "proxy=http://query.proxy.com:10805",
 			},
 		}
 
@@ -214,7 +214,7 @@ func TestGetConfig(t *testing.T) {
 		req := &http.Request{
 			Header: http.Header{},
 			URL: &url.URL{
-				RawQuery: "proxy=http://query.proxy.com:8080",
+				RawQuery: "proxy=http://query.proxy.com:10805",
 			},
 		}
 
@@ -223,7 +223,7 @@ func TestGetConfig(t *testing.T) {
 			t.Errorf("Unexpected error: %v", err)
 		}
 
-		if result == nil || result.URL != "http://query.proxy.com:8080" {
+		if result == nil || result.URL != "http://query.proxy.com:10805" {
 			t.Error("Expected query parameter config")
 		}
 	})

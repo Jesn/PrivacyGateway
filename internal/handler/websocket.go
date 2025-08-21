@@ -3,7 +3,9 @@ package handler
 import (
 	"net/http"
 	"net/url"
+	"time"
 
+	"privacygateway/internal/accesslog"
 	"privacygateway/internal/config"
 	"privacygateway/internal/logger"
 	"privacygateway/internal/proxy"
@@ -20,9 +22,20 @@ var upgrader = websocket.Upgrader{
 }
 
 // WebSocket handles WebSocket proxying with optional upstream proxy support.
-func WebSocket(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *logger.Logger) {
+func WebSocket(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *logger.Logger, recorder *accesslog.Recorder) {
+	startTime := time.Now()
+	var statusCode int = 101 // WebSocket upgrade status code
+
+	// 记录WebSocket连接日志
+	defer func() {
+		if recorder != nil {
+			duration := time.Since(startTime)
+			recorder.RecordRequest(r, statusCode, "", duration, 0, "/ws")
+		}
+	}()
 	targetURLStr := r.URL.Query().Get("target")
 	if targetURLStr == "" {
+		statusCode = http.StatusBadRequest
 		http.Error(w, "'target' query parameter is required for WebSocket proxy", http.StatusBadRequest)
 		return
 	}
@@ -30,6 +43,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *
 	// 获取代理配置
 	proxyConfig, err := proxy.GetConfig(r, cfg.DefaultProxy)
 	if err != nil {
+		statusCode = http.StatusBadRequest
 		log.Error("failed to parse proxy config", "error", err)
 		http.Error(w, "Invalid proxy configuration", http.StatusBadRequest)
 		return
@@ -37,6 +51,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *
 
 	// 验证代理配置安全性
 	if err := proxy.Validate(proxyConfig, cfg.ProxyWhitelist, cfg.AllowPrivateIP); err != nil {
+		statusCode = http.StatusForbidden
 		log.Error("proxy validation failed", "error", err)
 		http.Error(w, "Proxy not allowed", http.StatusForbidden)
 		return

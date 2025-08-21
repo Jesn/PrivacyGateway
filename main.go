@@ -41,7 +41,7 @@ func main() {
 	})
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		handler.WebSocket(w, r, cfg, log)
+		handler.WebSocket(w, r, cfg, log, recorder)
 	})
 
 	// 设置日志查看路由

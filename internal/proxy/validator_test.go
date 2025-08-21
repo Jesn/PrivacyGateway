@@ -24,7 +24,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("Valid HTTP Proxy", func(t *testing.T) {
 		proxyConfig := &config.ProxyConfig{
-			URL:  "http://proxy.example.com:8080",
+			URL:  "http://proxy.example.com:10805",
 			Type: "http",
 		}
 		err := Validate(proxyConfig, nil, false)
@@ -79,7 +79,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("Private IP Blocked", func(t *testing.T) {
 		proxyConfig := &config.ProxyConfig{
-			URL:  "http://127.0.0.1:8080",
+			URL:  "http://127.0.0.1:10805",
 			Type: "http",
 		}
 		err := Validate(proxyConfig, nil, false)
@@ -90,7 +90,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("Private IP Allowed", func(t *testing.T) {
 		proxyConfig := &config.ProxyConfig{
-			URL:  "http://127.0.0.1:8080",
+			URL:  "http://127.0.0.1:10805",
 			Type: "http",
 		}
 		err := Validate(proxyConfig, nil, true)
@@ -101,7 +101,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("Whitelist Check - Allowed", func(t *testing.T) {
 		proxyConfig := &config.ProxyConfig{
-			URL:  "http://allowed.proxy.com:8080",
+			URL:  "http://allowed.proxy.com:10805",
 			Type: "http",
 		}
 		whitelist := []string{"allowed.proxy.com", "other.proxy.com"}
@@ -113,7 +113,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("Whitelist Check - Blocked", func(t *testing.T) {
 		proxyConfig := &config.ProxyConfig{
-			URL:  "http://blocked.proxy.com:8080",
+			URL:  "http://blocked.proxy.com:10805",
 			Type: "http",
 		}
 		whitelist := []string{"allowed.proxy.com", "other.proxy.com"}
@@ -125,7 +125,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("No Whitelist", func(t *testing.T) {
 		proxyConfig := &config.ProxyConfig{
-			URL:  "http://any.proxy.com:8080",
+			URL:  "http://any.proxy.com:10805",
 			Type: "http",
 		}
 		err := Validate(proxyConfig, nil, false)

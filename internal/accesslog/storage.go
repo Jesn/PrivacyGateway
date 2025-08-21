@@ -9,34 +9,37 @@ import (
 type Storage interface {
 	// Add 添加日志记录
 	Add(log *AccessLog) error
-	
+
 	// Query 查询日志记录
 	Query(filter *LogFilter) (*LogResponse, error)
-	
+
+	// GetByID 根据ID获取单个日志记录
+	GetByID(id string) (*AccessLog, error)
+
 	// GetStats 获取存储统计信息
 	GetStats() *StorageStats
-	
+
 	// Clear 清空所有日志
 	Clear()
-	
+
 	// Close 关闭存储
 	Close() error
 }
 
 // MemoryStorage 内存存储实现
 type MemoryStorage struct {
-	logs         []AccessLog   // 日志存储数组
-	head         int           // 写入位置
-	size         int           // 当前大小
-	maxEntries   int           // 最大条数
-	maxMemoryMB  float64       // 最大内存使用（MB）
+	logs           []AccessLog // 日志存储数组
+	head           int         // 写入位置
+	size           int         // 当前大小
+	maxEntries     int         // 最大条数
+	maxMemoryMB    float64     // 最大内存使用（MB）
 	retentionHours int         // 保留时间（小时）
-	maxBodySize  int           // 响应体最大大小
-	
-	mutex        sync.RWMutex  // 读写锁
-	cleanupCount int64         // 清理次数
-	lastCleanup  time.Time     // 最后清理时间
-	
+	maxBodySize    int         // 响应体最大大小
+
+	mutex        sync.RWMutex // 读写锁
+	cleanupCount int64        // 清理次数
+	lastCleanup  time.Time    // 最后清理时间
+
 	// 清理相关
 	cleanupTicker *time.Ticker
 	stopCleanup   chan struct{}
@@ -56,10 +59,10 @@ func NewMemoryStorage(maxEntries int, maxMemoryMB float64, retentionHours int, m
 		lastCleanup:    time.Now(),
 		stopCleanup:    make(chan struct{}),
 	}
-	
+
 	// 启动定期清理
 	storage.startCleanup()
-	
+
 	return storage
 }
 
@@ -68,33 +71,33 @@ func (s *MemoryStorage) Add(log *AccessLog) error {
 	if log == nil {
 		return ErrInvalidLogID
 	}
-	
+
 	// 验证日志记录
 	if err := log.Validate(); err != nil {
 		return err
 	}
-	
+
 	// 截断响应体
 	if len(log.ResponseBody) > s.maxBodySize {
 		log.ResponseBody = TruncateBody([]byte(log.ResponseBody), s.maxBodySize)
 	}
-	
+
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	
+
 	// 检查内存使用
 	if s.isMemoryLimitExceeded() {
 		s.forceCleanup()
 	}
-	
+
 	// 添加到环形缓冲区
 	s.logs[s.head] = *log
 	s.head = (s.head + 1) % s.maxEntries
-	
+
 	if s.size < s.maxEntries {
 		s.size++
 	}
-	
+
 	return nil
 }
 
@@ -103,19 +106,19 @@ func (s *MemoryStorage) Query(filter *LogFilter) (*LogResponse, error) {
 	if filter == nil {
 		filter = &LogFilter{}
 	}
-	
+
 	// 验证和设置默认值
 	if err := filter.Validate(); err != nil {
 		return nil, err
 	}
 	filter.SetDefaults()
-	
+
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
-	
+
 	// 收集匹配的日志
 	var matchedLogs []AccessLog
-	
+
 	for i := 0; i < s.size; i++ {
 		// 计算实际索引（从最老的开始）
 		var idx int
@@ -124,27 +127,27 @@ func (s *MemoryStorage) Query(filter *LogFilter) (*LogResponse, error) {
 		} else {
 			idx = (s.head + i) % s.maxEntries
 		}
-		
+
 		log := s.logs[idx]
-		
+
 		// 应用筛选条件
 		if s.matchesFilter(&log, filter) {
 			matchedLogs = append(matchedLogs, log)
 		}
 	}
-	
+
 	// 按时间倒序排列（最新的在前）
 	for i, j := 0, len(matchedLogs)-1; i < j; i, j = i+1, j-1 {
 		matchedLogs[i], matchedLogs[j] = matchedLogs[j], matchedLogs[i]
 	}
-	
+
 	// 分页处理
 	total := len(matchedLogs)
 	totalPages := (total + filter.Limit - 1) / filter.Limit
-	
+
 	start := (filter.Page - 1) * filter.Limit
 	end := start + filter.Limit
-	
+
 	if start >= total {
 		matchedLogs = []AccessLog{}
 	} else {
@@ -153,7 +156,7 @@ func (s *MemoryStorage) Query(filter *LogFilter) (*LogResponse, error) {
 		}
 		matchedLogs = matchedLogs[start:end]
 	}
-	
+
 	return &LogResponse{
 		Logs:       matchedLogs,
 		Total:      total,
@@ -163,11 +166,41 @@ func (s *MemoryStorage) Query(filter *LogFilter) (*LogResponse, error) {
 	}, nil
 }
 
+// GetByID 根据ID获取单个日志记录
+func (s *MemoryStorage) GetByID(id string) (*AccessLog, error) {
+	if id == "" {
+		return nil, ErrInvalidLogID
+	}
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	// 遍历所有日志查找匹配的ID
+	for i := 0; i < s.size; i++ {
+		// 计算实际索引
+		var idx int
+		if s.size < s.maxEntries {
+			idx = i
+		} else {
+			idx = (s.head + i) % s.maxEntries
+		}
+
+		log := s.logs[idx]
+		if log.ID == id {
+			// 返回日志的副本
+			logCopy := log
+			return &logCopy, nil
+		}
+	}
+
+	return nil, ErrLogNotFound
+}
+
 // GetStats 获取存储统计信息
 func (s *MemoryStorage) GetStats() *StorageStats {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
-	
+
 	stats := &StorageStats{
 		CurrentEntries: s.size,
 		MaxEntries:     s.maxEntries,
@@ -175,7 +208,7 @@ func (s *MemoryStorage) GetStats() *StorageStats {
 		CleanupCount:   s.cleanupCount,
 		LastCleanup:    s.lastCleanup.Format(time.RFC3339),
 	}
-	
+
 	// 获取最老和最新的日志时间
 	if s.size > 0 {
 		var oldestIdx, newestIdx int
@@ -186,11 +219,11 @@ func (s *MemoryStorage) GetStats() *StorageStats {
 			oldestIdx = s.head
 			newestIdx = (s.head - 1 + s.maxEntries) % s.maxEntries
 		}
-		
+
 		stats.OldestEntry = s.logs[oldestIdx].Timestamp.Format(time.RFC3339)
 		stats.NewestEntry = s.logs[newestIdx].Timestamp.Format(time.RFC3339)
 	}
-	
+
 	return stats
 }
 
@@ -198,7 +231,7 @@ func (s *MemoryStorage) GetStats() *StorageStats {
 func (s *MemoryStorage) Clear() {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	
+
 	s.head = 0
 	s.size = 0
 	s.cleanupCount++
@@ -220,24 +253,29 @@ func (s *MemoryStorage) matchesFilter(log *AccessLog, filter *LogFilter) bool {
 	if !MatchesDomain(log.TargetHost, filter.Domain) {
 		return false
 	}
-	
+
 	// 状态码筛选
 	if !ContainsStatusCode(filter.StatusCode, log.StatusCode) {
 		return false
 	}
-	
+
 	// 时间范围筛选
 	if !IsWithinTimeRange(log.Timestamp, filter.FromTime, filter.ToTime) {
 		return false
 	}
-	
+
+	// 搜索关键词筛选
+	if !MatchesSearch(log, filter.Search) {
+		return false
+	}
+
 	return true
 }
 
 // calculateMemoryUsage 计算当前内存使用量（MB）
 func (s *MemoryStorage) calculateMemoryUsage() float64 {
 	var totalBytes int64
-	
+
 	for i := 0; i < s.size; i++ {
 		var idx int
 		if s.size < s.maxEntries {
@@ -247,7 +285,7 @@ func (s *MemoryStorage) calculateMemoryUsage() float64 {
 		}
 		totalBytes += EstimateMemoryUsage(&s.logs[idx])
 	}
-	
+
 	return float64(totalBytes) / (1024 * 1024) // 转换为MB
 }
 
@@ -263,7 +301,7 @@ func (s *MemoryStorage) isMemoryLimitExceeded() bool {
 func (s *MemoryStorage) startCleanup() {
 	// 每5分钟清理一次
 	s.cleanupTicker = time.NewTicker(5 * time.Minute)
-	
+
 	go func() {
 		for {
 			select {
@@ -280,14 +318,14 @@ func (s *MemoryStorage) startCleanup() {
 func (s *MemoryStorage) performCleanup() {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-	
+
 	if s.size == 0 {
 		return
 	}
-	
+
 	cutoff := time.Now().Add(-time.Duration(s.retentionHours) * time.Hour)
 	cleaned := 0
-	
+
 	// 从最老的日志开始检查
 	for i := 0; i < s.size; i++ {
 		var idx int
@@ -296,7 +334,7 @@ func (s *MemoryStorage) performCleanup() {
 		} else {
 			idx = (s.head + i) % s.maxEntries
 		}
-		
+
 		if s.logs[idx].Timestamp.Before(cutoff) {
 			// 清理过期日志
 			s.logs[idx] = AccessLog{} // 清空内存
@@ -305,7 +343,7 @@ func (s *MemoryStorage) performCleanup() {
 			break // 后面的日志都是更新的
 		}
 	}
-	
+
 	if cleaned > 0 {
 		// 重新整理数组
 		s.compactArray(cleaned)
@@ -319,13 +357,13 @@ func (s *MemoryStorage) forceCleanup() {
 	if s.size == 0 {
 		return
 	}
-	
+
 	// 清理最老的25%的日志
 	cleanCount := s.size / 4
 	if cleanCount == 0 {
 		cleanCount = 1
 	}
-	
+
 	s.compactArray(cleanCount)
 	s.cleanupCount++
 	s.lastCleanup = time.Now()
@@ -338,7 +376,7 @@ func (s *MemoryStorage) compactArray(removeCount int) {
 		s.size = 0
 		return
 	}
-	
+
 	// 移动数据
 	if s.size < s.maxEntries {
 		// 简单情况：数组未满

@@ -1,6 +1,9 @@
 package accesslog
 
 import (
+	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -9,6 +12,7 @@ type AccessLog struct {
 	ID             string            `json:"id"`                        // 唯一标识符
 	Timestamp      time.Time         `json:"timestamp"`                 // 请求时间戳
 	Method         string            `json:"method"`                    // HTTP 方法
+	RequestType    string            `json:"request_type"`              // 请求类型 (HTTP, HTTPS, WebSocket, SSE)
 	TargetHost     string            `json:"target_host"`               // 目标主机
 	TargetPath     string            `json:"target_path"`               // 目标路径
 	StatusCode     int               `json:"status_code"`               // HTTP 状态码
@@ -31,6 +35,7 @@ type LogFilter struct {
 	ToTime     time.Time `json:"to_time,omitempty"`     // 结束时间
 	Page       int       `json:"page"`                  // 页码（从1开始）
 	Limit      int       `json:"limit"`                 // 每页条数
+	Search     string    `json:"search,omitempty"`      // 搜索关键词
 }
 
 // LogResponse 日志查询响应
@@ -62,6 +67,61 @@ const (
 	LogLevelError
 	LogLevelDebug
 )
+
+// 请求类型常量
+const (
+	RequestTypeHTTP      = "HTTP"
+	RequestTypeHTTPS     = "HTTPS"
+	RequestTypeWebSocket = "WebSocket"
+	RequestTypeSSE       = "SSE"
+)
+
+// DetermineRequestType 根据请求信息确定请求类型
+func DetermineRequestType(r *http.Request, endpoint string) string {
+	// 如果是WebSocket端点
+	if endpoint == "/ws" {
+		return RequestTypeWebSocket
+	}
+
+	// 根据目标URL确定HTTP/HTTPS（SSE检测需要响应头，这里先不检测）
+	targetURL := r.URL.Query().Get("target")
+	if targetURL != "" {
+		if parsedURL, err := url.Parse(targetURL); err == nil {
+			if parsedURL.Scheme == "https" {
+				return RequestTypeHTTPS
+			}
+		}
+	}
+
+	return RequestTypeHTTP
+}
+
+// DetermineRequestTypeWithResponse 根据请求信息和响应头确定请求类型
+func DetermineRequestTypeWithResponse(r *http.Request, endpoint string, responseHeaders map[string]string) string {
+	// 如果是WebSocket端点
+	if endpoint == "/ws" {
+		return RequestTypeWebSocket
+	}
+
+	// 检查响应的Content-Type是否是text/event-stream
+	if contentType, exists := responseHeaders["Content-Type"]; exists {
+		if strings.Contains(strings.ToLower(contentType), "text/event-stream") {
+			return RequestTypeSSE
+		}
+	}
+
+	// 根据目标URL确定HTTP/HTTPS
+	targetURL := r.URL.Query().Get("target")
+	if targetURL != "" {
+		if parsedURL, err := url.Parse(targetURL); err == nil {
+			if parsedURL.Scheme == "https" {
+				return RequestTypeHTTPS
+			}
+		}
+	}
+
+	return RequestTypeHTTP
+}
 
 // String 返回日志级别的字符串表示
 func (l LogLevel) String() string {

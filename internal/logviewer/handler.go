@@ -140,6 +140,7 @@ func (h *Handler) handleLogView(w http.ResponseWriter, r *http.Request) {
 		filterBuilder.GetParams(),
 		response,
 		&stats.StorageStats,
+		h.recorder.IsLogRecord200Enabled(),
 	)
 
 	// 渲染模板
@@ -166,6 +167,14 @@ func (h *Handler) handleAPI(w http.ResponseWriter, r *http.Request) {
 
 // handleAPILogs 处理API日志查询
 func (h *Handler) handleAPILogs(w http.ResponseWriter, r *http.Request) {
+	// 检查是否是按ID查询
+	logID := r.URL.Query().Get("id")
+	if logID != "" {
+		// 按ID查询特定日志
+		h.handleAPILogByID(w, r, logID)
+		return
+	}
+
 	// 构建筛选器
 	filterBuilder := NewFilterBuilder().FromRequest(r)
 	filter := filterBuilder.Build()
@@ -187,6 +196,52 @@ func (h *Handler) handleAPILogs(w http.ResponseWriter, r *http.Request) {
 	// 返回JSON响应
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
+		h.logger.Error("failed to encode API response", "error", err)
+		h.handleAPIError(w, "Encoding failed", http.StatusInternalServerError)
+	}
+}
+
+// handleAPILogByID 处理按ID查询单个日志
+func (h *Handler) handleAPILogByID(w http.ResponseWriter, r *http.Request, logID string) {
+	// 创建一个大范围的查询来获取所有日志
+	filter := &accesslog.LogFilter{
+		Page:  1,
+		Limit: 1000, // 查询足够多的日志
+	}
+
+	// 查询日志
+	response, err := h.recorder.Query(filter)
+	if err != nil {
+		h.logger.Error("failed to query logs by ID", "error", err, "id", logID)
+		h.handleAPIError(w, "Query failed", http.StatusInternalServerError)
+		return
+	}
+
+	// 在结果中查找指定ID的日志
+	var targetLog *accesslog.AccessLog
+	for _, log := range response.Logs {
+		if log.ID == logID {
+			targetLog = &log
+			break
+		}
+	}
+
+	if targetLog == nil {
+		h.handleAPIError(w, "Log not found", http.StatusNotFound)
+		return
+	}
+
+	// 返回包含单个日志的响应
+	singleLogResponse := &accesslog.LogResponse{
+		Logs:       []accesslog.AccessLog{*targetLog},
+		Total:      1,
+		Page:       1,
+		Limit:      1,
+		TotalPages: 1,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(singleLogResponse); err != nil {
 		h.logger.Error("failed to encode API response", "error", err)
 		h.handleAPIError(w, "Encoding failed", http.StatusInternalServerError)
 	}

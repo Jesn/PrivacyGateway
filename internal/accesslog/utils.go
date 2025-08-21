@@ -170,21 +170,21 @@ func MatchesDomain(host, domain string) bool {
 	if domain == "" {
 		return true // 空域名表示不筛选
 	}
-	
+
 	// 转换为小写进行比较
 	host = strings.ToLower(host)
 	domain = strings.ToLower(domain)
-	
+
 	// 精确匹配
 	if host == domain {
 		return true
 	}
-	
+
 	// 子域名匹配
 	if strings.HasSuffix(host, "."+domain) {
 		return true
 	}
-	
+
 	// 部分匹配
 	return strings.Contains(host, domain)
 }
@@ -192,27 +192,92 @@ func MatchesDomain(host, domain string) bool {
 // EstimateMemoryUsage 估算日志记录的内存使用量（字节）
 func EstimateMemoryUsage(log *AccessLog) int64 {
 	size := int64(0)
-	
+
 	// 基础结构体大小
-	size += 8  // ID (string header)
+	size += 8 // ID (string header)
 	size += int64(len(log.ID))
 	size += 24 // Timestamp (time.Time)
 	size += 8  // Method (string header)
 	size += int64(len(log.Method))
-	size += 8  // TargetHost (string header)
+	size += 8 // TargetHost (string header)
 	size += int64(len(log.TargetHost))
-	size += 8  // TargetPath (string header)
+	size += 8 // TargetPath (string header)
 	size += int64(len(log.TargetPath))
-	size += 8  // StatusCode (int)
-	size += 8  // ResponseBody (string header)
+	size += 8 // StatusCode (int)
+	size += 8 // ResponseBody (string header)
 	size += int64(len(log.ResponseBody))
-	size += 8  // UserAgent (string header)
+	size += 8 // UserAgent (string header)
 	size += int64(len(log.UserAgent))
-	size += 8  // ClientIP (string header)
+	size += 8 // ClientIP (string header)
 	size += int64(len(log.ClientIP))
-	size += 8  // Duration (int64)
-	size += 8  // RequestSize (int64)
-	size += 8  // ResponseSize (int64)
-	
+	size += 8 // Duration (int64)
+	size += 8 // RequestSize (int64)
+	size += 8 // ResponseSize (int64)
+
 	return size
+}
+
+// MatchesSearch 检查日志是否匹配搜索关键词
+func MatchesSearch(log *AccessLog, search string) bool {
+	if search == "" {
+		return true // 空搜索表示不筛选
+	}
+
+	// 转换为小写进行不区分大小写的搜索
+	search = strings.ToLower(search)
+
+	// 搜索目标主机
+	if strings.Contains(strings.ToLower(log.TargetHost), search) {
+		return true
+	}
+
+	// 搜索目标路径
+	if strings.Contains(strings.ToLower(log.TargetPath), search) {
+		return true
+	}
+
+	// 搜索HTTP方法
+	if strings.Contains(strings.ToLower(log.Method), search) {
+		return true
+	}
+
+	// 搜索请求类型
+	if strings.Contains(strings.ToLower(log.RequestType), search) {
+		return true
+	}
+
+	// 搜索User-Agent
+	if strings.Contains(strings.ToLower(log.UserAgent), search) {
+		return true
+	}
+
+	// 搜索客户端IP
+	if strings.Contains(strings.ToLower(log.ClientIP), search) {
+		return true
+	}
+
+	// 搜索代理信息
+	if strings.Contains(strings.ToLower(log.ProxyInfo), search) {
+		return true
+	}
+
+	// 搜索响应体内容（仅非200状态码）
+	if log.StatusCode != 200 && strings.Contains(strings.ToLower(log.ResponseBody), search) {
+		return true
+	}
+
+	// 搜索请求体内容
+	if strings.Contains(strings.ToLower(log.RequestBody), search) {
+		return true
+	}
+
+	// 搜索请求头
+	for key, value := range log.RequestHeaders {
+		if strings.Contains(strings.ToLower(key), search) ||
+			strings.Contains(strings.ToLower(value), search) {
+			return true
+		}
+	}
+
+	return false
 }

@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  privacy-gateway:
+    build: .
+    container_name: privacy-gateway
+    ports:
+      - "10805:10805"
+    environment:
+      # 基础配置
+      - GATEWAY_PORT=10805
+      - SENSITIVE_HEADERS=cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlation-id,x-country,x-region,x-city
+      
+      # 代理配置（可选）
+      # - DEFAULT_PROXY=http://proxy.example.com:8080
+      # - PROXY_WHITELIST=proxy1.example.com,proxy2.example.com
+      # - ALLOW_PRIVATE_PROXY=false
+      
+      # 管理功能配置（可选）
+      # 取消注释下面的行来启用日志查看功能
+      # - ADMIN_SECRET=your-admin-secret-here
+      # - LOG_MAX_ENTRIES=1000
+      # - LOG_MAX_BODY_SIZE=1024
+      # - LOG_RETENTION_HOURS=24
+      # - LOG_MAX_MEMORY_MB=50.0
+      # - LOG_RECORD_200=false
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:10805/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 开发环境配置示例
+  privacy-gateway-dev:
+    build: .
+    container_name: privacy-gateway-dev
+    ports:
+      - "10806:10805"
+    environment:
+      - GATEWAY_PORT=10805
+      - SENSITIVE_HEADERS=cf-,x-forwarded,proxy,via
+      - ADMIN_SECRET=dev-secret-123
+      - LOG_RECORD_200=true
+      - LOG_MAX_ENTRIES=2000
+    restart: unless-stopped
+    profiles:
+      - dev

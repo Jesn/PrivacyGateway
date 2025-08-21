@@ -62,12 +62,13 @@ func NewRecorder(cfg *config.Config, log *logger.Logger) (*Recorder, error) {
 }
 
 // RecordRequest 记录HTTP请求
-func (r *Recorder) RecordRequest(req *http.Request, statusCode int, responseBody string, duration time.Duration, responseSize int64) {
+func (r *Recorder) RecordRequest(req *http.Request, statusCode int, responseBody string, duration time.Duration, responseSize int64, endpoint string) {
 	// 创建日志记录
 	log := &AccessLog{
 		ID:           GenerateLogID(),
 		Timestamp:    time.Now(),
 		Method:       req.Method,
+		RequestType:  DetermineRequestType(req, endpoint),
 		TargetHost:   r.extractTargetHost(req),
 		TargetPath:   r.extractTargetPath(req),
 		StatusCode:   statusCode,
@@ -90,7 +91,7 @@ func (r *Recorder) RecordRequest(req *http.Request, statusCode int, responseBody
 }
 
 // RecordFromCapture 从响应捕获器记录日志
-func (r *Recorder) RecordFromCapture(req *http.Request, capture *ResponseCapture) {
+func (r *Recorder) RecordFromCapture(req *http.Request, capture *ResponseCapture, endpoint string) {
 	// 使用实际发送给目标服务器的User-Agent，如果没有设置则使用客户端的
 	actualUserAgent := capture.GetActualUserAgent()
 	if actualUserAgent == "" {
@@ -101,6 +102,7 @@ func (r *Recorder) RecordFromCapture(req *http.Request, capture *ResponseCapture
 		ID:             GenerateLogID(),
 		Timestamp:      capture.startTime,
 		Method:         req.Method,
+		RequestType:    DetermineRequestTypeWithResponse(req, endpoint, capture.GetResponseHeaders()),
 		TargetHost:     r.extractTargetHost(req),
 		TargetPath:     r.extractTargetPath(req),
 		StatusCode:     capture.GetStatusCode(),
@@ -264,8 +266,8 @@ func (r *Recorder) extractTargetPath(req *http.Request) string {
 
 // processResponseBody 处理响应体
 func (r *Recorder) processResponseBody(body string, statusCode int) string {
-	// 只记录非200状态码的响应体
-	if statusCode == 200 {
+	// 根据配置决定是否记录200状态码的响应体
+	if statusCode == 200 && !r.config.LogRecord200 {
 		return ""
 	}
 
@@ -326,11 +328,16 @@ type RecorderStats struct {
 
 // CreateMiddleware 创建中间件
 func (r *Recorder) CreateMiddleware() *LoggingMiddleware {
-	return NewLoggingMiddleware(r.storage, r.config.LogMaxBodySize)
+	return NewLoggingMiddleware(r.storage, r.config.LogMaxBodySize, r.config.LogRecord200)
 }
 
 // WrapHandler 包装HTTP处理器
 func (r *Recorder) WrapHandler(handler http.HandlerFunc) http.HandlerFunc {
 	middleware := r.CreateMiddleware()
 	return middleware.Wrap(handler)
+}
+
+// IsLogRecord200Enabled 返回是否启用了200状态码记录
+func (r *Recorder) IsLogRecord200Enabled() bool {
+	return r.config.LogRecord200
 }

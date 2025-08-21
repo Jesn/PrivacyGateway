@@ -21,24 +21,36 @@ type ResponseCapture struct {
 	proxyInfo       string            // 代理服务器信息
 	requestHeaders  map[string]string // 请求头信息
 	requestBody     string            // 请求体内容
+	responseHeaders map[string]string // 响应头信息
+	record200       bool              // 是否记录200状态码的详细信息
 }
 
 // NewResponseCapture 创建新的响应捕获器
-func NewResponseCapture(w http.ResponseWriter, captureBody bool, maxBodySize int) *ResponseCapture {
+func NewResponseCapture(w http.ResponseWriter, captureBody bool, maxBodySize int, record200 bool) *ResponseCapture {
 	return &ResponseCapture{
-		ResponseWriter: w,
-		statusCode:     200, // 默认状态码
-		body:           &bytes.Buffer{},
-		bodySize:       0,
-		captureBody:    captureBody,
-		maxBodySize:    maxBodySize,
-		startTime:      time.Now(),
+		ResponseWriter:  w,
+		statusCode:      200, // 默认状态码
+		body:            &bytes.Buffer{},
+		bodySize:        0,
+		captureBody:     captureBody,
+		maxBodySize:     maxBodySize,
+		startTime:       time.Now(),
+		responseHeaders: make(map[string]string),
+		record200:       record200,
 	}
 }
 
-// WriteHeader 捕获状态码
+// WriteHeader 捕获状态码和响应头
 func (rc *ResponseCapture) WriteHeader(statusCode int) {
 	rc.statusCode = statusCode
+
+	// 捕获响应头
+	for key, values := range rc.ResponseWriter.Header() {
+		if len(values) > 0 {
+			rc.responseHeaders[key] = values[0] // 只取第一个值
+		}
+	}
+
 	rc.ResponseWriter.WriteHeader(statusCode)
 }
 
@@ -151,9 +163,18 @@ func (rc *ResponseCapture) GetRequestBody() string {
 	return rc.requestBody
 }
 
+// GetResponseHeaders 获取响应头信息
+func (rc *ResponseCapture) GetResponseHeaders() map[string]string {
+	return rc.responseHeaders
+}
+
 // shouldCaptureBody 判断是否应该捕获响应体
 func (rc *ResponseCapture) shouldCaptureBody() bool {
-	// 只有非200状态码才捕获响应体
+	// 如果配置了记录200状态码，则记录所有状态码
+	if rc.record200 {
+		return true
+	}
+	// 否则只记录非200状态码
 	return rc.statusCode != 200
 }
 
@@ -161,13 +182,15 @@ func (rc *ResponseCapture) shouldCaptureBody() bool {
 type LoggingMiddleware struct {
 	storage     Storage
 	maxBodySize int
+	record200   bool
 }
 
 // NewLoggingMiddleware 创建新的日志记录中间件
-func NewLoggingMiddleware(storage Storage, maxBodySize int) *LoggingMiddleware {
+func NewLoggingMiddleware(storage Storage, maxBodySize int, record200 bool) *LoggingMiddleware {
 	return &LoggingMiddleware{
 		storage:     storage,
 		maxBodySize: maxBodySize,
+		record200:   record200,
 	}
 }
 
@@ -175,7 +198,7 @@ func NewLoggingMiddleware(storage Storage, maxBodySize int) *LoggingMiddleware {
 func (lm *LoggingMiddleware) Wrap(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// 创建响应捕获器
-		capture := NewResponseCapture(w, true, lm.maxBodySize)
+		capture := NewResponseCapture(w, true, lm.maxBodySize, lm.record200)
 
 		// 记录请求开始时间
 		startTime := time.Now()
@@ -277,8 +300,8 @@ func extractTargetPath(r *http.Request) string {
 }
 
 // WrapHandler 便捷函数，包装单个处理器
-func WrapHandler(handler http.HandlerFunc, storage Storage, maxBodySize int) http.HandlerFunc {
-	middleware := NewLoggingMiddleware(storage, maxBodySize)
+func WrapHandler(handler http.HandlerFunc, storage Storage, maxBodySize int, record200 bool) http.HandlerFunc {
+	middleware := NewLoggingMiddleware(storage, maxBodySize, record200)
 	return middleware.Wrap(handler)
 }
 
@@ -289,9 +312,9 @@ type ConditionalCapture struct {
 }
 
 // NewConditionalCapture 创建条件响应捕获器
-func NewConditionalCapture(w http.ResponseWriter, maxBodySize int, shouldCapture func(int) bool) *ConditionalCapture {
+func NewConditionalCapture(w http.ResponseWriter, maxBodySize int, record200 bool, shouldCapture func(int) bool) *ConditionalCapture {
 	return &ConditionalCapture{
-		ResponseCapture: NewResponseCapture(w, true, maxBodySize),
+		ResponseCapture: NewResponseCapture(w, true, maxBodySize, record200),
 		shouldCapture:   shouldCapture,
 	}
 }

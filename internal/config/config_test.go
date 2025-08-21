@@ -32,8 +32,8 @@ func TestLoad(t *testing.T) {
 
 		config := Load()
 
-		if config.Port != "8080" {
-			t.Errorf("Expected default port 8080, got %s", config.Port)
+		if config.Port != "10805" {
+			t.Errorf("Expected default port 10805, got %s", config.Port)
 		}
 
 		if len(config.SensitiveHeaders) == 0 {
@@ -56,7 +56,7 @@ func TestLoad(t *testing.T) {
 	t.Run("Custom Values", func(t *testing.T) {
 		os.Setenv("GATEWAY_PORT", "9090")
 		os.Setenv("SENSITIVE_HEADERS", "test1,test2")
-		os.Setenv("DEFAULT_PROXY", "http://proxy.example.com:8080")
+		os.Setenv("DEFAULT_PROXY", "http://proxy.example.com:10805")
 		os.Setenv("PROXY_WHITELIST", "proxy1.com, proxy2.com")
 		os.Setenv("ALLOW_PRIVATE_PROXY", "true")
 
@@ -72,8 +72,8 @@ func TestLoad(t *testing.T) {
 
 		if config.DefaultProxy == nil {
 			t.Error("Expected default proxy to be set")
-		} else if config.DefaultProxy.URL != "http://proxy.example.com:8080" {
-			t.Errorf("Expected proxy URL http://proxy.example.com:8080, got %s", config.DefaultProxy.URL)
+		} else if config.DefaultProxy.URL != "http://proxy.example.com:10805" {
+			t.Errorf("Expected proxy URL http://proxy.example.com:10805, got %s", config.DefaultProxy.URL)
 		}
 
 		if len(config.ProxyWhitelist) != 2 {
@@ -103,7 +103,7 @@ func TestParseSimpleProxy(t *testing.T) {
 		},
 		{
 			name:        "HTTP Proxy",
-			proxyURL:    "http://proxy.example.com:8080",
+			proxyURL:    "http://proxy.example.com:10805",
 			expectError: false,
 			expectType:  "http",
 			expectAuth:  false,
@@ -117,7 +117,7 @@ func TestParseSimpleProxy(t *testing.T) {
 		},
 		{
 			name:        "Proxy with Auth",
-			proxyURL:    "http://user:pass@proxy.example.com:8080",
+			proxyURL:    "http://user:pass@proxy.example.com:10805",
 			expectError: false,
 			expectType:  "http",
 			expectAuth:  true,

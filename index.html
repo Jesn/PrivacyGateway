@@ -292,8 +292,8 @@
                 <div class="feature-grid" style="margin-top: 15px;">
                     <div class="feature-card">
                         <h3>🌐 HTTP/HTTPS</h3>
-                        <p><code>http://proxy.example.com:8080</code><br>
-                        <code>https://proxy.example.com:8080</code></p>
+                        <p><code>http://proxy.example.com:10805</code><br>
+                        <code>https://proxy.example.com:10805</code></p>
                     </div>
                     <div class="feature-card">
                         <h3>🔒 SOCKS5</h3>
@@ -306,7 +306,7 @@
                 <div class="code-block">
 // Privacy Gateway 代理配置工具类
 class PrivacyGatewayClient {
-    constructor(gatewayUrl = 'http://localhost:8080') {
+    constructor(gatewayUrl = 'http://localhost:10805') {
         this.gatewayUrl = gatewayUrl;
     }
 
@@ -375,7 +375,7 @@ const response = await client.request('http://httpbin.org/get');
 
 // 2. HTTP 代理
 const proxyConfig = {
-    url: 'http://proxy.example.com:8080',
+    url: 'http://proxy.example.com:10805',
     timeout: 60
 };
 await client.request('http://ipinfo.io/json', { proxyConfig });
@@ -409,23 +409,23 @@ const responses = await Promise.all(promises);
                 <h3>基础 cURL 请求示例</h3>
                 <div class="code-block">
 # 直接代理（无上游代理）
-curl "http://localhost:8080/proxy?target=http://ipinfo.io/json"
+curl "http://localhost:10805/proxy?target=http://ipinfo.io/json"
 
 # 通过 HTTP 代理
-curl "http://localhost:8080/proxy?target=http://ipinfo.io/json&proxy=http://proxy.example.com:8080"
+curl "http://localhost:10805/proxy?target=http://ipinfo.io/json&proxy=http://proxy.example.com:10805"
 
 # 通过 SOCKS5 代理
-curl "http://localhost:8080/proxy?target=http://ipinfo.io/json&proxy=socks5://proxy.example.com:1080"
+curl "http://localhost:10805/proxy?target=http://ipinfo.io/json&proxy=socks5://proxy.example.com:1080"
                 </div>
 
                 <h3>cURL 高级代理配置示例</h3>
                 <div class="code-block">
 # 带认证的代理配置
-proxy_config='{"url":"http://proxy.example.com:8080","auth":{"username":"user","password":"pass"},"timeout":60}'
+proxy_config='{"url":"http://proxy.example.com:10805","auth":{"username":"user","password":"pass"},"timeout":60}'
 encoded_config=$(echo -n "$proxy_config" | base64)
 
 curl -H "X-Proxy-Config: $encoded_config" \
-     "http://localhost:8080/proxy?target=http://ipinfo.io/json"
+     "http://localhost:10805/proxy?target=http://ipinfo.io/json"
 
 # SOCKS5 代理配置
 socks_config='{"url":"socks5://proxy.example.com:1080","auth":{"username":"user","password":"pass"},"timeout":120}'
@@ -433,19 +433,19 @@ encoded_socks=$(echo -n "$socks_config" | base64)
 
 curl -H "X-Proxy-Config: $encoded_socks" \
      -H "User-Agent: PrivacyGateway/1.0" \
-     "http://localhost:8080/proxy?target=https://api.github.com/user"
+     "http://localhost:10805/proxy?target=https://api.github.com/user"
                 </div>
 
                 <h3>WebSocket 代理示例</h3>
                 <div class="code-block">
 # 直接 WebSocket 代理
-wscat -c "ws://localhost:8080/ws?target=wss://echo.websocket.events"
+wscat -c "ws://localhost:10805/ws?target=wss://echo.websocket.events"
 
 # 通过上游代理的 WebSocket
-wscat -c "ws://localhost:8080/ws?target=wss://echo.websocket.events&proxy=socks5://proxy.example.com:1080"
+wscat -c "ws://localhost:10805/ws?target=wss://echo.websocket.events&proxy=socks5://proxy.example.com:1080"
 
 # 简单的 JavaScript WebSocket 代理
-const ws = new WebSocket('ws://localhost:8080/ws?target=wss://echo.websocket.events&proxy=http://proxy.example.com:8080');
+const ws = new WebSocket('ws://localhost:10805/ws?target=wss://echo.websocket.events&proxy=http://proxy.example.com:10805');
 
 ws.onopen = () => console.log('WebSocket 连接已建立');
 ws.onmessage = (event) => console.log('收到消息:', event.data);
@@ -460,11 +460,11 @@ ws.onclose = () => console.log('WebSocket 连接已关闭');
 
                 <div class="code-block">
 # 基础配置
-GATEWAY_PORT=8080
+GATEWAY_PORT=10805
 SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via,x-request-id"
 
 # 代理配置
-DEFAULT_PROXY="http://default-proxy.example.com:8080"  # 默认上游代理
+DEFAULT_PROXY="http://default-proxy.example.com:10805"  # 默认上游代理
 PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
 
 # 安全配置

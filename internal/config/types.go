@@ -28,4 +28,5 @@ type Config struct {
 	LogMaxBodySize    int     // 响应体最大记录大小（字节）
 	LogRetentionHours int     // 日志保留时间（小时）
 	LogMaxMemoryMB    float64 // 日志最大内存使用（MB）
+	LogRecord200      bool    // 是否记录200状态码的详细信息
 }

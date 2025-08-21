@@ -11,7 +11,7 @@ import (
 func Load() *Config {
 	port := os.Getenv("GATEWAY_PORT")
 	if port == "" {
-		port = "8080"
+		port = "10805"
 	}
 
 	sensitiveHeadersStr := os.Getenv("SENSITIVE_HEADERS")
@@ -71,6 +71,9 @@ func Load() *Config {
 		}
 	}
 
+	// 是否记录200状态码的详细信息（默认false，只记录非200状态码）
+	logRecord200 := os.Getenv("LOG_RECORD_200") == "true"
+
 	return &Config{
 		Port:             port,
 		SensitiveHeaders: strings.Split(strings.ToLower(sensitiveHeadersStr), ","),
@@ -84,6 +87,7 @@ func Load() *Config {
 		LogMaxBodySize:    logMaxBodySize,
 		LogRetentionHours: logRetentionHours,
 		LogMaxMemoryMB:    logMaxMemoryMB,
+		LogRecord200:      logRecord200,
 	}
 }
 
