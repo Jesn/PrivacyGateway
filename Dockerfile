@@ -5,32 +5,43 @@ FROM golang:1.22-alpine AS builder
 # 设置工作目录
 WORKDIR /app
 
-# 复制 go.mod 和 go.sum (如果存在) 以便缓存依赖
-# 由于我们没有外部依赖，这一步可以简化，但保留是个好习惯
-# COPY go.mod go.sum ./
-# RUN go mod download
+# 复制依赖文件并下载依赖（利用Docker缓存层）
+COPY go.mod go.sum ./
+RUN go mod download
 
-# 复制所有源代码
+# 复制源代码
 COPY . .
 
-# 构建一个静态链接的、移除调试信息的二进制文件
-# CGO_ENABLED=0 确保静态链接
-# -ldflags "-s -w" 移除调试符号和 DWARF 信息，减小体积
-RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags "-s -w" -o privacy-gateway .
+# 构建优化的二进制文件
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -a \
+    -installsuffix cgo \
+    -ldflags "-s -w -extldflags '-static'" \
+    -tags netgo \
+    -trimpath \
+    -o privacy-gateway .
 
 # ---- Final Stage ----
 # 使用 Distroless 镜像，它包含了 CA 证书并且为静态 Go 应用提供了更好的兼容性
 FROM gcr.io/distroless/static-debian11
 
+# 添加镜像标签
+LABEL maintainer="Privacy Gateway Team" \
+      description="Lightweight reverse proxy with privacy protection" \
+      version="1.0" \
+      org.opencontainers.image.source="https://github.com/username/PrivacyGateway"
+
 # 设置工作目录
 WORKDIR /app
 
+# 创建非root用户（Distroless镜像中的nobody用户）
+USER 65534:65534
+
 # 从构建阶段复制编译好的二进制文件和静态文件
-COPY --from=builder /app/privacy-gateway .
-COPY --from=builder /app/index.html .
+COPY --from=builder --chown=65534:65534 /app/privacy-gateway .
+COPY --from=builder --chown=65534:65534 /app/index.html .
 
 # 暴露网关将要监听的端口 (默认 10805)
-# 这只是元数据，实际端口由 GATEWAY_PORT 环境变量决定
 EXPOSE 10805
 
 # 设置默认的环境变量
@@ -45,6 +56,10 @@ ENV SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlat
 # ENV LOG_RETENTION_HOURS=24
 # ENV LOG_MAX_MEMORY_MB=50.0
 # ENV LOG_RECORD_200=false
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD ["/app/privacy-gateway", "--health-check"] || exit 1
 
 # 容器启动时运行的命令
 CMD ["./privacy-gateway"]

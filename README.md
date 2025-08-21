@@ -1,5 +1,10 @@
 # 隐私网关 (Privacy Gateway)
 
+[![Build and Push Docker Image](https://github.com/username/PrivacyGateway/actions/workflows/docker-build.yml/badge.svg)](https://github.com/username/PrivacyGateway/actions/workflows/docker-build.yml)
+[![Docker Hub](https://img.shields.io/docker/pulls/richpeople/privacy-gateway)](https://hub.docker.com/r/richpeople/privacy-gateway)
+[![Docker Image Size](https://img.shields.io/docker/image-size/richpeople/privacy-gateway/latest)](https://hub.docker.com/r/richpeople/privacy-gateway)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 一个轻量级的反向代理服务，通过过滤敏感头信息来增强隐私保护，支持HTTP/HTTPS、WebSocket代理，并提供完整的访问日志管理功能。
 
 ## ✨ 主要功能
@@ -16,6 +21,19 @@
 ## 🚀 快速开始
 
 ### Docker 部署（推荐）
+
+#### 方式一：使用预构建镜像
+
+```bash
+# 直接运行最新版本
+docker run -d -p 10805:10805 richpeople/privacy-gateway:latest
+
+# 或使用docker-compose
+curl -O https://raw.githubusercontent.com/username/PrivacyGateway/main/docker-compose.yml
+docker-compose up -d
+```
+
+#### 方式二：本地构建
 
 ```bash
 # 1. 克隆项目
@@ -115,6 +133,45 @@ nano .env
 ![请求详情](images/details.jpg)
 
 *详情页面提供了完整的请求信息、响应内容，以及可一键复制的等效curl命令，方便调试和重现请求。*
+
+## 🚀 Docker Hub
+
+项目镜像已发布到Docker Hub，支持多平台：
+
+- **仓库地址**: [richpeople/privacy-gateway](https://hub.docker.com/r/richpeople/privacy-gateway)
+- **支持平台**: `linux/amd64`, `linux/arm64`
+- **标签策略**:
+  - `latest` - 最新稳定版本
+  - `v1.0.0` - 具体版本号
+  - `main` - 主分支最新代码
+
+```bash
+# 拉取最新版本
+docker pull richpeople/privacy-gateway:latest
+
+# 拉取特定版本
+docker pull richpeople/privacy-gateway:v1.0.0
+```
+
+## 🔄 CI/CD
+
+项目使用GitHub Actions自动构建和发布：
+
+- ✅ **自动构建** - 推送到main分支时自动构建
+- ✅ **多平台支持** - 同时构建AMD64和ARM64镜像
+- ✅ **版本发布** - 创建tag时自动发布新版本
+- ✅ **Docker Hub推送** - 自动推送到Docker Hub
+
+### 发布新版本
+
+```bash
+# 使用发布脚本
+./scripts/release.sh 1.0.0
+
+# 或手动创建标签
+git tag v1.0.0
+git push origin v1.0.0
+```
 
 ## 📝 注意事项
 
