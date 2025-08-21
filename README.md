@@ -1,6 +1,6 @@
 # 隐私网关 (Privacy Gateway)
 
-[![Build and Push Docker Image](https://github.com/username/PrivacyGateway/actions/workflows/docker-build.yml/badge.svg)](https://github.com/username/PrivacyGateway/actions/workflows/docker-build.yml)
+[![Build and Push Docker Image](https://github.com/Jesn/PrivacyGateway/actions/workflows/docker-build.yml/badge.svg)](https://github.com/Jesn/PrivacyGateway/actions/workflows/docker-build.yml)
 [![Docker Hub](https://img.shields.io/docker/pulls/richpeople/privacy-gateway)](https://hub.docker.com/r/richpeople/privacy-gateway)
 [![Docker Image Size](https://img.shields.io/docker/image-size/richpeople/privacy-gateway/latest)](https://hub.docker.com/r/richpeople/privacy-gateway)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -29,7 +29,7 @@
 docker run -d -p 10805:10805 richpeople/privacy-gateway:latest
 
 # 或使用docker-compose
-curl -O https://raw.githubusercontent.com/username/PrivacyGateway/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/J'e's'n/PrivacyGateway/main/docker-compose.yml
 docker-compose up -d
 ```
 
