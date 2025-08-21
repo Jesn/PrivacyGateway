@@ -22,42 +22,31 @@
 
 ### Docker 部署（推荐）
 
-#### 方式一：使用预构建镜像
-
 ```bash
-# 直接运行最新版本
+# 直接运行
 docker run -d -p 10805:10805 richpeople/privacy-gateway:latest
 
-# 或使用docker-compose
-curl -O https://raw.githubusercontent.com/J'e's'n/PrivacyGateway/main/docker-compose.yml
+# 或使用 docker-compose
+curl -O https://raw.githubusercontent.com/Jesn/PrivacyGateway/main/docker-compose.yml
 docker-compose up -d
 ```
 
-#### 方式二：本地构建
+### 下载二进制文件
+
+从 [GitHub Releases](https://github.com/Jesn/PrivacyGateway/releases) 下载适合你系统的版本：
 
 ```bash
-# 1. 克隆项目
-git clone <repository-url>
-cd PrivacyGateway
-
-# 2. 使用 Docker Compose 启动
-docker-compose up -d
-
-# 3. 自定义配置（可选）
-cp .env.example .env
-# 编辑 .env 文件设置参数
-docker-compose up -d
+# 下载并运行（以Linux为例）
+wget https://github.com/Jesn/PrivacyGateway/releases/latest/download/privacy-gateway-linux-amd64
+chmod +x privacy-gateway-linux-amd64
+./privacy-gateway-linux-amd64
 ```
 
-### 本地运行
+### 本地构建
 
 ```bash
-# 构建并运行
 go build -o privacy-gateway .
 ./privacy-gateway
-
-# 或直接运行
-go run .
 ```
 
 ## 📖 使用方法
@@ -157,21 +146,30 @@ docker pull richpeople/privacy-gateway:v1.0.0
 
 项目使用GitHub Actions自动构建和发布：
 
-- ✅ **自动构建** - 推送到main分支时自动构建
-- ✅ **多平台支持** - 同时构建AMD64和ARM64镜像
+- ✅ **自动构建** - 推送到main分支时自动构建Docker镜像
+- ✅ **多平台支持** - 同时构建AMD64和ARM64架构
 - ✅ **版本发布** - 创建tag时自动发布新版本
 - ✅ **Docker Hub推送** - 自动推送到Docker Hub
+- ✅ **GitHub Releases** - 自动创建Release并上传二进制文件
+- ✅ **多平台二进制** - 自动构建6个平台的可执行文件
 
 ### 发布新版本
 
 ```bash
-# 使用发布脚本
+# 使用发布脚本（推荐）
 ./scripts/release.sh 1.0.0
 
 # 或手动创建标签
 git tag v1.0.0
 git push origin v1.0.0
 ```
+
+发布后GitHub Actions将自动：
+1. 🔨 构建6个平台的二进制文件
+2. 🐳 构建并推送多平台Docker镜像
+3. 📦 创建GitHub Release
+4. ⬆️ 上传所有文件到Release
+5. 🔐 生成SHA256校验文件
 
 ## 📝 注意事项
 

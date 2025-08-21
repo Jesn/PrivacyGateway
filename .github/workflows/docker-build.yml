@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Release
 
 on:
   push:
@@ -16,7 +16,58 @@ env:
   IMAGE_NAME: richpeople/privacy-gateway
 
 jobs:
-  build:
+  # 构建Go二进制文件
+  build-binaries:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            suffix: linux-amd64
+          - goos: linux
+            goarch: arm64
+            suffix: linux-arm64
+          - goos: darwin
+            goarch: amd64
+            suffix: darwin-amd64
+          - goos: darwin
+            goarch: arm64
+            suffix: darwin-arm64
+          - goos: windows
+            goarch: amd64
+            suffix: windows-amd64.exe
+          - goos: windows
+            goarch: arm64
+            suffix: windows-arm64.exe
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          go build -a -ldflags "-s -w -X main.version=$VERSION" -o privacy-gateway-${{ matrix.suffix }} .
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: privacy-gateway-${{ matrix.suffix }}
+          path: privacy-gateway-${{ matrix.suffix }}
+
+  # 构建Docker镜像
+  build-docker:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -59,6 +110,7 @@ jobs:
             org.opencontainers.image.licenses=MIT
 
       - name: Build and push Docker image
+        id: docker-build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -75,4 +127,97 @@ jobs:
 
       - name: Image digest
         if: github.event_name != 'pull_request'
-        run: echo ${{ steps.build.outputs.digest }}
+        run: echo ${{ steps.docker-build.outputs.digest }}
+
+  # 创建GitHub Release
+  create-release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build-binaries, build-docker]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ./artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p ./release
+          find ./artifacts -name "privacy-gateway-*" -type f -exec cp {} ./release/ \;
+          ls -la ./release/
+
+      - name: Generate checksums
+        run: |
+          cd ./release
+          sha256sum * > checksums.txt
+          cat checksums.txt
+
+      - name: Extract release notes
+        id: extract-notes
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          # 尝试从CHANGELOG.md提取发布说明（如果存在）
+          if [ -f CHANGELOG.md ]; then
+            # 提取当前版本的更新日志
+            awk "/^## \[$VERSION\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md > release_notes.txt
+          fi
+
+          # 如果没有找到发布说明，创建默认的
+          if [ ! -s release_notes.txt ]; then
+            cat > release_notes.txt << EOF
+          ## 🚀 Privacy Gateway $VERSION
+
+          ### 📦 下载
+
+          选择适合你系统的二进制文件：
+
+          - **Linux AMD64**: \`privacy-gateway-linux-amd64\`
+          - **Linux ARM64**: \`privacy-gateway-linux-arm64\`
+          - **macOS Intel**: \`privacy-gateway-darwin-amd64\`
+          - **macOS Apple Silicon**: \`privacy-gateway-darwin-arm64\`
+          - **Windows AMD64**: \`privacy-gateway-windows-amd64.exe\`
+          - **Windows ARM64**: \`privacy-gateway-windows-arm64.exe\`
+
+          ### 🐳 Docker镜像
+
+          \`\`\`bash
+          docker pull richpeople/privacy-gateway:$VERSION
+          docker pull richpeople/privacy-gateway:latest
+          \`\`\`
+
+          ### ✅ 校验文件完整性
+
+          下载 \`checksums.txt\` 文件并验证：
+
+          \`\`\`bash
+          sha256sum -c checksums.txt
+          \`\`\`
+
+          ### 📋 更新内容
+
+          - 🔒 隐私保护代理功能
+          - 🌐 多协议支持（HTTP/HTTPS/WebSocket）
+          - 📊 访问日志管理
+          - 🔧 灵活的配置选项
+          EOF
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.extract-notes.outputs.version }}
+          name: Privacy Gateway ${{ steps.extract-notes.outputs.version }}
+          body_path: release_notes.txt
+          files: |
+            ./release/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true

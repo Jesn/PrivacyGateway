@@ -111,11 +111,25 @@ print_info "推送标签到远程仓库..."
 git push origin "$TAG"
 
 print_success "版本 $TAG 发布成功!"
-print_info "GitHub Actions将自动构建并推送Docker镜像"
-print_info "查看构建状态: https://github.com/$(git config --get remote.origin.url | sed 's/.*github.com[:/]\([^.]*\).*/\1/')/actions"
-print_info "Docker镜像将推送到: richpeople/privacy-gateway:$VERSION"
+print_info "GitHub Actions将自动执行以下操作:"
+echo "  ✅ 构建多平台Go二进制文件"
+echo "  ✅ 构建并推送Docker镜像"
+echo "  ✅ 创建GitHub Release"
+echo "  ✅ 上传二进制文件到Release"
+
+REPO_URL=$(git config --get remote.origin.url | sed 's/.*github.com[:/]\([^.]*\).*/\1/')
+print_info "查看构建状态: https://github.com/$REPO_URL/actions"
+print_info "查看Release: https://github.com/$REPO_URL/releases"
 
 echo
-print_info "发布完成后，你可以使用以下命令拉取镜像:"
-echo "  docker pull richpeople/privacy-gateway:$VERSION"
-echo "  docker pull richpeople/privacy-gateway:latest"
+print_info "发布完成后，用户可以:"
+echo "  📦 从GitHub Releases下载二进制文件"
+echo "  🐳 拉取Docker镜像:"
+echo "    docker pull richpeople/privacy-gateway:$VERSION"
+echo "    docker pull richpeople/privacy-gateway:latest"
+
+echo
+print_info "支持的平台:"
+echo "  - Linux (AMD64/ARM64)"
+echo "  - macOS (Intel/Apple Silicon)"
+echo "  - Windows (AMD64/ARM64)"
