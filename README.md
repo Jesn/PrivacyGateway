@@ -51,37 +51,20 @@ go build -o privacy-gateway .
 
 ## 📖 使用方法
 
-### HTTP/HTTPS 代理
+### 基本代理
 
 ```bash
-# 基本格式
-http://localhost:10805/proxy?target=<目标URL>
-
-# GET 请求示例
+# HTTP/HTTPS 代理
 curl "http://localhost:10805/proxy?target=https://httpbin.org/get"
 
-# POST 请求示例
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"key":"value"}' \
-  "http://localhost:10805/proxy?target=https://httpbin.org/post"
-```
-
-### WebSocket 代理
-
-```bash
-# WebSocket 连接格式
-ws://localhost:10805/ws?target=<目标WebSocket地址>
-
-# 使用 wscat 测试
+# WebSocket 代理
 wscat -c "ws://localhost:10805/ws?target=wss://echo.websocket.events"
+
+# 管理界面（需要设置 ADMIN_SECRET）
+http://localhost:10805/logs?secret=your-admin-secret
 ```
 
-### 管理界面
-
-```bash
-# 访问日志管理页面（需要设置 ADMIN_SECRET）
-http://localhost:10805/logs
-```
+📚 **详细使用指南**: [USAGE.md](USAGE.md) - 包含完整的API文档、高级配置和故障排除
 
 ## ⚙️ 配置
 
@@ -99,7 +82,14 @@ cp .env.example .env
 nano .env
 ```
 
-## 📸 功能展示
+## � 文档
+
+- 📖 **[详细使用指南](USAGE.md)** - 完整的API文档、高级配置和使用示例
+- ⚙️ **[配置参数说明](.env.example)** - 所有环境变量的详细说明
+- 🔧 **[GitHub Actions设置](GITHUB_ACTIONS_SETUP.md)** - CI/CD配置指南
+- 📝 **[更新日志](CHANGELOG.md)** - 版本更新记录
+
+## �📸 功能展示
 
 ### 管理界面登录
 
