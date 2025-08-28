@@ -271,6 +271,92 @@
             gap: 15px;
         }
 
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 下拉菜单样式 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dropdown-arrow {
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 150px;
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: dropdownSlideIn 0.2s ease;
+        }
+
+        @keyframes dropdownSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            color: #495057;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .dropdown-item:first-child {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
         .search-box {
             position: relative;
             display: flex;
@@ -644,6 +730,102 @@
             width: auto !important;
             margin-right: 10px;
             transform: scale(1.2);
+        }
+
+        .checkmark-small {
+            margin-left: 5px;
+        }
+
+        .checkbox-column {
+            width: 40px;
+            text-align: center;
+        }
+
+        /* 导入预览样式 */
+        .import-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .import-preview h4 {
+            margin: 0 0 15px 0;
+            color: #495057;
+        }
+
+        .preview-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .preview-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .preview-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f3f4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-item-name {
+            font-weight: 500;
+        }
+
+        .preview-item-subdomain {
+            color: #6c757d;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        /* 批量操作样式 */
+        .selected-configs {
+            margin-top: 15px;
+        }
+
+        .selected-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background: #f8f9fa;
+            margin-top: 10px;
+        }
+
+        .selected-item {
+            padding: 6px 10px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
+        }
+
+        .selected-item:last-child {
+            border-bottom: none;
+        }
+
+        .batch-warning {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .batch-warning .warning-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 10px;
         }
 
         /* 删除警告样式 */
@@ -1076,9 +1258,40 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                     <div class="config-header">
                         <h2>🔧 代理配置管理</h2>
                         <div class="config-actions">
-                            <button class="btn btn-primary" onclick="showAddConfigModal()">
-                                <span class="icon">➕</span> 新增配置
-                            </button>
+                            <div class="action-group">
+                                <button class="btn btn-primary" onclick="showAddConfigModal()">
+                                    <span class="icon">➕</span> 新增配置
+                                </button>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" onclick="toggleDropdown('batch-dropdown')">
+                                        <span class="icon">⚡</span> 批量操作 <span class="dropdown-arrow">▼</span>
+                                    </button>
+                                    <div class="dropdown-menu" id="batch-dropdown">
+                                        <button class="dropdown-item" onclick="batchOperation('enable')">
+                                            <span class="icon">▶️</span> 批量启用
+                                        </button>
+                                        <button class="dropdown-item" onclick="batchOperation('disable')">
+                                            <span class="icon">⏸️</span> 批量禁用
+                                        </button>
+                                        <button class="dropdown-item" onclick="batchOperation('delete')">
+                                            <span class="icon">🗑️</span> 批量删除
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" onclick="toggleDropdown('import-export-dropdown')">
+                                        <span class="icon">📁</span> 导入导出 <span class="dropdown-arrow">▼</span>
+                                    </button>
+                                    <div class="dropdown-menu" id="import-export-dropdown">
+                                        <button class="dropdown-item" onclick="exportConfigs()">
+                                            <span class="icon">📤</span> 导出配置
+                                        </button>
+                                        <button class="dropdown-item" onclick="showImportModal()">
+                                            <span class="icon">📥</span> 导入配置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="search-box">
                                 <input type="text" id="config-search" placeholder="搜索配置..." onkeyup="filterConfigs(this.value)">
                                 <span class="search-icon">🔍</span>
@@ -1106,6 +1319,12 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                             <table class="config-table">
                                 <thead>
                                     <tr>
+                                        <th class="checkbox-column">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="select-all" onchange="toggleSelectAll(this.checked)">
+                                                <span class="checkmark-small"></span>
+                                            </label>
+                                        </th>
                                         <th>名称</th>
                                         <th>子域名</th>
                                         <th>目标URL</th>
@@ -1117,7 +1336,7 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                                 </thead>
                                 <tbody id="config-tbody">
                                     <tr class="no-data">
-                                        <td colspan="7">
+                                        <td colspan="8">
                                             <div class="no-data-message">
                                                 <span class="no-data-icon">📝</span>
                                                 <p>暂无配置数据</p>
@@ -1223,6 +1442,70 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             </div>
         </div>
 
+        <!-- 导入配置弹框 -->
+        <div id="import-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>导入配置</h3>
+                    <span class="close" onclick="closeImportModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="import-form">
+                        <div class="form-group">
+                            <label for="import-file">选择配置文件</label>
+                            <input type="file" id="import-file" accept=".json" required>
+                            <small class="form-hint">请选择之前导出的JSON配置文件</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="import-mode">导入模式</label>
+                            <select id="import-mode" name="mode">
+                                <option value="error">遇到冲突时报错</option>
+                                <option value="skip">跳过冲突的配置</option>
+                                <option value="replace">替换冲突的配置</option>
+                            </select>
+                            <small class="form-hint">当子域名冲突时的处理方式</small>
+                        </div>
+                        <div class="import-preview" id="import-preview" style="display: none;">
+                            <h4>预览导入内容</h4>
+                            <div class="preview-stats">
+                                <span class="preview-count">配置数量: <strong id="preview-count">0</strong></span>
+                                <span class="preview-version">版本: <strong id="preview-version">-</strong></span>
+                            </div>
+                            <div class="preview-list" id="preview-list"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeImportModal()">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="importConfigs()" id="import-btn" disabled>导入</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 批量操作确认弹框 -->
+        <div id="batch-modal" class="modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h3 id="batch-modal-title">批量操作确认</h3>
+                    <span class="close" onclick="closeBatchModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="batch-warning">
+                        <span class="warning-icon" id="batch-warning-icon">⚠️</span>
+                        <p id="batch-warning-text">确定要对选中的配置执行此操作吗？</p>
+                        <div class="selected-configs">
+                            <p>已选择 <strong id="selected-count">0</strong> 个配置：</p>
+                            <div class="selected-list" id="selected-list"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeBatchModal()">取消</button>
+                    <button type="button" class="btn" id="batch-confirm-btn" onclick="confirmBatchOperation()">确认</button>
+                </div>
+            </div>
+        </div>
+
         <div class="footer">
             <p>Privacy Gateway - 保护您的网络隐私 🛡️</p>
             <p>基于 Go 语言开发 | 开源项目</p>
@@ -1237,6 +1520,9 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
         let currentPage = 1;
         let totalPages = 1;
         const pageSize = 10;
+        let selectedConfigs = new Set();
+        let currentBatchOperation = null;
+        let importData = null;
 
         // 获取管理员密钥
         function getAdminSecret() {
@@ -1334,6 +1620,12 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
 
             tbody.innerHTML = currentConfigs.map(config => `
                 <tr>
+                    <td class="checkbox-column">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="config-checkbox" value="${config.id}" onchange="updateSelection()">
+                            <span class="checkmark-small"></span>
+                        </label>
+                    </td>
                     <td><strong>${escapeHtml(config.name)}</strong></td>
                     <td><code>${escapeHtml(config.subdomain)}</code></td>
                     <td><a href="${escapeHtml(config.target_url)}" target="_blank" class="target-link">${escapeHtml(config.target_url)}</a></td>
@@ -1555,6 +1847,266 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             }
         }
 
+        // 复选框选择功能
+        function toggleSelectAll(checked) {
+            const checkboxes = document.querySelectorAll('.config-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+            updateSelection();
+        }
+
+        function updateSelection() {
+            const checkboxes = document.querySelectorAll('.config-checkbox:checked');
+            selectedConfigs.clear();
+            checkboxes.forEach(checkbox => {
+                selectedConfigs.add(checkbox.value);
+            });
+
+            // 更新全选复选框状态
+            const selectAllCheckbox = document.getElementById('select-all');
+            const totalCheckboxes = document.querySelectorAll('.config-checkbox').length;
+            const checkedCheckboxes = checkboxes.length;
+
+            if (checkedCheckboxes === 0) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = false;
+            } else if (checkedCheckboxes === totalCheckboxes) {
+                selectAllCheckbox.indeterminate = false;
+                selectAllCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.indeterminate = true;
+                selectAllCheckbox.checked = false;
+            }
+        }
+
+        // 下拉菜单功能
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const isShow = dropdown.classList.contains('show');
+
+            // 关闭所有下拉菜单
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('show');
+            });
+            document.querySelectorAll('.dropdown').forEach(dd => {
+                dd.classList.remove('active');
+            });
+
+            // 切换当前下拉菜单
+            if (!isShow) {
+                dropdown.classList.add('show');
+                dropdown.parentElement.classList.add('active');
+            }
+        }
+
+        // 批量操作
+        function batchOperation(operation) {
+            if (selectedConfigs.size === 0) {
+                showError('请先选择要操作的配置');
+                return;
+            }
+
+            currentBatchOperation = operation;
+
+            // 设置弹框内容
+            const title = document.getElementById('batch-modal-title');
+            const icon = document.getElementById('batch-warning-icon');
+            const text = document.getElementById('batch-warning-text');
+            const confirmBtn = document.getElementById('batch-confirm-btn');
+
+            switch (operation) {
+                case 'enable':
+                    title.textContent = '批量启用确认';
+                    icon.textContent = '▶️';
+                    text.textContent = '确定要启用选中的配置吗？';
+                    confirmBtn.className = 'btn btn-success';
+                    confirmBtn.textContent = '启用';
+                    break;
+                case 'disable':
+                    title.textContent = '批量禁用确认';
+                    icon.textContent = '⏸️';
+                    text.textContent = '确定要禁用选中的配置吗？';
+                    confirmBtn.className = 'btn btn-warning';
+                    confirmBtn.textContent = '禁用';
+                    break;
+                case 'delete':
+                    title.textContent = '批量删除确认';
+                    icon.textContent = '🗑️';
+                    text.textContent = '确定要删除选中的配置吗？此操作不可撤销！';
+                    confirmBtn.className = 'btn btn-danger';
+                    confirmBtn.textContent = '删除';
+                    break;
+            }
+
+            // 显示选中的配置
+            document.getElementById('selected-count').textContent = selectedConfigs.size;
+            const selectedList = document.getElementById('selected-list');
+            selectedList.innerHTML = Array.from(selectedConfigs).map(configId => {
+                const config = currentConfigs.find(c => c.id === configId);
+                return `<div class="selected-item">${escapeHtml(config ? config.name : configId)}</div>`;
+            }).join('');
+
+            showModal('batch-modal');
+        }
+
+        // 确认批量操作
+        async function confirmBatchOperation() {
+            try {
+                showLoading();
+                const configIds = Array.from(selectedConfigs);
+
+                const response = await apiRequest('/config/proxy/batch', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        operation: currentBatchOperation,
+                        config_ids: configIds
+                    })
+                });
+
+                showSuccess(`批量${currentBatchOperation === 'enable' ? '启用' : currentBatchOperation === 'disable' ? '禁用' : '删除'}操作完成`);
+                closeBatchModal();
+                selectedConfigs.clear();
+                loadProxyConfigs();
+            } catch (error) {
+                showError('批量操作失败: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function closeBatchModal() {
+            document.getElementById('batch-modal').classList.remove('show');
+            currentBatchOperation = null;
+        }
+
+        // 导出配置
+        async function exportConfigs() {
+            try {
+                showLoading();
+                const secret = getAdminSecret();
+
+                // 创建下载链接
+                const url = `/config/proxy/export?secret=${encodeURIComponent(secret)}`;
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `proxy-configs-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                showSuccess('配置导出成功');
+            } catch (error) {
+                showError('导出配置失败: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 显示导入弹框
+        function showImportModal() {
+            document.getElementById('import-preview').style.display = 'none';
+            document.getElementById('import-btn').disabled = true;
+            document.getElementById('import-file').value = '';
+            document.getElementById('import-mode').value = 'error';
+            showModal('import-modal');
+        }
+
+        function closeImportModal() {
+            document.getElementById('import-modal').classList.remove('show');
+            importData = null;
+        }
+
+        // 处理文件选择
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('import-file');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            try {
+                                const data = JSON.parse(e.target.result);
+                                previewImportData(data);
+                            } catch (error) {
+                                showError('文件格式错误，请选择有效的JSON文件');
+                                document.getElementById('import-preview').style.display = 'none';
+                                document.getElementById('import-btn').disabled = true;
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+            }
+        });
+
+        // 预览导入数据
+        function previewImportData(data) {
+            importData = data;
+
+            // 验证数据格式
+            if (!data.configs || !Array.isArray(data.configs)) {
+                showError('文件格式错误：缺少configs字段或格式不正确');
+                return;
+            }
+
+            // 显示预览
+            document.getElementById('preview-count').textContent = data.configs.length;
+            document.getElementById('preview-version').textContent = data.version || '未知';
+
+            const previewList = document.getElementById('preview-list');
+            previewList.innerHTML = data.configs.map(config => `
+                <div class="preview-item">
+                    <div>
+                        <div class="preview-item-name">${escapeHtml(config.name)}</div>
+                        <div class="preview-item-subdomain">${escapeHtml(config.subdomain)}</div>
+                    </div>
+                    <div>${escapeHtml(config.target_url)}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('import-preview').style.display = 'block';
+            document.getElementById('import-btn').disabled = false;
+        }
+
+        // 导入配置
+        async function importConfigs() {
+            if (!importData) {
+                showError('请先选择要导入的文件');
+                return;
+            }
+
+            try {
+                showLoading();
+                const mode = document.getElementById('import-mode').value;
+
+                const response = await apiRequest('/config/proxy/import', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        configs: importData.configs,
+                        mode: mode
+                    })
+                });
+
+                let message = `导入完成：成功 ${response.imported_count} 个`;
+                if (response.skipped_count > 0) {
+                    message += `，跳过 ${response.skipped_count} 个`;
+                }
+                if (response.error_count > 0) {
+                    message += `，失败 ${response.error_count} 个`;
+                }
+
+                showSuccess(message);
+                closeImportModal();
+                loadProxyConfigs();
+            } catch (error) {
+                showError('导入配置失败: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
         // 辅助函数
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -1671,7 +2223,21 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                         closeConfigModal();
                     } else if (e.target.id === 'delete-modal') {
                         closeDeleteModal();
+                    } else if (e.target.id === 'import-modal') {
+                        closeImportModal();
+                    } else if (e.target.id === 'batch-modal') {
+                        closeBatchModal();
                     }
+                }
+
+                // 点击外部关闭下拉菜单
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                    document.querySelectorAll('.dropdown').forEach(dd => {
+                        dd.classList.remove('active');
+                    });
                 }
             });
 
