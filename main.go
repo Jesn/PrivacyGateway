@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"privacygateway/internal/accesslog"
 	"privacygateway/internal/config"
@@ -31,8 +32,22 @@ func main() {
 	}
 
 	// 创建代理配置存储
-	configStorage := proxyconfig.NewMemoryStorage(1000)
-	log.Info("proxy config storage initialized", "max_entries", 1000)
+	var configStorage proxyconfig.Storage
+
+	// 检查是否启用持久化存储
+	persistEnabled := os.Getenv("PROXY_CONFIG_PERSIST") == "true"
+	if persistEnabled {
+		configFile := os.Getenv("PROXY_CONFIG_FILE")
+		if configFile == "" {
+			configFile = "data/proxy-configs.json"
+		}
+		autoSave := os.Getenv("PROXY_CONFIG_AUTO_SAVE") != "false"
+		configStorage = proxyconfig.NewPersistentStorage(configFile, 1000, autoSave, log)
+		log.Info("persistent config storage initialized", "file", configFile, "auto_save", autoSave)
+	} else {
+		configStorage = proxyconfig.NewMemoryStorage(1000)
+		log.Info("memory config storage initialized", "max_entries", 1000)
+	}
 
 	log.Info("starting Privacy Gateway", "port", cfg.Port)
 
@@ -57,6 +72,20 @@ func main() {
 
 	// 代理配置管理API
 	http.HandleFunc("/config/proxy", func(w http.ResponseWriter, r *http.Request) {
+		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
+	})
+
+	// 配置导入导出API
+	http.HandleFunc("/config/proxy/export", func(w http.ResponseWriter, r *http.Request) {
+		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
+	})
+
+	http.HandleFunc("/config/proxy/import", func(w http.ResponseWriter, r *http.Request) {
+		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
+	})
+
+	// 批量操作API
+	http.HandleFunc("/config/proxy/batch", func(w http.ResponseWriter, r *http.Request) {
 		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
 	})
 

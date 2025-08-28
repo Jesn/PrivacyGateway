@@ -2,8 +2,10 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"privacygateway/internal/config"
 	"privacygateway/internal/logger"
@@ -25,6 +27,21 @@ func HandleProxyConfigAPI(w http.ResponseWriter, r *http.Request, cfg *config.Co
 
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// 检查特殊路径
+	path := r.URL.Path
+	if path == "/config/proxy/export" {
+		handleExportConfigs(w, r, storage, log)
+		return
+	}
+	if path == "/config/proxy/import" {
+		handleImportConfigs(w, r, storage, log)
+		return
+	}
+	if path == "/config/proxy/batch" {
+		handleBatchOperation(w, r, storage, log)
 		return
 	}
 
@@ -196,4 +213,99 @@ func handleDeleteConfig(w http.ResponseWriter, r *http.Request, storage proxycon
 	log.Info("config deleted", "id", configID)
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// handleExportConfigs 导出配置
+func handleExportConfigs(w http.ResponseWriter, r *http.Request, storage proxyconfig.Storage, log *logger.Logger) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	exportData, err := storage.ExportAll()
+	if err != nil {
+		log.Error("failed to export configs", "error", err)
+		http.Error(w, "Export failed", http.StatusInternalServerError)
+		return
+	}
+
+	// 设置下载文件头
+	filename := fmt.Sprintf("proxy-configs-%s.json", time.Now().Format("20060102-150405"))
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+
+	json.NewEncoder(w).Encode(exportData)
+	log.Info("configs exported", "count", exportData.TotalCount, "filename", filename)
+}
+
+// handleImportConfigs 导入配置
+func handleImportConfigs(w http.ResponseWriter, r *http.Request, storage proxyconfig.Storage, log *logger.Logger) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var importData struct {
+		Configs []proxyconfig.ProxyConfig `json:"configs"`
+		Mode    string                    `json:"mode"` // skip, replace, error
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&importData); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// 默认模式为error（遇到冲突时报错）
+	if importData.Mode == "" {
+		importData.Mode = "error"
+	}
+
+	result, err := storage.ImportConfigs(importData.Configs, importData.Mode)
+	if err != nil {
+		log.Error("failed to import configs", "error", err)
+		http.Error(w, "Import failed", http.StatusInternalServerError)
+		return
+	}
+
+	log.Info("configs imported", "imported", result.ImportedCount, "skipped", result.SkippedCount, "errors", result.ErrorCount)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+// handleBatchOperation 批量操作
+func handleBatchOperation(w http.ResponseWriter, r *http.Request, storage proxyconfig.Storage, log *logger.Logger) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var req proxyconfig.BatchOperationRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// 验证操作类型
+	if req.Operation != "enable" && req.Operation != "disable" && req.Operation != "delete" {
+		http.Error(w, "Invalid operation. Must be: enable, disable, or delete", http.StatusBadRequest)
+		return
+	}
+
+	if len(req.ConfigIDs) == 0 {
+		http.Error(w, "No config IDs provided", http.StatusBadRequest)
+		return
+	}
+
+	result, err := storage.BatchOperation(req.Operation, req.ConfigIDs)
+	if err != nil {
+		log.Error("batch operation failed", "operation", req.Operation, "error", err)
+		http.Error(w, "Batch operation failed", http.StatusInternalServerError)
+		return
+	}
+
+	log.Info("batch operation completed", "operation", req.Operation, "total", result.TotalCount, "success", len(result.Success), "failed", result.FailedCount)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
 }

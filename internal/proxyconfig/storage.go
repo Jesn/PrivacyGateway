@@ -20,6 +20,17 @@ type Storage interface {
 	GetBySubdomain(subdomain string) (*ProxyConfig, error)
 	Clear()
 	GetStats() *StorageStats
+
+	// 批量操作
+	BatchOperation(operation string, configIDs []string) (*BatchOperationResult, error)
+
+	// 导入导出
+	ExportAll() (*ExportData, error)
+	ImportConfigs(configs []ProxyConfig, mode string) (*ImportResult, error)
+
+	// 统计功能
+	UpdateStats(configID string, responseTime time.Duration, success bool, bytes int64) error
+	GetConfigStats(configID string) (*ConfigStats, error)
 }
 
 // MemoryStorage 内存存储实现
@@ -232,4 +243,170 @@ func (s *MemoryStorage) GetStats() *StorageStats {
 		EnabledConfigs: enabledCount,
 		MemoryUsage:    len(s.configs) * 200, // 估算每个配置约200字节
 	}
+}
+
+// BatchOperation 批量操作
+func (s *MemoryStorage) BatchOperation(operation string, configIDs []string) (*BatchOperationResult, error) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	result := &BatchOperationResult{
+		Success:    make([]string, 0),
+		Failed:     make([]string, 0),
+		TotalCount: len(configIDs),
+	}
+
+	for _, configID := range configIDs {
+		config, exists := s.configs[configID]
+		if !exists {
+			result.Failed = append(result.Failed, configID)
+			continue
+		}
+
+		switch operation {
+		case "enable":
+			config.Enabled = true
+			config.UpdatedAt = time.Now()
+			result.Success = append(result.Success, configID)
+		case "disable":
+			config.Enabled = false
+			config.UpdatedAt = time.Now()
+			result.Success = append(result.Success, configID)
+		case "delete":
+			delete(s.configs, configID)
+			delete(s.subdomains, config.Subdomain)
+			result.Success = append(result.Success, configID)
+		default:
+			result.Failed = append(result.Failed, configID)
+		}
+	}
+
+	result.FailedCount = len(result.Failed)
+	return result, nil
+}
+
+// ExportAll 导出所有配置
+func (s *MemoryStorage) ExportAll() (*ExportData, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	configs := make([]ProxyConfig, 0, len(s.configs))
+	for _, config := range s.configs {
+		configs = append(configs, *config)
+	}
+
+	return &ExportData{
+		Version:    "1.0",
+		ExportAt:   time.Now(),
+		Configs:    configs,
+		TotalCount: len(configs),
+	}, nil
+}
+
+// ImportConfigs 导入配置
+func (s *MemoryStorage) ImportConfigs(configs []ProxyConfig, mode string) (*ImportResult, error) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	result := &ImportResult{
+		Errors: make([]string, 0),
+	}
+
+	for _, config := range configs {
+		// 验证配置
+		if err := ValidateConfig(&config); err != nil {
+			result.ErrorCount++
+			result.Errors = append(result.Errors, fmt.Sprintf("配置 %s 验证失败: %v", config.Name, err))
+			continue
+		}
+
+		// 检查子域名冲突
+		if existingID, exists := s.subdomains[config.Subdomain]; exists {
+			if mode == "skip" {
+				result.SkippedCount++
+				continue
+			} else if mode == "replace" {
+				// 删除现有配置
+				delete(s.configs, existingID)
+			} else {
+				result.ErrorCount++
+				result.Errors = append(result.Errors, fmt.Sprintf("子域名 %s 已存在", config.Subdomain))
+				continue
+			}
+		}
+
+		// 检查是否超过最大条目数
+		if len(s.configs) >= s.maxEntries {
+			result.ErrorCount++
+			result.Errors = append(result.Errors, fmt.Sprintf("已达到最大配置数量限制 (%d)", s.maxEntries))
+			break
+		}
+
+		// 生成新的ID和时间戳
+		config.ID = uuid.New().String()
+		config.CreatedAt = time.Now()
+		config.UpdatedAt = time.Now()
+
+		// 添加配置
+		s.configs[config.ID] = &config
+		s.subdomains[config.Subdomain] = config.ID
+		result.ImportedCount++
+	}
+
+	return result, nil
+}
+
+// UpdateStats 更新配置统计信息
+func (s *MemoryStorage) UpdateStats(configID string, responseTime time.Duration, success bool, bytes int64) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return ErrConfigNotFound
+	}
+
+	// 初始化统计信息
+	if config.Stats == nil {
+		config.Stats = &ConfigStats{}
+	}
+
+	// 更新统计数据
+	config.Stats.RequestCount++
+	if !success {
+		config.Stats.ErrorCount++
+	}
+
+	// 更新平均响应时间（使用移动平均）
+	responseTimeMs := float64(responseTime.Nanoseconds()) / 1e6
+	if config.Stats.RequestCount == 1 {
+		config.Stats.AvgResponseTime = responseTimeMs
+	} else {
+		// 使用指数移动平均，权重为0.1
+		config.Stats.AvgResponseTime = config.Stats.AvgResponseTime*0.9 + responseTimeMs*0.1
+	}
+
+	config.Stats.LastAccessed = time.Now()
+	config.Stats.TotalBytes += bytes
+
+	return nil
+}
+
+// GetConfigStats 获取配置统计信息
+func (s *MemoryStorage) GetConfigStats(configID string) (*ConfigStats, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return nil, ErrConfigNotFound
+	}
+
+	if config.Stats == nil {
+		return &ConfigStats{}, nil
+	}
+
+	// 返回副本
+	statsCopy := *config.Stats
+	return &statsCopy, nil
 }

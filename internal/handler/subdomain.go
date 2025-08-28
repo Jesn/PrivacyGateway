@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"privacygateway/internal/accesslog"
 	"privacygateway/internal/config"
@@ -37,8 +38,20 @@ func HandleSubdomainProxy(w http.ResponseWriter, r *http.Request, cfg *config.Co
 
 	log.Info("subdomain proxy request", "subdomain", subdomain, "target", targetURL, "path", r.URL.Path)
 
+	// 记录开始时间用于统计
+	startTime := time.Now()
+
 	// 调用现有的代理处理逻辑
 	HTTPProxy(w, newReq, cfg, log, recorder)
+
+	// 更新统计信息
+	responseTime := time.Since(startTime)
+	success := true   // 这里简化处理，实际应该根据响应状态判断
+	bytes := int64(0) // 这里简化处理，实际应该统计传输字节数
+
+	if err := configStorage.UpdateStats(config.ID, responseTime, success, bytes); err != nil {
+		log.Error("failed to update stats", "config_id", config.ID, "error", err)
+	}
 }
 
 // IsSubdomainProxy 检查是否是子域名代理请求

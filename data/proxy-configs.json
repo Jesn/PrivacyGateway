@@ -1,0 +1,29 @@
+{
+  "523d8ea0-1666-4425-bb3c-5ee14a745c29": {
+    "id": "523d8ea0-1666-4425-bb3c-5ee14a745c29",
+    "name": "GitHub API",
+    "subdomain": "github-api",
+    "target_url": "https://api.github.com",
+    "protocol": "https",
+    "enabled": false,
+    "created_at": "2025-08-28T15:59:06.366502+08:00",
+    "updated_at": "2025-08-28T16:01:11.239871+08:00"
+  },
+  "eff1fdef-32c3-49e0-9942-bd809fcc1e56": {
+    "id": "eff1fdef-32c3-49e0-9942-bd809fcc1e56",
+    "name": "HTTPBin测试",
+    "subdomain": "httpbin",
+    "target_url": "https://httpbin.org",
+    "protocol": "https",
+    "enabled": true,
+    "created_at": "2025-08-28T15:59:18.545286+08:00",
+    "updated_at": "2025-08-28T16:02:48.676089+08:00",
+    "stats": {
+      "request_count": 1,
+      "error_count": 0,
+      "avg_response_time": 2555.842291,
+      "last_accessed": "2025-08-28T16:03:05.053348+08:00",
+      "total_bytes": 0
+    }
+  }
+}
