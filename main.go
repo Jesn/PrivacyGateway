@@ -8,6 +8,7 @@ import (
 	"privacygateway/internal/handler"
 	"privacygateway/internal/logger"
 	"privacygateway/internal/logviewer"
+	"privacygateway/internal/proxyconfig"
 )
 
 func main() {
@@ -29,10 +30,20 @@ func main() {
 		}
 	}
 
+	// 创建代理配置存储
+	configStorage := proxyconfig.NewMemoryStorage(1000)
+	log.Info("proxy config storage initialized", "max_entries", 1000)
+
 	log.Info("starting Privacy Gateway", "port", cfg.Port)
 
 	// 设置路由
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// 检查是否是子域名代理请求
+		if handler.IsSubdomainProxy(r.Host) {
+			handler.HandleSubdomainProxy(w, r, cfg, log, recorder, configStorage)
+			return
+		}
+		// 否则处理静态文件
 		handler.Static(w, r, log)
 	})
 
@@ -42,6 +53,11 @@ func main() {
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		handler.WebSocket(w, r, cfg, log, recorder)
+	})
+
+	// 代理配置管理API
+	http.HandleFunc("/config/proxy", func(w http.ResponseWriter, r *http.Request) {
+		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
 	})
 
 	// 设置日志查看路由
