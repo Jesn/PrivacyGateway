@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Gateway - 隐私网关</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=6">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=6">
     <style>
         * {
             margin: 0;
@@ -394,16 +396,16 @@
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
         }
 
         .stat-number {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .stat-label {
@@ -471,6 +473,15 @@
 
         .btn-warning:hover {
             background: #e0a800;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
         }
 
         .btn-sm {
@@ -619,19 +630,37 @@
             justify-content: center;
         }
 
+        .modal[style*="display: block"] {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+        }
+
         .modal-content {
             background: white;
-            border-radius: 15px;
+            border-radius: 8px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             width: 90%;
-            max-width: 500px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
             animation: modalSlideIn 0.3s ease;
+            border: 1px solid #e9ecef;
         }
 
         .modal-small {
             max-width: 400px;
+        }
+
+        .modal-large {
+            max-width: 900px;
+            width: 95%;
+        }
+
+        .modal-test {
+            max-width: 600px;
+            width: 85%;
+            max-height: 80vh;
         }
 
         @keyframes modalSlideIn {
@@ -646,25 +675,37 @@
         }
 
         .modal-header {
-            padding: 20px 25px;
+            padding: 12px 18px;
             border-bottom: 1px solid #e9ecef;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #f8f9fa;
+            border-radius: 8px 8px 0 0;
         }
 
         .modal-header h3 {
             margin: 0;
             color: #495057;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .close {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: bold;
             color: #aaa;
             cursor: pointer;
             line-height: 1;
             transition: color 0.3s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .close:hover {
@@ -672,11 +713,11 @@
         }
 
         .modal-body {
-            padding: 25px;
+            padding: 18px;
         }
 
         .modal-footer {
-            padding: 20px 25px;
+            padding: 12px 18px;
             border-top: 1px solid #e9ecef;
             display: flex;
             justify-content: flex-end;
@@ -717,6 +758,103 @@
             margin-top: 5px;
             font-size: 12px;
             color: #6c757d;
+        }
+
+        /* 紧凑型表单布局 */
+        .form-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 0;
+        }
+
+        .form-group-half {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .form-group-third {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .checkbox-label-inline {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .checkmark-small {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            position: relative;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .checkbox-label-inline input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkbox-label-inline input[type="checkbox"]:checked + .checkmark-small {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .checkbox-label-inline input[type="checkbox"]:checked + .checkmark-small::after {
+            content: '✓';
+            position: absolute;
+            top: -1px;
+            left: 2px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .checkbox-label {
@@ -916,6 +1054,27 @@
                 margin: 10px;
             }
 
+            .modal-large {
+                width: 98%;
+                max-width: none;
+                margin: 5px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-group-half,
+            .form-group-third {
+                flex: none;
+            }
+
+            .checkbox-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
             .action-buttons {
                 flex-direction: column;
                 gap: 5px;
@@ -924,6 +1083,91 @@
             .btn-sm {
                 width: 100%;
                 justify-content: center;
+            }
+
+            /* 日志过滤器响应式 */
+            .log-filters .filter-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .log-filters .filter-group {
+                min-width: auto;
+            }
+
+            .log-filters .filter-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .log-filters .filter-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .log-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .log-table-container {
+                overflow-x: auto;
+            }
+
+            .log-table {
+                min-width: 700px;
+            }
+
+            /* 测试弹窗响应式 */
+            .modal-test {
+                width: 95%;
+                max-width: none;
+                margin: 10px;
+            }
+
+            .modal-header {
+                padding: 10px 15px;
+            }
+
+            .modal-header h3 {
+                font-size: 14px;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
+
+            .modal-footer {
+                padding: 10px 15px;
+            }
+
+            .config-info-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .result-metrics {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .test-tabs {
+                flex-wrap: wrap;
+            }
+
+            .test-tab-btn {
+                flex: 1;
+                min-width: 80px;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .code-block {
+                max-height: 150px;
+                padding: 10px;
+            }
+
+            .code-block pre {
+                font-size: 10px;
             }
         }
 
@@ -951,14 +1195,695 @@
             padding: 20px;
             color: #6c757d;
         }
+
+        /* 测试弹窗样式 */
+        .test-info {
+            margin-bottom: 20px;
+        }
+
+        .test-config-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .test-config-info h4 {
+            margin: 0 0 12px 0;
+            color: #495057;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .config-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .info-item label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .info-item span {
+            color: #495057;
+            font-size: 13px;
+            word-break: break-all;
+            line-height: 1.3;
+        }
+
+        .test-result-summary {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .result-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .status-icon {
+            font-size: 20px;
+        }
+
+        .status-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .result-status.success .status-icon {
+            color: #28a745;
+        }
+
+        .result-status.success .status-text {
+            color: #28a745;
+        }
+
+        .result-status.error .status-icon {
+            color: #dc3545;
+        }
+
+        .result-status.error .status-text {
+            color: #dc3545;
+        }
+
+        .result-status.testing .status-icon {
+            color: #ffc107;
+            animation: spin 1s linear infinite;
+        }
+
+        .result-status.testing .status-text {
+            color: #856404;
+        }
+
+        .result-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .metric-item label {
+            display: block;
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .metric-item span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .test-details {
+            margin-top: 20px;
+        }
+
+        .test-tabs {
+            display: flex;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 15px;
+        }
+
+        .test-tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6c757d;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .test-tab-btn:hover {
+            color: #495057;
+            background: #f8f9fa;
+        }
+
+        .test-tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .test-tab-content {
+            position: relative;
+        }
+
+        .test-tab-pane {
+            display: none;
+        }
+
+        .test-tab-pane.active {
+            display: block;
+        }
+
+        .test-tab-pane h5 {
+            margin: 0 0 10px 0;
+            color: #495057;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .code-block {
+            /* background: #f8f9fa; */
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #495057;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* 日志详情弹窗样式 */
+        .detail-row {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+
+        .copy-btn:active {
+            background: #004085;
+        }
+
+        .clickable-target {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .clickable-target:hover {
+            text-decoration: underline;
+        }
+
+        .non-clickable {
+            color: #6c757d;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #5a6fd8;
+        }
+
+        /* 原始日志页面的样式类 */
+        .method-badge {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            background: #6c757d;
+        }
+
+        .type-badge {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .type-http {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .type-https {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .type-websocket {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-badge {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-2xx {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-3xx {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-4xx {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-5xx {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* 日志页面样式 */
+        .log-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .log-filters {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .log-filters .filter-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        .log-filters .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .log-filters .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .log-filters .filter-group input,
+        .log-filters .filter-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .log-filters .filter-group input:focus,
+        .log-filters .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .log-filters .filter-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        /* 日志表格样式 */
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .log-table th {
+            background: #f8f9fa;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .log-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        .log-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .log-table tr.no-data:hover {
+            background: transparent;
+        }
+
+        /* 日志状态和方法标签 */
+        .log-status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .log-status-2xx {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-status-3xx {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .log-status-4xx {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .log-status-5xx {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-method-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .log-method-get {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-method-post {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .log-method-put {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .log-method-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-method-patch {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .log-method-head,
+        .log-method-options {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .log-type-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .log-type-http {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .log-type-https {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-type-websocket {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .log-type-sse {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-target-link {
+            color: #667eea;
+            text-decoration: none;
+            max-width: 300px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .log-target-link:hover {
+            text-decoration: underline;
+        }
+
+        .log-duration {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* 登录页面样式 */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            animation: loginSlideIn 0.6s ease;
+        }
+
+        @keyframes loginSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 30px;
+        }
+
+        .login-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            margin: 5px 0;
+        }
+
+        .login-form {
+            padding: 40px 30px;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #495057;
+            font-size: 1.5rem;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .login-info {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .login-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .login-info code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #495057;
+        }
+
+        /* 主应用头部样式调整 */
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-title {
+            flex: 1;
+        }
+
+        .header-actions {
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .login-card {
+                margin: 10px;
+            }
+
+            .login-header {
+                padding: 30px 20px;
+            }
+
+            .login-form {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- 登录页面 -->
+    <div id="login-page" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🛡️ Privacy Gateway</h1>
+                <p>轻量级隐私保护反向代理服务</p>
+                <p>保护您的网络隐私，安全访问互联网</p>
+            </div>
+            <div class="login-form">
+                <h2>管理员登录</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="admin-secret">管理员密钥</label>
+                        <input type="password" id="admin-secret" name="secret" placeholder="请输入管理员密钥" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-login">
+                        <span class="icon">🔑</span> 登录
+                    </button>
+                </form>
+                <div class="login-info">
+                    <p>💡 提示：管理员密钥通过环境变量 <code>ADMIN_SECRET</code> 设置</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用页面 -->
+    <div id="main-app" class="container" style="display: none;">
         <div class="header">
-            <h1>🛡️ Privacy Gateway</h1>
-            <p>轻量级隐私保护反向代理服务</p>
-            <p><span class="status-indicator"></span>服务正在运行</p>
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>🛡️ Privacy Gateway</h1>
+                    <p>轻量级隐私保护反向代理服务</p>
+                    <p><span class="status-indicator"></span>服务正在运行</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="logout()">
+                        <span class="icon">🚪</span> 退出登录
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="main-content">
@@ -1361,14 +2286,111 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             <div id="logs-tab" class="tab-pane">
                 <div class="section">
                     <h2>📊 访问日志</h2>
-                    <div class="logs-container">
-                        <p class="logs-info">访问日志功能需要配置管理员密钥。</p>
-                        <p class="logs-hint">请在URL中添加 <code>?secret=your-admin-secret</code> 参数来访问日志管理功能。</p>
-                        <div class="logs-actions">
-                            <button class="btn btn-secondary" onclick="redirectToLogs()">
-                                <span class="icon">📋</span> 访问日志管理
-                            </button>
+
+                    <!-- 日志统计信息 -->
+                    <div class="log-stats" id="log-stats" style="display: none;">
+                        <div class="stat-card">
+                            <div class="stat-number" id="log-total-entries">0</div>
+                            <div class="stat-label">总日志数</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="log-memory-usage">0</div>
+                            <div class="stat-label">内存使用(MB)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="log-cleanup-count">0</div>
+                            <div class="stat-label">清理次数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="log-newest-entry">-</div>
+                            <div class="stat-label">最新日志</div>
+                        </div>
+                    </div>
+
+                    <!-- 日志过滤器 -->
+                    <div class="log-filters" id="log-filters" style="display: none;">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="log-filter-method">请求方法</label>
+                                <select id="log-filter-method" onchange="filterLogs()">
+                                    <option value="">全部</option>
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PUT">PUT</option>
+                                    <option value="DELETE">DELETE</option>
+                                    <option value="PATCH">PATCH</option>
+                                    <option value="HEAD">HEAD</option>
+                                    <option value="OPTIONS">OPTIONS</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="log-filter-status">状态码</label>
+                                <select id="log-filter-status" onchange="filterLogs()">
+                                    <option value="">全部</option>
+                                    <option value="2xx">2xx 成功</option>
+                                    <option value="3xx">3xx 重定向</option>
+                                    <option value="4xx">4xx 客户端错误</option>
+                                    <option value="5xx">5xx 服务器错误</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="log-filter-domain">域名</label>
+                                <input type="text" id="log-filter-domain" placeholder="例如: httpbin.org" onkeyup="filterLogs()">
+                            </div>
+                            <div class="filter-group">
+                                <label for="log-filter-search">搜索</label>
+                                <input type="text" id="log-filter-search" placeholder="搜索URL、IP等..." onkeyup="filterLogs()">
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" onclick="loadLogs()">
+                                    <span class="icon">🔄</span> 刷新
+                                </button>
+                                <button class="btn btn-secondary" onclick="clearLogFilters()">
+                                    <span class="icon">🧹</span> 清空筛选
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 日志列表 -->
+                    <div class="log-table-container" id="log-table-container" style="display: none;">
+                        <table class="log-table">
+                            <thead>
+                                <tr>
+                                    <th>方法</th>
+                                    <th>类型</th>
+                                    <th>目标</th>
+                                    <th>状态码</th>
+                                    <th>耗时</th>
+                                    <th>客户端IP</th>
+                                    <th>时间</th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-tbody">
+                                <tr class="no-data">
+                                    <td colspan="7">
+                                        <div class="no-data-message">
+                                            <span class="no-data-icon">📋</span>
+                                            <p>暂无日志数据</p>
+                                            <p class="no-data-hint">当有代理请求时，日志将显示在这里</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 日志分页 -->
+                    <div class="pagination" id="log-pagination" style="display: none;">
+                        <button class="page-btn" onclick="changeLogPage(-1)">‹ 上一页</button>
+                        <span class="page-info">第 <span id="log-current-page">1</span> 页，共 <span id="log-total-pages">1</span> 页</span>
+                        <button class="page-btn" onclick="changeLogPage(1)">下一页 ›</button>
+                    </div>
+
+                    <!-- 加载状态 -->
+                    <div class="loading-text" id="log-loading" style="display: none;">
+                        <div class="loading"></div>
+                        <span>加载日志数据中...</span>
                     </div>
                 </div>
             </div>
@@ -1376,47 +2398,176 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
 
         <!-- 配置编辑弹框 -->
         <div id="config-modal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content modal-large">
                 <div class="modal-header">
                     <h3 id="modal-title">新增代理配置</h3>
                     <span class="close" onclick="closeConfigModal()">&times;</span>
                 </div>
                 <div class="modal-body">
                     <form id="config-form">
-                        <div class="form-group">
-                            <label for="config-name">配置名称 *</label>
-                            <input type="text" id="config-name" name="name" required>
-                            <small class="form-hint">为此配置起一个易于识别的名称</small>
+                        <!-- 基本信息 -->
+                        <div class="form-section">
+                            <h4 class="section-title">📋 基本信息</h4>
+                            <div class="form-row">
+                                <div class="form-group form-group-half">
+                                    <label for="config-name">配置名称 *</label>
+                                    <input type="text" id="config-name" name="name" required placeholder="例如: GitHub API">
+                                </div>
+                                <div class="form-group form-group-half">
+                                    <label for="config-subdomain">子域名 *</label>
+                                    <input type="text" id="config-subdomain" name="subdomain" required placeholder="例如: github">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="config-target-url">目标URL *</label>
+                                <input type="url" id="config-target-url" name="target_url" required placeholder="https://api.github.com">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form-group-third">
+                                    <label for="config-protocol">协议</label>
+                                    <select id="config-protocol" name="protocol">
+                                        <option value="https">HTTPS</option>
+                                        <option value="http">HTTP</option>
+                                    </select>
+                                </div>
+                                <div class="form-group form-group-third">
+                                    <label for="config-timeout">超时时间 (秒)</label>
+                                    <input type="number" id="config-timeout" name="timeout" min="1" max="300" value="30" placeholder="30">
+                                </div>
+                                <div class="form-group form-group-third">
+                                    <label for="config-max-retries">重试次数</label>
+                                    <input type="number" id="config-max-retries" name="max_retries" min="0" max="10" value="3" placeholder="3">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="config-subdomain">子域名 *</label>
-                            <input type="text" id="config-subdomain" name="subdomain" required>
-                            <small class="form-hint">例如: api (访问时使用 api.localhost:10805)</small>
+
+                        <!-- 请求配置 -->
+                        <div class="form-section">
+                            <h4 class="section-title">🔧 请求配置</h4>
+                            <div class="form-row">
+                                <div class="form-group form-group-half">
+                                    <label for="config-user-agent">User-Agent</label>
+                                    <input type="text" id="config-user-agent" name="user_agent" placeholder="自定义 User-Agent">
+                                </div>
+                                <div class="form-group form-group-half">
+                                    <label for="config-referer">Referer</label>
+                                    <input type="text" id="config-referer" name="referer" placeholder="自定义 Referer">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="config-headers">自定义请求头 (JSON格式)</label>
+                                <textarea id="config-headers" name="headers" rows="3" placeholder='{"Authorization": "Bearer token", "X-API-Key": "your-key"}'></textarea>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="config-target-url">目标URL *</label>
-                            <input type="url" id="config-target-url" name="target_url" required>
-                            <small class="form-hint">例如: https://api.github.com</small>
+
+                        <!-- 安全配置 -->
+                        <div class="form-section">
+                            <h4 class="section-title">🔒 安全配置</h4>
+                            <div class="form-row">
+                                <div class="form-group form-group-half">
+                                    <label for="config-allowed-methods">允许的HTTP方法</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label-inline">
+                                            <input type="checkbox" name="allowed_methods" value="GET" checked>
+                                            <span class="checkmark-small"></span> GET
+                                        </label>
+                                        <label class="checkbox-label-inline">
+                                            <input type="checkbox" name="allowed_methods" value="POST" checked>
+                                            <span class="checkmark-small"></span> POST
+                                        </label>
+                                        <label class="checkbox-label-inline">
+                                            <input type="checkbox" name="allowed_methods" value="PUT">
+                                            <span class="checkmark-small"></span> PUT
+                                        </label>
+                                        <label class="checkbox-label-inline">
+                                            <input type="checkbox" name="allowed_methods" value="DELETE">
+                                            <span class="checkmark-small"></span> DELETE
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group form-group-half">
+                                    <label for="config-rate-limit">速率限制 (请求/分钟)</label>
+                                    <input type="number" id="config-rate-limit" name="rate_limit" min="0" placeholder="0 = 无限制">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form-group-half">
+                                    <label for="config-ip-whitelist">IP白名单 (一行一个)</label>
+                                    <textarea id="config-ip-whitelist" name="ip_whitelist" rows="2" placeholder="192.168.1.1&#10;10.0.0.0/8"></textarea>
+                                </div>
+                                <div class="form-group form-group-half">
+                                    <label for="config-ip-blacklist">IP黑名单 (一行一个)</label>
+                                    <textarea id="config-ip-blacklist" name="ip_blacklist" rows="2" placeholder="192.168.1.100&#10;172.16.0.0/12"></textarea>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="config-protocol">协议</label>
-                            <select id="config-protocol" name="protocol">
-                                <option value="https">HTTPS</option>
-                                <option value="http">HTTP</option>
-                            </select>
+
+                        <!-- 高级配置 -->
+                        <div class="form-section">
+                            <h4 class="section-title">⚙️ 高级配置</h4>
+                            <div class="form-row">
+                                <div class="form-group form-group-third">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="config-follow-redirects" name="follow_redirects" checked>
+                                        <span class="checkmark"></span>
+                                        跟随重定向
+                                    </label>
+                                </div>
+                                <div class="form-group form-group-third">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="config-verify-ssl" name="verify_ssl" checked>
+                                        <span class="checkmark"></span>
+                                        验证SSL证书
+                                    </label>
+                                </div>
+                                <div class="form-group form-group-third">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="config-log-requests" name="log_requests" checked>
+                                        <span class="checkmark"></span>
+                                        记录请求日志
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group form-group-half">
+                                    <label for="config-cache-ttl">缓存时间 (秒)</label>
+                                    <input type="number" id="config-cache-ttl" name="cache_ttl" min="0" value="0" placeholder="0 = 不缓存">
+                                </div>
+                                <div class="form-group form-group-half">
+                                    <label for="config-priority">优先级</label>
+                                    <select id="config-priority" name="priority">
+                                        <option value="low">低</option>
+                                        <option value="normal" selected>普通</option>
+                                        <option value="high">高</option>
+                                        <option value="critical">紧急</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="config-enabled" name="enabled" checked>
-                                <span class="checkmark"></span>
-                                启用配置
-                            </label>
+
+                        <!-- 状态配置 -->
+                        <div class="form-section">
+                            <h4 class="section-title">🎛️ 状态配置</h4>
+                            <div class="form-row">
+                                <div class="form-group form-group-half">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="config-enabled" name="enabled" checked>
+                                        <span class="checkmark"></span>
+                                        启用配置
+                                    </label>
+                                </div>
+                                <div class="form-group form-group-half">
+                                    <label for="config-description">描述</label>
+                                    <input type="text" id="config-description" name="description" placeholder="配置描述信息">
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeConfigModal()">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="saveConfig()">保存</button>
+                    <button type="button" class="btn btn-info" onclick="testConfigInModal()">测试连接</button>
+                    <button type="button" class="btn btn-primary" onclick="saveConfig()">保存配置</button>
                 </div>
             </div>
         </div>
@@ -1506,6 +2657,158 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             </div>
         </div>
 
+        <!-- 日志详情弹框 -->
+        <div id="logDetailModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>请求详情</h2>
+                    <span class="close" onclick="closeLogModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="detail-row">
+                        <div class="detail-label">请求ID</div>
+                        <div class="detail-value" id="detail-id"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">请求方法</div>
+                        <div class="detail-value" id="detail-method"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">目标地址</div>
+                        <div class="detail-value" id="detail-target"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">状态码</div>
+                        <div class="detail-value" id="detail-status"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">请求时间</div>
+                        <div class="detail-value" id="detail-time"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">处理耗时</div>
+                        <div class="detail-value" id="detail-duration"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">客户端IP</div>
+                        <div class="detail-value" id="detail-ip"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">User-Agent</div>
+                        <div class="detail-value" id="detail-useragent"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">代理服务器</div>
+                        <div class="detail-value" id="detail-proxy"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">响应内容</div>
+                        <div class="detail-value" id="detail-response"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>等效curl命令</span>
+                            <button onclick="copyCurlCommand()" class="copy-btn" title="复制命令">📋</button>
+                        </div>
+                        <div class="detail-value" id="detail-curl" style="background: #f8f9fa; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配置测试结果弹框 -->
+        <div id="test-modal" class="modal">
+            <div class="modal-content modal-test">
+                <div class="modal-header">
+                    <h3>🧪 配置测试结果</h3>
+                    <span class="close" onclick="closeTestModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="test-info">
+                        <div class="test-config-info">
+                            <h4>测试配置</h4>
+                            <div class="config-info-grid">
+                                <div class="info-item">
+                                    <label>配置名称:</label>
+                                    <span id="test-config-name">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>子域名:</label>
+                                    <span id="test-config-subdomain">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>目标URL:</label>
+                                    <span id="test-config-target">-</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>协议:</label>
+                                    <span id="test-config-protocol">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="test-result-summary">
+                            <div class="result-status" id="test-result-status">
+                                <span class="status-icon" id="test-status-icon">⏳</span>
+                                <span class="status-text" id="test-status-text">测试中...</span>
+                            </div>
+                            <div class="result-metrics" id="test-result-metrics" style="display: none;">
+                                <div class="metric-item">
+                                    <label>响应时间:</label>
+                                    <span id="test-response-time">-</span>
+                                </div>
+                                <div class="metric-item">
+                                    <label>状态码:</label>
+                                    <span id="test-status-code">-</span>
+                                </div>
+                                <div class="metric-item">
+                                    <label>响应大小:</label>
+                                    <span id="test-response-size">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="test-details" id="test-details" style="display: none;">
+                        <div class="test-tabs">
+                            <button class="test-tab-btn active" data-tab="request" onclick="switchTestTab('request')">请求信息</button>
+                            <button class="test-tab-btn" data-tab="response" onclick="switchTestTab('response')">响应信息</button>
+                            <button class="test-tab-btn" data-tab="headers" onclick="switchTestTab('headers')">响应头</button>
+                        </div>
+
+                        <div class="test-tab-content">
+                            <div id="test-request-tab" class="test-tab-pane active">
+                                <h5>请求详情</h5>
+                                <div class="code-block">
+                                    <pre id="test-request-info"></pre>
+                                </div>
+                            </div>
+
+                            <div id="test-response-tab" class="test-tab-pane">
+                                <h5>响应内容</h5>
+                                <div class="code-block">
+                                    <pre id="test-response-content"></pre>
+                                </div>
+                            </div>
+
+                            <div id="test-headers-tab" class="test-tab-pane">
+                                <h5>响应头信息</h5>
+                                <div class="code-block">
+                                    <pre id="test-response-headers"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeTestModal()">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="retestConfig()" id="retest-btn" style="display: none;">
+                        <span class="icon">🔄</span> 重新测试
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="footer">
             <p>Privacy Gateway - 保护您的网络隐私 🛡️</p>
             <p>基于 Go 语言开发 | 开源项目</p>
@@ -1523,11 +2826,93 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
         let selectedConfigs = new Set();
         let currentBatchOperation = null;
         let importData = null;
+        let adminSecret = '';
 
         // 获取管理员密钥
         function getAdminSecret() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('secret') || '';
+            return adminSecret || sessionStorage.getItem('adminSecret') || '';
+        }
+
+        // 设置管理员密钥
+        function setAdminSecret(secret) {
+            adminSecret = secret;
+            sessionStorage.setItem('adminSecret', secret);
+        }
+
+        // 清除管理员密钥
+        function clearAdminSecret() {
+            adminSecret = '';
+            sessionStorage.removeItem('adminSecret');
+        }
+
+        // 检查是否已登录
+        function isLoggedIn() {
+            const secret = getAdminSecret();
+            return secret && secret.length > 0;
+        }
+
+        // 显示登录页面
+        function showLoginPage() {
+            document.getElementById('login-page').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'none';
+        }
+
+        // 显示主应用页面
+        function showMainApp() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+        }
+
+        // 登录处理
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const secret = formData.get('secret');
+
+            if (!secret) {
+                showError('请输入管理员密钥');
+                return;
+            }
+
+            try {
+                showLoading();
+
+                // 测试密钥是否有效
+                const response = await fetch('/config/proxy', {
+                    headers: {
+                        'X-Log-Secret': secret
+                    }
+                });
+
+                if (response.ok) {
+                    setAdminSecret(secret);
+                    showMainApp();
+                    showSuccess('登录成功');
+
+                    // 加载配置数据
+                    switchTab('proxy-config');
+                } else {
+                    showError('管理员密钥无效，请检查后重试');
+                }
+            } catch (error) {
+                showError('登录失败：' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            clearAdminSecret();
+            showLoginPage();
+            showSuccess('已退出登录');
+
+            // 清理数据
+            currentConfigs = [];
+            selectedConfigs.clear();
+            currentPage = 1;
+            totalPages = 1;
         }
 
         // API请求封装
@@ -1575,9 +2960,11 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
 
-            // 如果切换到代理配置页面，加载数据
+            // 根据标签页加载对应数据
             if (tabName === 'proxy-config') {
                 loadProxyConfigs();
+            } else if (tabName === 'logs') {
+                loadLogs();
             }
         }
 
@@ -1636,6 +3023,9 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                         <div class="action-buttons">
                             <button class="btn btn-sm btn-primary" onclick="editConfig('${config.id}')" title="编辑">
                                 <span class="icon">✏️</span>
+                            </button>
+                            <button class="btn btn-sm btn-info" onclick="testConfig('${config.id}')" title="测试连接">
+                                <span class="icon">🧪</span>
                             </button>
                             <button class="btn btn-sm ${config.enabled ? 'btn-warning' : 'btn-success'}" onclick="toggleConfigStatus('${config.id}')" title="${config.enabled ? '禁用' : '启用'}">
                                 <span class="icon">${config.enabled ? '⏸️' : '▶️'}</span>
@@ -1711,12 +3101,36 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             editingConfigId = configId;
             document.getElementById('modal-title').textContent = '编辑代理配置';
 
-            // 填充表单
-            document.getElementById('config-name').value = config.name;
-            document.getElementById('config-subdomain').value = config.subdomain;
-            document.getElementById('config-target-url').value = config.target_url;
-            document.getElementById('config-protocol').value = config.protocol;
-            document.getElementById('config-enabled').checked = config.enabled;
+            // 填充基本信息
+            document.getElementById('config-name').value = config.name || '';
+            document.getElementById('config-subdomain').value = config.subdomain || '';
+            document.getElementById('config-target-url').value = config.target_url || '';
+            document.getElementById('config-protocol').value = config.protocol || 'https';
+            document.getElementById('config-enabled').checked = config.enabled !== false;
+            document.getElementById('config-description').value = config.description || '';
+
+            // 填充请求配置
+            document.getElementById('config-timeout').value = config.timeout || 30;
+            document.getElementById('config-max-retries').value = config.max_retries || 3;
+            document.getElementById('config-user-agent').value = config.user_agent || '';
+            document.getElementById('config-referer').value = config.referer || '';
+            document.getElementById('config-headers').value = config.headers ? JSON.stringify(config.headers, null, 2) : '';
+
+            // 填充安全配置
+            const allowedMethods = config.allowed_methods || ['GET', 'POST'];
+            document.querySelectorAll('input[name="allowed_methods"]').forEach(cb => {
+                cb.checked = allowedMethods.includes(cb.value);
+            });
+            document.getElementById('config-rate-limit').value = config.rate_limit || '';
+            document.getElementById('config-ip-whitelist').value = (config.ip_whitelist || []).join('\n');
+            document.getElementById('config-ip-blacklist').value = (config.ip_blacklist || []).join('\n');
+
+            // 填充高级配置
+            document.getElementById('config-follow-redirects').checked = config.follow_redirects !== false;
+            document.getElementById('config-verify-ssl').checked = config.verify_ssl !== false;
+            document.getElementById('config-log-requests').checked = config.log_requests !== false;
+            document.getElementById('config-cache-ttl').value = config.cache_ttl || 0;
+            document.getElementById('config-priority').value = config.priority || 'normal';
 
             showModal('config-modal');
         }
@@ -1725,17 +3139,77 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
         async function saveConfig() {
             try {
                 const formData = new FormData(document.getElementById('config-form'));
+
+                // 获取允许的HTTP方法
+                const allowedMethods = [];
+                document.querySelectorAll('input[name="allowed_methods"]:checked').forEach(cb => {
+                    allowedMethods.push(cb.value);
+                });
+
+                // 解析JSON字段
+                let headers = {};
+                const headersText = formData.get('headers');
+                if (headersText && headersText.trim()) {
+                    try {
+                        headers = JSON.parse(headersText);
+                    } catch (e) {
+                        showError('自定义请求头格式错误，请使用有效的JSON格式');
+                        return;
+                    }
+                }
+
+                // 处理IP列表
+                const ipWhitelist = formData.get('ip_whitelist') ?
+                    formData.get('ip_whitelist').split('\n').filter(ip => ip.trim()) : [];
+                const ipBlacklist = formData.get('ip_blacklist') ?
+                    formData.get('ip_blacklist').split('\n').filter(ip => ip.trim()) : [];
+
                 const config = {
                     name: formData.get('name'),
                     subdomain: formData.get('subdomain'),
                     target_url: formData.get('target_url'),
                     protocol: formData.get('protocol'),
-                    enabled: formData.has('enabled')
+                    enabled: formData.has('enabled'),
+                    description: formData.get('description') || '',
+
+                    // 请求配置
+                    timeout: parseInt(formData.get('timeout')) || 30,
+                    max_retries: parseInt(formData.get('max_retries')) || 3,
+                    user_agent: formData.get('user_agent') || '',
+                    referer: formData.get('referer') || '',
+                    headers: headers,
+
+                    // 安全配置
+                    allowed_methods: allowedMethods.length > 0 ? allowedMethods : ['GET', 'POST'],
+                    rate_limit: parseInt(formData.get('rate_limit')) || 0,
+                    ip_whitelist: ipWhitelist,
+                    ip_blacklist: ipBlacklist,
+
+                    // 高级配置
+                    follow_redirects: formData.has('follow_redirects'),
+                    verify_ssl: formData.has('verify_ssl'),
+                    log_requests: formData.has('log_requests'),
+                    cache_ttl: parseInt(formData.get('cache_ttl')) || 0,
+                    priority: formData.get('priority') || 'normal'
                 };
 
                 // 验证表单
                 if (!config.name || !config.subdomain || !config.target_url) {
                     showError('请填写所有必填字段');
+                    return;
+                }
+
+                // 验证子域名格式
+                if (!/^[a-zA-Z0-9-]+$/.test(config.subdomain)) {
+                    showError('子域名只能包含字母、数字和连字符');
+                    return;
+                }
+
+                // 验证URL格式
+                try {
+                    new URL(config.target_url);
+                } catch (e) {
+                    showError('目标URL格式不正确');
                     return;
                 }
 
@@ -1835,16 +3309,418 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
         function resetConfigForm() {
             document.getElementById('config-form').reset();
             document.getElementById('config-enabled').checked = true;
+            document.getElementById('config-follow-redirects').checked = true;
+            document.getElementById('config-verify-ssl').checked = true;
+            document.getElementById('config-log-requests').checked = true;
+            document.getElementById('config-timeout').value = 30;
+            document.getElementById('config-max-retries').value = 3;
+            document.getElementById('config-cache-ttl').value = 0;
+            document.getElementById('config-priority').value = 'normal';
+
+            // 重置HTTP方法选择
+            document.querySelectorAll('input[name="allowed_methods"]').forEach(cb => {
+                cb.checked = cb.value === 'GET' || cb.value === 'POST';
+            });
         }
 
-        // 重定向到日志页面
-        function redirectToLogs() {
-            const secret = getAdminSecret();
-            if (secret) {
-                window.open(`/logs?secret=${secret}`, '_blank');
-            } else {
-                showError('需要管理员密钥才能访问日志页面');
+        // 在弹框中测试连接
+        async function testConfigInModal() {
+            try {
+                const formData = new FormData(document.getElementById('config-form'));
+                const targetUrl = formData.get('target_url');
+
+                if (!targetUrl) {
+                    showError('请先填写目标URL');
+                    return;
+                }
+
+                // 验证URL格式
+                try {
+                    new URL(targetUrl);
+                } catch (e) {
+                    showError('目标URL格式不正确');
+                    return;
+                }
+
+                showLoading();
+
+                // 使用HTTP代理进行测试
+                const testUrl = `/proxy?target=${encodeURIComponent(targetUrl)}`;
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-Log-Secret': getAdminSecret()
+                    }
+                });
+
+                if (response.ok) {
+                    showSuccess(`连接测试成功！状态码: ${response.status}`);
+                } else {
+                    showError(`连接测试失败！状态码: ${response.status}`);
+                }
+            } catch (error) {
+                showError('连接测试失败: ' + error.message);
+            } finally {
+                hideLoading();
             }
+        }
+
+        // 日志相关变量
+        let currentLogs = [];
+        let currentLogPage = 1;
+        let totalLogPages = 1;
+        const logPageSize = 20;
+        let logFilters = {
+            method: '',
+            status: '',
+            domain: '',
+            search: ''
+        };
+
+        // 加载日志数据
+        async function loadLogs() {
+            try {
+                document.getElementById('log-loading').style.display = 'flex';
+
+                // 构建查询参数
+                const params = new URLSearchParams({
+                    page: currentLogPage,
+                    limit: logPageSize
+                });
+
+                // 添加过滤条件
+                if (logFilters.method) params.append('method', logFilters.method);
+                if (logFilters.status) params.append('status', logFilters.status);
+                if (logFilters.domain) params.append('domain', logFilters.domain);
+                if (logFilters.search) params.append('search', logFilters.search);
+
+                const response = await apiRequest(`/logs/api?${params.toString()}`);
+
+                currentLogs = response.logs || [];
+                totalLogPages = response.total_pages || 1;
+
+                renderLogTable();
+                // 单独加载统计信息
+                loadLogStats();
+                updateLogPagination();
+
+                // 显示日志相关元素
+                document.getElementById('log-stats').style.display = 'grid';
+                document.getElementById('log-filters').style.display = 'block';
+                document.getElementById('log-table-container').style.display = 'block';
+                if (totalLogPages > 1) {
+                    document.getElementById('log-pagination').style.display = 'flex';
+                }
+
+            } catch (error) {
+                showError('加载日志失败: ' + error.message);
+            } finally {
+                document.getElementById('log-loading').style.display = 'none';
+            }
+        }
+
+        // 渲染日志表格
+        function renderLogTable() {
+            const tbody = document.getElementById('log-tbody');
+
+            if (currentLogs.length === 0) {
+                tbody.innerHTML = `
+                    <tr class="no-data">
+                        <td colspan="7">
+                            <div class="no-data-message">
+                                <span class="no-data-icon">📋</span>
+                                <p>暂无日志数据</p>
+                                <p class="no-data-hint">当有代理请求时，日志将显示在这里</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = currentLogs.map(log => `
+                <tr>
+                    <td><span class="method-badge">${log.method}</span></td>
+                    <td><span class="type-badge type-${getTypeClass(log.request_type)}">${log.request_type}</span></td>
+                    <td>
+                        <a href="#" class="clickable-target" onclick="showLogDetailById('${log.id}'); return false;">${escapeHtml(log.target_host)}${escapeHtml(log.target_path)}</a>
+                    </td>
+                    <td><span class="status-badge status-${getStatusClass(log.status_code)}">${log.status_code}</span></td>
+                    <td>${log.duration_ms}ms</td>
+                    <td>${log.client_ip}</td>
+                    <td>${formatLogTime(log.timestamp)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 加载日志统计信息
+        async function loadLogStats() {
+            try {
+                const response = await apiRequest('/logs/api/stats');
+                updateLogStats(response.storage_stats);
+            } catch (error) {
+                console.error('加载统计信息失败:', error);
+                // 使用默认值
+                updateLogStats({});
+            }
+        }
+
+        // 更新日志统计信息
+        function updateLogStats(stats) {
+            if (!stats) stats = {};
+
+            document.getElementById('log-total-entries').textContent = stats.current_entries || 0;
+            document.getElementById('log-memory-usage').textContent = (stats.memory_usage_mb || 0).toFixed(1);
+            document.getElementById('log-cleanup-count').textContent = stats.cleanup_count || 0;
+            document.getElementById('log-newest-entry').textContent = stats.newest_entry ? formatLogTime(stats.newest_entry) : '-';
+        }
+
+        // 更新日志分页
+        function updateLogPagination() {
+            document.getElementById('log-current-page').textContent = currentLogPage;
+            document.getElementById('log-total-pages').textContent = totalLogPages;
+
+            const pagination = document.getElementById('log-pagination');
+            const prevBtn = pagination.querySelector('.page-btn:first-child');
+            const nextBtn = pagination.querySelector('.page-btn:last-child');
+
+            prevBtn.disabled = currentLogPage <= 1;
+            nextBtn.disabled = currentLogPage >= totalLogPages;
+        }
+
+        // 日志分页
+        function changeLogPage(direction) {
+            const newPage = currentLogPage + direction;
+            if (newPage >= 1 && newPage <= totalLogPages) {
+                currentLogPage = newPage;
+                loadLogs();
+            }
+        }
+
+        // 过滤日志
+        function filterLogs() {
+            logFilters.method = document.getElementById('log-filter-method').value;
+            logFilters.status = document.getElementById('log-filter-status').value;
+            logFilters.domain = document.getElementById('log-filter-domain').value;
+            logFilters.search = document.getElementById('log-filter-search').value;
+
+            currentLogPage = 1; // 重置到第一页
+            loadLogs();
+        }
+
+        // 清空日志筛选
+        function clearLogFilters() {
+            document.getElementById('log-filter-method').value = '';
+            document.getElementById('log-filter-status').value = '';
+            document.getElementById('log-filter-domain').value = '';
+            document.getElementById('log-filter-search').value = '';
+
+            logFilters = { method: '', status: '', domain: '', search: '' };
+            currentLogPage = 1;
+            loadLogs();
+        }
+
+
+
+
+
+
+
+        // 测试配置功能
+        let currentTestConfig = null;
+
+        // 测试配置
+        async function testConfig(configId) {
+            const config = currentConfigs.find(c => c.id === configId);
+            if (!config) {
+                showError('配置不存在');
+                return;
+            }
+
+            currentTestConfig = config;
+            showTestModal(config);
+
+            try {
+                await performConfigTest(config);
+            } catch (error) {
+                showTestError(error.message);
+            }
+        }
+
+        // 显示测试弹窗
+        function showTestModal(config) {
+            // 填充配置信息
+            document.getElementById('test-config-name').textContent = config.name;
+            document.getElementById('test-config-subdomain').textContent = config.subdomain;
+            document.getElementById('test-config-target').textContent = config.target_url;
+            document.getElementById('test-config-protocol').textContent = config.protocol.toUpperCase();
+
+            // 重置状态
+            resetTestModal();
+
+            // 显示弹窗
+            document.getElementById('test-modal').style.display = 'block';
+        }
+
+        // 重置测试弹窗状态
+        function resetTestModal() {
+            const statusElement = document.getElementById('test-result-status');
+            statusElement.className = 'result-status testing';
+            document.getElementById('test-status-icon').textContent = '⏳';
+            document.getElementById('test-status-text').textContent = '测试中...';
+
+            document.getElementById('test-result-metrics').style.display = 'none';
+            document.getElementById('test-details').style.display = 'none';
+            document.getElementById('retest-btn').style.display = 'none';
+
+            // 重置标签页
+            switchTestTab('request');
+        }
+
+        // 执行配置测试
+        async function performConfigTest(config) {
+            const startTime = Date.now();
+
+            try {
+                // 构建测试URL - 使用子域名方式
+                const port = window.location.port || '10805';
+                const testUrl = `http://${config.subdomain}.localhost:${port}/`;
+
+                // 发送测试请求
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-Log-Secret': getAdminSecret()
+                    }
+                });
+
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+
+                // 读取响应内容
+                const responseText = await response.text();
+                const responseHeaders = {};
+                response.headers.forEach((value, key) => {
+                    responseHeaders[key] = value;
+                });
+
+                // 显示测试结果
+                showTestSuccess({
+                    responseTime,
+                    statusCode: response.status,
+                    responseSize: responseText.length,
+                    responseText,
+                    responseHeaders,
+                    requestInfo: {
+                        method: 'GET',
+                        url: testUrl,
+                        subdomain: config.subdomain,
+                        target: config.target_url,
+                        protocol: config.protocol,
+                        timestamp: new Date().toISOString()
+                    }
+                });
+
+            } catch (error) {
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+
+                showTestError(error.message, responseTime);
+            }
+        }
+
+        // 显示测试成功结果
+        function showTestSuccess(result) {
+            const statusElement = document.getElementById('test-result-status');
+            statusElement.className = 'result-status success';
+            document.getElementById('test-status-icon').textContent = '✅';
+            document.getElementById('test-status-text').textContent = '测试成功';
+
+            // 显示指标
+            document.getElementById('test-response-time').textContent = `${result.responseTime}ms`;
+            document.getElementById('test-status-code').textContent = result.statusCode;
+            document.getElementById('test-response-size').textContent = formatBytes(result.responseSize);
+            document.getElementById('test-result-metrics').style.display = 'grid';
+
+            // 填充详细信息
+            fillTestDetails(result);
+
+            // 显示详细信息和重新测试按钮
+            document.getElementById('test-details').style.display = 'block';
+            document.getElementById('retest-btn').style.display = 'inline-block';
+        }
+
+        // 显示测试错误结果
+        function showTestError(errorMessage, responseTime = 0) {
+            const statusElement = document.getElementById('test-result-status');
+            statusElement.className = 'result-status error';
+            document.getElementById('test-status-icon').textContent = '❌';
+            document.getElementById('test-status-text').textContent = '测试失败';
+
+            // 显示错误指标
+            if (responseTime > 0) {
+                document.getElementById('test-response-time').textContent = `${responseTime}ms`;
+                document.getElementById('test-status-code').textContent = 'Error';
+                document.getElementById('test-response-size').textContent = '-';
+                document.getElementById('test-result-metrics').style.display = 'grid';
+            }
+
+            // 填充错误信息
+            fillTestErrorDetails(errorMessage);
+
+            // 显示详细信息和重新测试按钮
+            document.getElementById('test-details').style.display = 'block';
+            document.getElementById('retest-btn').style.display = 'inline-block';
+        }
+
+        // 填充测试详细信息
+        function fillTestDetails(result) {
+            // 请求信息
+            const requestInfo = `请求方法: ${result.requestInfo.method}
+子域名: ${result.requestInfo.subdomain}
+测试URL: ${result.requestInfo.url}
+目标URL: ${result.requestInfo.target}
+协议: ${result.requestInfo.protocol.toUpperCase()}
+请求时间: ${new Date(result.requestInfo.timestamp).toLocaleString('zh-CN')}
+用户代理: Privacy Gateway Test
+
+代理流程:
+1. 客户端请求: ${result.requestInfo.url}
+2. 子域名解析: ${result.requestInfo.subdomain} → ${result.requestInfo.target}
+3. 协议转换: ${result.requestInfo.protocol.toUpperCase()}
+4. 目标请求: ${result.requestInfo.target}`;
+
+            document.getElementById('test-request-info').textContent = requestInfo;
+
+            // 响应内容
+            let responseContent = result.responseText;
+            if (responseContent.length > 5000) {
+                responseContent = responseContent.substring(0, 5000) + '\n\n... (内容过长，已截断)';
+            }
+            document.getElementById('test-response-content').textContent = responseContent;
+
+            // 响应头
+            const headersText = Object.entries(result.responseHeaders)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join('\n');
+            document.getElementById('test-response-headers').textContent = headersText;
+        }
+
+        // 填充测试错误详细信息
+        function fillTestErrorDetails(errorMessage) {
+            const errorInfo = `测试失败
+错误信息: ${errorMessage}
+测试时间: ${new Date().toLocaleString('zh-CN')}
+
+可能的原因:
+1. 目标服务器无法访问
+2. 网络连接问题
+3. 目标URL配置错误
+4. 服务器响应超时`;
+
+            document.getElementById('test-request-info').textContent = errorInfo;
+            document.getElementById('test-response-content').textContent = '测试失败，无响应内容';
+            document.getElementById('test-response-headers').textContent = '测试失败，无响应头信息';
         }
 
         // 复选框选择功能
@@ -2107,6 +3983,206 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             }
         }
 
+
+
+        // 日志辅助函数
+        function formatLogTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function getLogType(url) {
+            if (!url || typeof url !== 'string') return 'http';
+            if (url.startsWith('ws://')) return 'websocket';
+            if (url.startsWith('wss://')) return 'websocket';
+            if (url.includes('text/event-stream')) return 'sse';
+            if (url.startsWith('https://')) return 'https';
+            return 'http';
+        }
+
+        function getLogTypeLabel(url) {
+            const type = getLogType(url);
+            switch (type) {
+                case 'websocket': return 'WebSocket';
+                case 'sse': return 'SSE';
+                case 'https': return 'HTTPS';
+                default: return 'HTTP';
+            }
+        }
+
+        function getStatusClass(statusCode) {
+            if (statusCode >= 200 && statusCode < 300) return '2xx';
+            if (statusCode >= 300 && statusCode < 400) return '3xx';
+            if (statusCode >= 400 && statusCode < 500) return '4xx';
+            if (statusCode >= 500) return '5xx';
+            return '2xx';
+        }
+
+        function truncateUrl(url, maxLength = 50) {
+            if (!url || typeof url !== 'string') return '-';
+            if (url.length <= maxLength) return url;
+            return url.substring(0, maxLength - 3) + '...';
+        }
+
+        // 显示日志详情（通过ID）
+        async function showLogDetailById(logId) {
+            try {
+                const response = await apiRequest(`/logs/api?id=${encodeURIComponent(logId)}`);
+                const log = response.logs && response.logs.length > 0 ? response.logs[0] : null;
+
+                if (!log) {
+                    showError('日志详情不存在');
+                    return;
+                }
+
+                // 填充详情信息
+                document.getElementById('detail-id').textContent = log.id;
+                document.getElementById('detail-method').textContent = log.method;
+                document.getElementById('detail-target').textContent = log.target_host + log.target_path;
+                document.getElementById('detail-status').textContent = log.status_code;
+                document.getElementById('detail-time').textContent = formatLogTime(log.timestamp);
+                document.getElementById('detail-duration').textContent = log.duration_ms + 'ms';
+                document.getElementById('detail-ip').textContent = log.client_ip;
+                document.getElementById('detail-useragent').textContent = log.user_agent || '-';
+                document.getElementById('detail-proxy').textContent = window.location.host;
+                document.getElementById('detail-response').textContent = log.response_body || '无响应内容';
+
+                // 生成等效的curl命令
+                const curlCommand = generateCurlCommand(log.method, log.target_host + log.target_path, log.request_headers, log.request_body);
+                document.getElementById('detail-curl').textContent = curlCommand;
+
+                document.getElementById('logDetailModal').style.display = 'block';
+            } catch (error) {
+                showError('获取日志详情失败: ' + error.message);
+            }
+        }
+
+        // 生成等效的curl命令
+        function generateCurlCommand(method, target, requestHeaders, requestBody) {
+            let curl = 'curl';
+
+            // 添加方法（如果不是GET）
+            if (method !== 'GET') {
+                curl += ' -X ' + method;
+            }
+
+            // 添加所有请求头
+            if (requestHeaders) {
+                for (const [key, value] of Object.entries(requestHeaders)) {
+                    // 转义引号
+                    const escapedValue = value.replace(/"/g, '\\"');
+                    curl += ' -H "' + key + ': ' + escapedValue + '"';
+                }
+            }
+
+            // 添加请求体（如果有）
+            if (requestBody && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+                // 转义引号和换行符
+                const escapedBody = requestBody.replace(/"/g, '\\"').replace(/\n/g, '\\n');
+                curl += ' -d "' + escapedBody + '"';
+            }
+
+            // 添加目标URL
+            curl += ' "' + target + '"';
+
+            return curl;
+        }
+
+        // 复制curl命令
+        function copyCurlCommand() {
+            const curlElement = document.getElementById('detail-curl');
+            const curlCommand = curlElement.textContent;
+
+            // 使用现代的Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(curlCommand).then(() => {
+                    showCopySuccess();
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopyTextToClipboard(curlCommand);
+                });
+            } else {
+                // 降级方案
+                fallbackCopyTextToClipboard(curlCommand);
+            }
+        }
+
+        // 降级复制方案
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+
+            // 避免滚动到底部
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopySuccess();
+                } else {
+                    showCopyError();
+                }
+            } catch (err) {
+                console.error('降级复制方案失败:', err);
+                showCopyError();
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // 显示复制成功提示
+        function showCopySuccess() {
+            const btn = document.querySelector('.copy-btn');
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.textContent = '✅';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#007bff';
+                }, 1500);
+            }
+        }
+
+        // 显示复制失败提示
+        function showCopyError() {
+            const btn = document.querySelector('.copy-btn');
+            if (btn) {
+                const originalText = btn.textContent;
+                btn.textContent = '❌';
+                btn.style.background = '#dc3545';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#007bff';
+                }, 1500);
+            }
+            showError('复制失败，请手动复制');
+        }
+
+        // 关闭日志详情弹窗
+        function closeLogModal() {
+            document.getElementById('logDetailModal').style.display = 'none';
+        }
+
+        // 获取类型样式类
+        function getTypeClass(requestType) {
+            if (!requestType) return 'http';
+            return requestType.toLowerCase();
+        }
+
         // 辅助函数
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -2123,6 +4199,44 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                 hour: '2-digit',
                 minute: '2-digit'
             });
+        }
+
+        // 格式化字节大小
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 测试弹窗相关函数
+        function closeTestModal() {
+            document.getElementById('test-modal').style.display = 'none';
+            currentTestConfig = null;
+        }
+
+        function switchTestTab(tabName) {
+            // 移除所有活动状态
+            document.querySelectorAll('.test-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.test-tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // 激活选中的标签
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`test-${tabName}-tab`).classList.add('active');
+        }
+
+        function retestConfig() {
+            if (currentTestConfig) {
+                resetTestModal();
+                performConfigTest(currentTestConfig).catch(error => {
+                    showTestError(error.message);
+                });
+            }
         }
 
         // 消息提示
@@ -2209,6 +4323,12 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Privacy Gateway Dashboard Loaded');
 
+            // 绑定登录表单事件
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+
             // 绑定标签页点击事件
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -2241,11 +4361,12 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                 }
             });
 
-            // 检查是否有管理员密钥
-            const secret = getAdminSecret();
-            if (secret) {
-                // 如果有密钥，默认切换到代理配置页面
+            // 检查登录状态
+            if (isLoggedIn()) {
+                showMainApp();
                 switchTab('proxy-config');
+            } else {
+                showLoginPage();
             }
 
             // 添加动画样式

@@ -34,9 +34,12 @@ func main() {
 	// 创建代理配置存储
 	var configStorage proxyconfig.Storage
 
-	// 检查是否启用持久化存储
-	persistEnabled := os.Getenv("PROXY_CONFIG_PERSIST") == "true"
-	if persistEnabled {
+	// 检查是否禁用持久化存储（默认启用）
+	persistDisabled := os.Getenv("PROXY_CONFIG_PERSIST") == "false"
+	if persistDisabled {
+		configStorage = proxyconfig.NewMemoryStorage(1000)
+		log.Info("memory config storage initialized", "max_entries", 1000)
+	} else {
 		configFile := os.Getenv("PROXY_CONFIG_FILE")
 		if configFile == "" {
 			configFile = "data/proxy-configs.json"
@@ -44,9 +47,6 @@ func main() {
 		autoSave := os.Getenv("PROXY_CONFIG_AUTO_SAVE") != "false"
 		configStorage = proxyconfig.NewPersistentStorage(configFile, 1000, autoSave, log)
 		log.Info("persistent config storage initialized", "file", configFile, "auto_save", autoSave)
-	} else {
-		configStorage = proxyconfig.NewMemoryStorage(1000)
-		log.Info("memory config storage initialized", "max_entries", 1000)
 	}
 
 	log.Info("starting Privacy Gateway", "port", cfg.Port)

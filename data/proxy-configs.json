@@ -1,4 +1,14 @@
 {
+  "0c8b1faf-f444-4ee4-8fc8-dd4a4cd66486": {
+    "id": "0c8b1faf-f444-4ee4-8fc8-dd4a4cd66486",
+    "name": "百度搜索",
+    "subdomain": "baidu",
+    "target_url": "https://baidu.com",
+    "protocol": "https",
+    "enabled": true,
+    "created_at": "2025-08-29T13:08:06.843323+08:00",
+    "updated_at": "2025-08-29T13:08:06.843323+08:00"
+  },
   "523d8ea0-1666-4425-bb3c-5ee14a745c29": {
     "id": "523d8ea0-1666-4425-bb3c-5ee14a745c29",
     "name": "GitHub API",
@@ -7,7 +17,14 @@
     "protocol": "https",
     "enabled": true,
     "created_at": "2025-08-28T15:59:06.366502+08:00",
-    "updated_at": "2025-08-28T16:17:19.993956+08:00"
+    "updated_at": "2025-08-28T16:17:19.993956+08:00",
+    "stats": {
+      "request_count": 2,
+      "error_count": 0,
+      "avg_response_time": 696.7472243999999,
+      "last_accessed": "2025-08-29T14:24:31.24076+08:00",
+      "total_bytes": 0
+    }
   },
   "6946a5ba-2a6c-44c9-8c10-11434a9b0361": {
     "id": "6946a5ba-2a6c-44c9-8c10-11434a9b0361",
@@ -17,7 +34,14 @@
     "protocol": "https",
     "enabled": true,
     "created_at": "2025-08-28T16:18:15.029828+08:00",
-    "updated_at": "2025-08-28T16:18:15.029828+08:00"
+    "updated_at": "2025-08-28T16:18:15.029828+08:00",
+    "stats": {
+      "request_count": 3,
+      "error_count": 0,
+      "avg_response_time": 829.2131647300001,
+      "last_accessed": "2025-08-28T18:04:26.623051+08:00",
+      "total_bytes": 0
+    }
   },
   "eff1fdef-32c3-49e0-9942-bd809fcc1e56": {
     "id": "eff1fdef-32c3-49e0-9942-bd809fcc1e56",
@@ -29,10 +53,10 @@
     "created_at": "2025-08-28T15:59:18.545286+08:00",
     "updated_at": "2025-08-28T16:17:19.993956+08:00",
     "stats": {
-      "request_count": 1,
+      "request_count": 21,
       "error_count": 0,
-      "avg_response_time": 2555.842291,
-      "last_accessed": "2025-08-28T16:03:05.053348+08:00",
+      "avg_response_time": 1224.2757141621714,
+      "last_accessed": "2025-08-29T14:36:53.972059+08:00",
       "total_bytes": 0
     }
   }

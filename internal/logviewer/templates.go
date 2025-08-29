@@ -720,6 +720,9 @@ func GetTemplate() *template.Template {
 		"eq": func(a, b interface{}) bool {
 			return fmt.Sprintf("%v", a) == fmt.Sprintf("%v", b)
 		},
+		"lower": func(s string) string {
+			return strings.ToLower(s)
+		},
 	}
 
 	tmpl := template.Must(template.New("logview").Funcs(funcMap).Parse(LogViewTemplate))

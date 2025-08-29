@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"privacygateway/internal/config"
@@ -16,7 +18,7 @@ import (
 func HandleProxyConfigAPI(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *logger.Logger, storage proxyconfig.Storage) {
 	// 认证检查
 	if !isAuthorizedForConfig(r, cfg.AdminSecret) {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		handleConfigAuthFailure(w, r, cfg.AdminSecret)
 		return
 	}
 
@@ -308,4 +310,51 @@ func handleBatchOperation(w http.ResponseWriter, r *http.Request, storage proxyc
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
+}
+
+// handleConfigAuthFailure 处理配置API认证失败
+func handleConfigAuthFailure(w http.ResponseWriter, r *http.Request, adminSecret string) {
+	// 检查是否是浏览器请求（通过Accept头判断）
+	acceptHeader := r.Header.Get("Accept")
+	isBrowserRequest := strings.Contains(acceptHeader, "text/html") ||
+		strings.Contains(acceptHeader, "application/xhtml+xml") ||
+		acceptHeader == "*/*" && r.Header.Get("User-Agent") != ""
+
+	// 如果是浏览器请求且有管理密钥配置，重定向到登录页面
+	if isBrowserRequest && adminSecret != "" {
+		// 构建登录页面URL，包含原始请求的URL作为返回地址
+		loginURL := "/logs"
+		if r.URL.RawQuery != "" {
+			// 保留原始查询参数（除了secret参数）
+			originalQuery := r.URL.Query()
+			originalQuery.Del("secret") // 移除可能存在的错误secret参数
+			if len(originalQuery) > 0 {
+				loginURL += "?redirect=" + url.QueryEscape(r.URL.Path+"?"+originalQuery.Encode())
+			} else {
+				loginURL += "?redirect=" + url.QueryEscape(r.URL.Path)
+			}
+		} else {
+			loginURL += "?redirect=" + url.QueryEscape(r.URL.Path)
+		}
+
+		http.Redirect(w, r, loginURL, http.StatusFound)
+		return
+	}
+
+	// 对于API请求或没有配置管理密钥的情况，返回JSON错误
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusUnauthorized)
+
+	errorResponse := map[string]interface{}{
+		"error":   "Unauthorized",
+		"message": "Authentication required",
+		"status":  http.StatusUnauthorized,
+		"success": false,
+	}
+
+	if adminSecret == "" {
+		errorResponse["message"] = "Admin secret not configured"
+	}
+
+	json.NewEncoder(w).Encode(errorResponse)
 }

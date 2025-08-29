@@ -14,6 +14,24 @@ import (
 
 // HTTPProxy 处理HTTP代理请求
 func HTTPProxy(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *logger.Logger, recorder *accesslog.Recorder) {
+	// 设置CORS头
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Log-Secret")
+
+	// 处理预检请求
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// 认证检查 - 代理服务需要管理员权限
+	if !isAuthorizedForProxy(r, cfg.AdminSecret) {
+		log.Warn("unauthorized proxy request", "client_ip", getClientIP(r), "target", r.URL.Query().Get("target"))
+		http.Error(w, "Unauthorized: Admin secret required", http.StatusUnauthorized)
+		return
+	}
+
 	// 创建响应捕获器（如果有记录器）
 	var capture *accesslog.ResponseCapture
 
@@ -143,8 +161,12 @@ func HTTPProxy(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *
 	}
 	defer resp.Body.Close()
 
-	// 将目标服务器的响应复制回客户端
+	// 将目标服务器的响应复制回客户端（过滤CORS头避免重复）
 	for key, values := range resp.Header {
+		// 跳过CORS相关的头，因为我们已经设置了
+		if isCORSHeader(key) {
+			continue
+		}
 		for _, value := range values {
 			w.Header().Add(key, value)
 		}

@@ -14,6 +14,24 @@ import (
 
 // HandleSubdomainProxy 处理子域名代理请求
 func HandleSubdomainProxy(w http.ResponseWriter, r *http.Request, cfg *config.Config, log *logger.Logger, recorder *accesslog.Recorder, configStorage proxyconfig.Storage) {
+	// 设置CORS头
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Log-Secret")
+
+	// 处理预检请求
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// 认证检查 - 子域名代理服务需要管理员权限
+	if !isAuthorizedForProxy(r, cfg.AdminSecret) {
+		log.Warn("unauthorized subdomain proxy request", "client_ip", getClientIP(r), "host", r.Host)
+		http.Error(w, "Unauthorized: Admin secret required", http.StatusUnauthorized)
+		return
+	}
+
 	// 提取子域名
 	subdomain := extractSubdomain(r.Host)
 	if subdomain == "" {
