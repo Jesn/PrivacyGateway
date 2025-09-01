@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -219,21 +218,6 @@ func ExtractConfigID(r *http.Request) string {
 	}
 
 	return ""
-}
-
-// ExtractConfigIDFromSubdomain 从子域名请求中提取配置ID
-func ExtractConfigIDFromSubdomain(r *http.Request, storage proxyconfig.Storage) (string, error) {
-	subdomain := extractSubdomain(r.Host)
-	if subdomain == "" {
-		return "", fmt.Errorf("invalid subdomain")
-	}
-
-	config, err := storage.GetBySubdomain(subdomain)
-	if err != nil {
-		return "", fmt.Errorf("subdomain not configured: %v", err)
-	}
-
-	return config.ID, nil
 }
 
 // LogAuthFailure 记录认证失败日志

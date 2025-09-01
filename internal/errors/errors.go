@@ -38,10 +38,9 @@ const (
 	ErrCodeResourceExhausted  ErrorCode = "RESOURCE_EXHAUSTED"
 
 	// 业务相关错误
-	ErrCodeMaxTokensExceeded  ErrorCode = "MAX_TOKENS_EXCEEDED"
-	ErrCodeDuplicateSubdomain ErrorCode = "DUPLICATE_SUBDOMAIN"
-	ErrCodeInvalidTarget      ErrorCode = "INVALID_TARGET"
-	ErrCodeProxyFailed        ErrorCode = "PROXY_FAILED"
+	ErrCodeMaxTokensExceeded ErrorCode = "MAX_TOKENS_EXCEEDED"
+	ErrCodeInvalidTarget     ErrorCode = "INVALID_TARGET"
+	ErrCodeProxyFailed       ErrorCode = "PROXY_FAILED"
 )
 
 // AppError 应用程序错误类型
@@ -154,12 +153,6 @@ func ErrConfigNotFound(configID string) *AppError {
 func ErrTokenNotFound(tokenID string) *AppError {
 	return NewAppError(ErrCodeTokenNotFound, "Token not found", http.StatusNotFound).
 		WithDetail("token_id", tokenID)
-}
-
-// ErrDuplicateSubdomain 重复子域名错误
-func ErrDuplicateSubdomain(subdomain string) *AppError {
-	return NewAppError(ErrCodeDuplicateSubdomain, "Subdomain already exists", http.StatusConflict).
-		WithDetail("subdomain", subdomain)
 }
 
 // ErrValidationFailed 验证失败错误

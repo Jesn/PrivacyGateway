@@ -134,15 +134,11 @@ func handleCreateConfig(w http.ResponseWriter, r *http.Request, storage proxycon
 	// 添加配置
 	if err := storage.Add(&config); err != nil {
 		log.Error("failed to add config", "error", err)
-		if err == proxyconfig.ErrDuplicateSubdomain {
-			http.Error(w, "Subdomain already exists", http.StatusConflict)
-		} else {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-		}
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	log.Info("config created", "id", config.ID, "name", config.Name, "subdomain", config.Subdomain)
+	log.Info("config created", "id", config.ID, "name", config.Name)
 
 	// 返回创建的配置
 	w.Header().Set("Content-Type", "application/json")
@@ -175,8 +171,6 @@ func handleUpdateConfig(w http.ResponseWriter, r *http.Request, storage proxycon
 		log.Error("failed to update config", "id", configID, "error", err)
 		if err == proxyconfig.ErrConfigNotFound {
 			http.Error(w, "Config not found", http.StatusNotFound)
-		} else if err == proxyconfig.ErrDuplicateSubdomain {
-			http.Error(w, "Subdomain already exists", http.StatusConflict)
 		} else {
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
