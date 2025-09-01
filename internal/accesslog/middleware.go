@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -277,26 +278,27 @@ func extractTargetPath(r *http.Request) string {
 		return ""
 	}
 
-	// 简单解析路径部分
-	if len(targetURL) > 8 { // 至少包含 "http://" 或 "https://"
-		if targetURL[:7] == "http://" {
-			targetURL = targetURL[7:]
-		} else if targetURL[:8] == "https://" {
-			targetURL = targetURL[8:]
+	// 使用标准URL解析，保持与recorder.go一致
+	parsed, err := url.Parse(targetURL)
+	if err != nil {
+		return ""
+	}
+
+	path := parsed.Path
+	// 不强制添加斜杠，保持用户原始意图
+	// 如果用户配置的是 https://example.com，那么路径就是空的
+	// 如果用户配置的是 https://example.com/，那么路径就是 "/"
+
+	// 包含查询参数
+	if parsed.RawQuery != "" {
+		if path == "" {
+			path = "?" + parsed.RawQuery
+		} else {
+			path += "?" + parsed.RawQuery
 		}
 	}
 
-	// 查找第一个斜杠，获取路径部分
-	for i, char := range targetURL {
-		if char == '/' {
-			return targetURL[i:]
-		}
-		if char == '?' || char == '#' {
-			return "/"
-		}
-	}
-
-	return "/"
+	return path
 }
 
 // WrapHandler 便捷函数，包装单个处理器

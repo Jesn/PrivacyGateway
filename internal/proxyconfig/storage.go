@@ -1,6 +1,7 @@
 package proxyconfig
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -17,7 +18,6 @@ type Storage interface {
 	Delete(id string) error
 	GetByID(id string) (*ProxyConfig, error)
 	List(filter *ConfigFilter) (*ConfigResponse, error)
-	GetBySubdomain(subdomain string) (*ProxyConfig, error)
 	Clear()
 	GetStats() *StorageStats
 
@@ -31,12 +31,22 @@ type Storage interface {
 	// 统计功能
 	UpdateStats(configID string, responseTime time.Duration, success bool, bytes int64) error
 	GetConfigStats(configID string) (*ConfigStats, error)
+
+	// 令牌管理
+	AddToken(configID string, token *AccessToken) error
+	UpdateToken(configID, tokenID string, token *AccessToken) error
+	DeleteToken(configID, tokenID string) error
+	GetTokens(configID string) ([]AccessToken, error)
+	GetTokenByID(configID, tokenID string) (*AccessToken, error)
+	ValidateToken(configID, tokenValue string) (*TokenValidationResult, error)
+	UpdateTokenUsage(configID, tokenValue string) error
+	GetTokenStats(configID string) (*TokenStats, error)
+	FindConfigByToken(tokenValue string) (string, error)
 }
 
 // MemoryStorage 内存存储实现
 type MemoryStorage struct {
 	configs    map[string]*ProxyConfig
-	subdomains map[string]string // subdomain -> config_id
 	mutex      sync.RWMutex
 	maxEntries int
 }
@@ -45,7 +55,6 @@ type MemoryStorage struct {
 func NewMemoryStorage(maxEntries int) *MemoryStorage {
 	return &MemoryStorage{
 		configs:    make(map[string]*ProxyConfig),
-		subdomains: make(map[string]string),
 		maxEntries: maxEntries,
 	}
 }
@@ -54,11 +63,6 @@ func NewMemoryStorage(maxEntries int) *MemoryStorage {
 func (s *MemoryStorage) Add(config *ProxyConfig) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
-
-	// 检查子域名是否已存在
-	if _, exists := s.subdomains[config.Subdomain]; exists {
-		return ErrDuplicateSubdomain
-	}
 
 	// 检查是否超过最大条目数
 	if len(s.configs) >= s.maxEntries {
@@ -70,9 +74,16 @@ func (s *MemoryStorage) Add(config *ProxyConfig) error {
 	config.CreatedAt = time.Now()
 	config.UpdatedAt = time.Now()
 
+	// 初始化令牌相关字段
+	if config.AccessTokens == nil {
+		config.AccessTokens = make([]AccessToken, 0)
+	}
+	if config.TokenStats == nil {
+		config.TokenStats = &TokenStats{}
+	}
+
 	// 存储配置
 	s.configs[config.ID] = config
-	s.subdomains[config.Subdomain] = config.ID
 
 	return nil
 }
@@ -87,20 +98,15 @@ func (s *MemoryStorage) Update(id string, config *ProxyConfig) error {
 		return ErrConfigNotFound
 	}
 
-	// 检查子域名冲突
-	if existing.Subdomain != config.Subdomain {
-		if _, exists := s.subdomains[config.Subdomain]; exists {
-			return ErrDuplicateSubdomain
-		}
-		// 更新子域名映射
-		delete(s.subdomains, existing.Subdomain)
-		s.subdomains[config.Subdomain] = id
-	}
-
-	// 更新配置
+	// 更新配置，保留令牌数据
 	config.ID = id
 	config.CreatedAt = existing.CreatedAt
 	config.UpdatedAt = time.Now()
+
+	// 保留原有的令牌数据和统计信息
+	config.AccessTokens = existing.AccessTokens
+	config.TokenStats = existing.TokenStats
+
 	s.configs[id] = config
 
 	return nil
@@ -111,13 +117,12 @@ func (s *MemoryStorage) Delete(id string) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
-	config, exists := s.configs[id]
+	_, exists := s.configs[id]
 	if !exists {
 		return ErrConfigNotFound
 	}
 
 	delete(s.configs, id)
-	delete(s.subdomains, config.Subdomain)
 
 	return nil
 }
@@ -137,26 +142,6 @@ func (s *MemoryStorage) GetByID(id string) (*ProxyConfig, error) {
 	return &configCopy, nil
 }
 
-// GetBySubdomain 根据子域名获取配置
-func (s *MemoryStorage) GetBySubdomain(subdomain string) (*ProxyConfig, error) {
-	s.mutex.RLock()
-	defer s.mutex.RUnlock()
-
-	configID, exists := s.subdomains[subdomain]
-	if !exists {
-		return nil, ErrConfigNotFound
-	}
-
-	config := s.configs[configID]
-	if !config.Enabled {
-		return nil, ErrConfigNotFound
-	}
-
-	// 返回副本
-	configCopy := *config
-	return &configCopy, nil
-}
-
 // List 获取配置列表
 func (s *MemoryStorage) List(filter *ConfigFilter) (*ConfigResponse, error) {
 	s.mutex.RLock()
@@ -168,7 +153,6 @@ func (s *MemoryStorage) List(filter *ConfigFilter) (*ConfigResponse, error) {
 		if filter.Search != "" {
 			searchTerm := strings.ToLower(filter.Search)
 			if !strings.Contains(strings.ToLower(config.Name), searchTerm) &&
-				!strings.Contains(strings.ToLower(config.Subdomain), searchTerm) &&
 				!strings.Contains(strings.ToLower(config.TargetURL), searchTerm) {
 				continue
 			}
@@ -223,7 +207,6 @@ func (s *MemoryStorage) Clear() {
 	defer s.mutex.Unlock()
 
 	s.configs = make(map[string]*ProxyConfig)
-	s.subdomains = make(map[string]string)
 }
 
 // GetStats 获取统计信息
@@ -274,7 +257,6 @@ func (s *MemoryStorage) BatchOperation(operation string, configIDs []string) (*B
 			result.Success = append(result.Success, configID)
 		case "delete":
 			delete(s.configs, configID)
-			delete(s.subdomains, config.Subdomain)
 			result.Success = append(result.Success, configID)
 		default:
 			result.Failed = append(result.Failed, configID)
@@ -320,21 +302,6 @@ func (s *MemoryStorage) ImportConfigs(configs []ProxyConfig, mode string) (*Impo
 			continue
 		}
 
-		// 检查子域名冲突
-		if existingID, exists := s.subdomains[config.Subdomain]; exists {
-			if mode == "skip" {
-				result.SkippedCount++
-				continue
-			} else if mode == "replace" {
-				// 删除现有配置
-				delete(s.configs, existingID)
-			} else {
-				result.ErrorCount++
-				result.Errors = append(result.Errors, fmt.Sprintf("子域名 %s 已存在", config.Subdomain))
-				continue
-			}
-		}
-
 		// 检查是否超过最大条目数
 		if len(s.configs) >= s.maxEntries {
 			result.ErrorCount++
@@ -349,7 +316,6 @@ func (s *MemoryStorage) ImportConfigs(configs []ProxyConfig, mode string) (*Impo
 
 		// 添加配置
 		s.configs[config.ID] = &config
-		s.subdomains[config.Subdomain] = config.ID
 		result.ImportedCount++
 	}
 
@@ -409,4 +375,304 @@ func (s *MemoryStorage) GetConfigStats(configID string) (*ConfigStats, error) {
 	// 返回副本
 	statsCopy := *config.Stats
 	return &statsCopy, nil
+}
+
+// ==================== 令牌管理方法 ====================
+
+// AddToken 添加令牌到指定配置
+func (s *MemoryStorage) AddToken(configID string, token *AccessToken) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return ErrConfigNotFound
+	}
+
+	// 验证令牌数据
+	if err := token.Validate(); err != nil {
+		return err
+	}
+
+	// 检查令牌数量限制
+	if err := ValidateTokenLimit(len(config.AccessTokens)); err != nil {
+		return err
+	}
+
+	// 检查令牌名称是否重复
+	for _, existingToken := range config.AccessTokens {
+		if existingToken.Name == token.Name {
+			return errors.New("token name already exists")
+		}
+	}
+
+	// 添加令牌
+	config.AccessTokens = append(config.AccessTokens, *token)
+	config.UpdatedAt = time.Now()
+
+	// 更新令牌统计
+	s.updateTokenStatsLocked(config)
+
+	return nil
+}
+
+// UpdateToken 更新指定令牌
+func (s *MemoryStorage) UpdateToken(configID, tokenID string, token *AccessToken) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return ErrConfigNotFound
+	}
+
+	// 查找令牌
+	tokenIndex := -1
+	for i, existingToken := range config.AccessTokens {
+		if existingToken.ID == tokenID {
+			tokenIndex = i
+			break
+		}
+	}
+
+	if tokenIndex == -1 {
+		return ErrTokenNotFound
+	}
+
+	// 验证令牌数据
+	if err := token.Validate(); err != nil {
+		return err
+	}
+
+	// 检查名称冲突（排除自己）
+	for i, existingToken := range config.AccessTokens {
+		if i != tokenIndex && existingToken.Name == token.Name {
+			return errors.New("token name already exists")
+		}
+	}
+
+	// 更新令牌
+	config.AccessTokens[tokenIndex] = *token
+	config.UpdatedAt = time.Now()
+
+	// 更新令牌统计
+	s.updateTokenStatsLocked(config)
+
+	return nil
+}
+
+// DeleteToken 删除指定令牌
+func (s *MemoryStorage) DeleteToken(configID, tokenID string) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return ErrConfigNotFound
+	}
+
+	// 查找令牌
+	tokenIndex := -1
+	for i, token := range config.AccessTokens {
+		if token.ID == tokenID {
+			tokenIndex = i
+			break
+		}
+	}
+
+	if tokenIndex == -1 {
+		return ErrTokenNotFound
+	}
+
+	// 删除令牌
+	config.AccessTokens = append(config.AccessTokens[:tokenIndex], config.AccessTokens[tokenIndex+1:]...)
+	config.UpdatedAt = time.Now()
+
+	// 更新令牌统计
+	s.updateTokenStatsLocked(config)
+
+	return nil
+}
+
+// GetTokens 获取指定配置的所有令牌
+func (s *MemoryStorage) GetTokens(configID string) ([]AccessToken, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return nil, ErrConfigNotFound
+	}
+
+	// 返回副本
+	tokens := make([]AccessToken, len(config.AccessTokens))
+	copy(tokens, config.AccessTokens)
+
+	return tokens, nil
+}
+
+// GetTokenByID 根据ID获取指定令牌
+func (s *MemoryStorage) GetTokenByID(configID, tokenID string) (*AccessToken, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return nil, ErrConfigNotFound
+	}
+
+	// 查找令牌
+	for _, token := range config.AccessTokens {
+		if token.ID == tokenID {
+			// 返回副本
+			tokenCopy := token
+			return &tokenCopy, nil
+		}
+	}
+
+	return nil, ErrTokenNotFound
+}
+
+// ValidateToken 验证令牌并返回验证结果
+func (s *MemoryStorage) ValidateToken(configID, tokenValue string) (*TokenValidationResult, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return &TokenValidationResult{
+			Valid:     false,
+			ErrorCode: "CONFIG_NOT_FOUND",
+			ErrorMsg:  "configuration not found",
+		}, nil
+	}
+
+	// 计算令牌哈希
+	tokenHash := HashToken(tokenValue)
+
+	// 查找匹配的令牌
+	for _, token := range config.AccessTokens {
+		if token.TokenHash == tokenHash {
+			// 验证令牌访问权限
+			tokenCopy := token // 创建副本避免指针问题
+			if err := ValidateTokenAccess(&tokenCopy); err != nil {
+				return &TokenValidationResult{
+					Valid:     false,
+					Token:     &tokenCopy,
+					ConfigID:  configID,
+					ErrorCode: getErrorCode(err),
+					ErrorMsg:  err.Error(),
+				}, nil
+			}
+
+			// 令牌有效
+			return &TokenValidationResult{
+				Valid:    true,
+				Token:    &tokenCopy,
+				ConfigID: configID,
+			}, nil
+		}
+	}
+
+	// 令牌未找到
+	return &TokenValidationResult{
+		Valid:     false,
+		ErrorCode: "TOKEN_NOT_FOUND",
+		ErrorMsg:  "token not found",
+	}, nil
+}
+
+// FindConfigByToken 通过令牌值查找对应的配置ID
+func (s *MemoryStorage) FindConfigByToken(tokenValue string) (string, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	// 计算令牌哈希
+	tokenHash := HashToken(tokenValue)
+
+	// 遍历所有配置查找匹配的令牌
+	for configID, config := range s.configs {
+		for _, token := range config.AccessTokens {
+			if token.TokenHash == tokenHash {
+				// 验证令牌是否有效
+				tokenCopy := token
+				if err := ValidateTokenAccess(&tokenCopy); err != nil {
+					continue // 跳过无效令牌
+				}
+				return configID, nil
+			}
+		}
+	}
+
+	return "", ErrTokenNotFound
+}
+
+// UpdateTokenUsage 更新令牌使用统计
+func (s *MemoryStorage) UpdateTokenUsage(configID, tokenValue string) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return ErrConfigNotFound
+	}
+
+	// 计算令牌哈希
+	tokenHash := HashToken(tokenValue)
+
+	// 查找并更新令牌
+	for i, token := range config.AccessTokens {
+		if token.TokenHash == tokenHash {
+			config.AccessTokens[i].UpdateUsage()
+			config.UpdatedAt = time.Now()
+
+			// 更新令牌统计
+			s.updateTokenStatsLocked(config)
+
+			return nil
+		}
+	}
+
+	return ErrTokenNotFound
+}
+
+// GetTokenStats 获取令牌统计信息
+func (s *MemoryStorage) GetTokenStats(configID string) (*TokenStats, error) {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	config, exists := s.configs[configID]
+	if !exists {
+		return nil, ErrConfigNotFound
+	}
+
+	if config.TokenStats == nil {
+		return &TokenStats{}, nil
+	}
+
+	// 返回副本
+	statsCopy := *config.TokenStats
+	return &statsCopy, nil
+}
+
+// updateTokenStatsLocked 更新令牌统计信息（需要持有锁）
+func (s *MemoryStorage) updateTokenStatsLocked(config *ProxyConfig) {
+	stats := CalculateTokenStats(config.AccessTokens)
+	config.TokenStats = stats
+}
+
+// getErrorCode 根据错误类型返回错误代码
+func getErrorCode(err error) string {
+	switch err {
+	case ErrTokenNotFound:
+		return "TOKEN_NOT_FOUND"
+	case ErrTokenExpired:
+		return "TOKEN_EXPIRED"
+	case ErrTokenDisabled:
+		return "TOKEN_DISABLED"
+	case ErrTokenInvalid:
+		return "TOKEN_INVALID"
+	default:
+		return "UNKNOWN_ERROR"
+	}
 }

@@ -44,7 +44,7 @@ const LogViewTemplate = `<!DOCTYPE html>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 20px; }
         .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .header h1 { color: #333; margin-bottom: 10px; }
         .stats { display: flex; gap: 20px; flex-wrap: wrap; }

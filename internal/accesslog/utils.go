@@ -11,6 +11,12 @@ import (
 )
 
 // GenerateLogID 生成唯一的日志ID
+//
+// 该函数生成一个8字节的随机ID，用于标识每条访问日志记录。
+// ID使用十六进制编码，确保在日志系统中的唯一性。
+//
+// 返回值:
+//   - string: 十六进制编码的唯一ID
 func GenerateLogID() string {
 	bytes := make([]byte, 8)
 	rand.Read(bytes)
@@ -18,6 +24,17 @@ func GenerateLogID() string {
 }
 
 // GetClientIP 从HTTP请求中获取客户端IP地址
+//
+// 该函数按优先级顺序检查以下HTTP头部来获取真实的客户端IP：
+// 1. X-Forwarded-For (取第一个有效IP)
+// 2. X-Real-IP
+// 3. RemoteAddr (直接连接的IP)
+//
+// 参数:
+//   - r: HTTP请求对象
+//
+// 返回值:
+//   - string: 客户端IP地址
 func GetClientIP(r *http.Request) string {
 	// 检查 X-Forwarded-For 头
 	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {

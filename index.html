@@ -22,7 +22,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -85,10 +85,11 @@
             margin-bottom: 10px;
         }
 
-        .code-block {
-            background: #1a202c;
-            color: #e2e8f0;
-            padding: 18px;
+        /* 项目介绍页面的代码块样式 */
+        #overview-tab .code-block {
+            background: #000000 !important;
+            color: #ffffff !important;
+            padding: 1px 24px;
             border-radius: 8px;
             overflow-x: auto;
             margin: 16px 0;
@@ -97,7 +98,7 @@
             line-height: 1.4;
             white-space: pre;
             word-wrap: normal;
-            border: 1px solid #2d3748;
+            border: 1px solid #333333;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
         }
@@ -408,9 +409,10 @@
             margin-bottom: 4px;
         }
 
-        .stat-label {
+        .stat-card .stat-label {
             font-size: 0.9rem;
             opacity: 0.9;
+            color: white;
         }
 
         /* 按钮样式 */
@@ -572,8 +574,122 @@
 
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+            font-size: 11px;
+            padding: 4px 8px;
+            min-width: auto;
+            white-space: nowrap;
+        }
+
+        /* 使用示例弹框样式 */
+
+        .usage-examples {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .usage-section {
+            margin-bottom: 24px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .usage-section h4 {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            margin: 0;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .usage-description {
+            padding: 12px 16px;
+            margin: 0;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 13px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        /* 使用示例弹框中的 code-block 样式 */
+        .modal .code-block {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            padding: 0; /* 移除padding，让pre完全铺满 */
+        }
+
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+
+        /* 使用示例弹框中的 code-block pre 样式 */
+        .modal .code-block pre {
+            margin: 0;
+            padding: 16px;
+            background: #ffffff;
+            color: #333333;
+            border: none;
+            border-radius: 4px; /* 与父容器保持一致 */
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+            word-wrap: normal;
+            width: 100%;
+            height: 100%; /* 确保高度铺满 */
+            box-sizing: border-box;
+            display: block; /* 确保块级显示 */
+            min-height: 100%; /* 最小高度铺满父容器 */
+        }
+
+        /* 使用示例弹框中的自定义滚动条样式 */
+        .modal .code-block pre::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .modal .code-block pre::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .modal .code-block pre::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .modal .code-block pre::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .modal .code-block code {
+            color: inherit;
+            background: none;
+            padding: 0;
+            font-size: inherit;
         }
 
         /* 分页样式 */
@@ -865,9 +981,22 @@
         }
 
         .checkbox-label input[type="checkbox"] {
-            width: auto !important;
-            margin-right: 10px;
-            transform: scale(1.2);
+            display: none;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark-small {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked + .checkmark-small::after {
+            content: '✓';
+            position: absolute;
+            top: -1px;
+            left: 2px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .checkmark-small {
@@ -925,11 +1054,7 @@
             font-weight: 500;
         }
 
-        .preview-item-subdomain {
-            color: #6c757d;
-            font-size: 12px;
-            font-family: monospace;
-        }
+
 
         /* 批量操作样式 */
         .selected-configs {
@@ -1369,22 +1494,53 @@
         }
 
         .code-block {
-            /* background: #f8f9fa; */
+            background: #f8f9fa;
             border: 1px solid #e9ecef;
             border-radius: 4px;
-            padding: 12px;
+            padding: 0; /* 移除padding，让pre完全铺满 */
             max-height: 200px;
-            overflow-y: auto;
+            overflow: hidden; /* 改为hidden，让pre处理滚动 */
         }
 
         .code-block pre {
             margin: 0;
+            padding: 12px; /* 将padding移到pre元素 */
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 11px;
             line-height: 1.4;
             color: #495057;
             white-space: pre-wrap;
             word-break: break-all;
+            background: #f8f9fa; /* 确保背景一致 */
+            border-radius: 4px; /* 与父容器保持一致 */
+            max-height: 200px; /* 继承父容器的最大高度 */
+            overflow-y: auto; /* pre元素处理滚动 */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 优化所有 code-block pre 的滚动条样式 */
+        .code-block pre::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        .code-block pre::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 2px;
+        }
+
+        .code-block pre::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 2px;
+        }
+
+        .code-block pre::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .code-block pre::-webkit-scrollbar-corner {
+            background: #f1f1f1;
         }
 
         /* 日志详情弹窗样式 */
@@ -1781,6 +1937,7 @@
             font-size: 16px;
             font-weight: 600;
             margin-top: 10px;
+            justify-content: center;
         }
 
         .login-info {
@@ -1839,6 +1996,284 @@
             .login-form {
                 padding: 30px 20px;
             }
+        }
+
+        /* 令牌管理样式 */
+        .token-management {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            background: #f8f9fa;
+        }
+
+        .token-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .token-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .token-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .token-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .token-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .empty-hint {
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .token-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .token-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 2px 4px rgba(0,123,255,0.1);
+        }
+
+        .token-item.disabled {
+            opacity: 0.6;
+            background: #f8f9fa;
+        }
+
+        .token-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .token-info {
+            flex: 1;
+        }
+
+        .token-name {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+        }
+
+
+
+        .token-meta {
+            font-size: 12px;
+            color: #6c757d;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .token-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .token-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .token-status.active {
+            color: #28a745;
+        }
+
+        .token-status.disabled {
+            color: #dc3545;
+        }
+
+        .token-status.expired {
+            color: #ffc107;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* 令牌弹框样式 */
+
+        .token-result {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .token-success h4 {
+            color: #155724;
+            margin-bottom: 12px;
+        }
+
+        .token-value-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .token-value {
+            flex: 1;
+            font-family: monospace;
+            background: white;
+            border: 1px solid #c3e6cb;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .token-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .token-warning .warning-icon {
+            margin-right: 6px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .token-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .token-stats {
+                justify-content: center;
+            }
+
+            .token-item-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .token-actions {
+                align-self: flex-start;
+            }
+
+            .token-meta {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+
+        /* Token管理弹框特定样式 */
+        #token-management-modal .token-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        #token-management-modal .token-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        #token-management-modal .token-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        #token-management-modal .token-list {
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        /* 确保Token管理按钮在操作列中的样式 */
+        .action-buttons .btn {
+            font-size: 11px;
+            padding: 4px 8px;
+            min-width: auto;
+            white-space: nowrap;
+            margin: 1px;
+        }
+
+        /* 响应式处理 */
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* 弹框层级管理 */
+        #token-management-modal {
+            z-index: 1100;
+        }
+
+        #token-modal {
+            z-index: 1200;
+        }
+
+        #delete-token-modal {
+            z-index: 1200;
         }
     </style>
 </head>
@@ -2251,7 +2686,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                                             </label>
                                         </th>
                                         <th>名称</th>
-                                        <th>子域名</th>
                                         <th>目标URL</th>
                                         <th>协议</th>
                                         <th>状态</th>
@@ -2409,13 +2843,9 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                         <div class="form-section">
                             <h4 class="section-title">📋 基本信息</h4>
                             <div class="form-row">
-                                <div class="form-group form-group-half">
+                                <div class="form-group">
                                     <label for="config-name">配置名称 *</label>
                                     <input type="text" id="config-name" name="name" required placeholder="例如: GitHub API">
-                                </div>
-                                <div class="form-group form-group-half">
-                                    <label for="config-subdomain">子域名 *</label>
-                                    <input type="text" id="config-subdomain" name="subdomain" required placeholder="例如: github">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -2562,6 +2992,8 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                                 </div>
                             </div>
                         </div>
+
+
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -2593,6 +3025,127 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             </div>
         </div>
 
+        <!-- 令牌管理弹框 -->
+        <div id="token-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="token-modal-title">新增访问令牌</h3>
+                    <span class="close" onclick="closeTokenModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="token-form">
+                        <div class="form-group">
+                            <label for="token-name">令牌名称 *</label>
+                            <input type="text" id="token-name" name="name" required placeholder="例如: 移动端API">
+                            <small class="form-hint">为令牌设置一个易于识别的名称</small>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label for="token-expires-at">过期时间 (可选)</label>
+                            <input type="datetime-local" id="token-expires-at" name="expires_at">
+                            <small class="form-hint">留空表示永不过期</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="token-description">描述信息</label>
+                            <textarea id="token-description" name="description" rows="3" placeholder="令牌的用途和使用说明"></textarea>
+                        </div>
+
+                        <!-- 令牌显示区域 (仅在创建成功后显示) -->
+                        <div class="token-result" id="token-result" style="display: none;">
+                            <div class="token-success">
+                                <h4>🎉 令牌创建成功！</h4>
+                                <div class="token-display">
+                                    <label>访问令牌</label>
+                                    <div class="token-value-container">
+                                        <input type="text" id="generated-token" readonly class="token-value">
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick="copyToken()">
+                                            📋 复制
+                                        </button>
+                                    </div>
+                                    <div class="token-warning">
+                                        <span class="warning-icon">✅</span>
+                                        <strong>提示：</strong>令牌创建成功！您可以随时从令牌列表中复制此令牌值。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeTokenModal()">取消</button>
+                    <button type="button" class="btn btn-primary" id="save-token-btn" onclick="saveToken()">创建令牌</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 令牌删除确认弹框 -->
+        <div id="delete-token-modal" class="modal">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h3>确认删除令牌</h3>
+                    <span class="close" onclick="closeDeleteTokenModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="delete-warning">
+                        <span class="warning-icon">⚠️</span>
+                        <p>确定要删除令牌 "<span id="delete-token-name"></span>" 吗？</p>
+                        <p class="warning-text">删除后使用此令牌的应用将无法访问代理服务！</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeDeleteTokenModal()">取消</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteToken()">删除令牌</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 独立Token管理弹框 -->
+        <div id="token-management-modal" class="modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3 id="token-management-title">令牌管理</h3>
+                    <span class="close" onclick="closeTokenManagementModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="token-section">
+                        <div class="token-header">
+                            <div class="token-stats">
+                                <span class="token-stat">
+                                    <span class="stat-label">总数:</span>
+                                    <span class="stat-value" id="token-mgmt-total-count">0</span>
+                                </span>
+                                <span class="token-stat">
+                                    <span class="stat-label">活跃:</span>
+                                    <span class="stat-value" id="token-mgmt-active-count">0</span>
+                                </span>
+                                <span class="token-stat">
+                                    <span class="stat-label">总请求:</span>
+                                    <span class="stat-value" id="token-mgmt-total-requests">0</span>
+                                </span>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="showAddTokenModal()">
+                                <span class="icon">➕</span> 新增令牌
+                            </button>
+                        </div>
+
+                        <div class="token-list" id="token-mgmt-list">
+                            <div class="token-empty">
+                                <span class="empty-icon">🔑</span>
+                                <p>暂无访问令牌</p>
+                                <p class="empty-hint">点击"新增令牌"创建第一个访问令牌</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeTokenManagementModal()">关闭</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 导入配置弹框 -->
         <div id="import-modal" class="modal">
             <div class="modal-content">
@@ -2614,7 +3167,7 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                                 <option value="skip">跳过冲突的配置</option>
                                 <option value="replace">替换冲突的配置</option>
                             </select>
-                            <small class="form-hint">当子域名冲突时的处理方式</small>
+                            <small class="form-hint">当配置名称冲突时的处理方式</small>
                         </div>
                         <div class="import-preview" id="import-preview" style="display: none;">
                             <h4>预览导入内容</h4>
@@ -2653,6 +3206,58 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="closeBatchModal()">取消</button>
                     <button type="button" class="btn" id="batch-confirm-btn" onclick="confirmBatchOperation()">确认</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用示例弹框 -->
+        <div id="usage-example-modal" class="modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3>🚀 使用示例</h3>
+                    <span class="close" onclick="closeUsageExampleModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="usage-examples">
+                        <div class="usage-section">
+                            <h4>📋 1. HTTP头部认证</h4>
+                            <p class="usage-description">使用X-Proxy-Token头部进行认证</p>
+                            <button class="copy-btn" onclick="copyUsageCode('curl-header')">复制代码</button>
+                            <div class="code-block">
+                                <pre id="curl-header"><code></code></pre>
+                            </div>
+                        </div>
+
+                        <div class="usage-section">
+                            <h4>🌐 2. 查询参数认证</h4>
+                            <p class="usage-description">将令牌作为URL查询参数传递</p>
+                            <button class="copy-btn" onclick="copyUsageCode('curl-query')">复制代码</button>
+                            <div class="code-block">
+                                <pre id="curl-query"><code></code></pre>
+                            </div>
+                        </div>
+
+                        <div class="usage-section">
+                            <h4>💻 4. JavaScript/Fetch API</h4>
+                            <p class="usage-description">在Web应用中使用Fetch API</p>
+                            <button class="copy-btn" onclick="copyUsageCode('js-fetch')">复制代码</button>
+                            <div class="code-block">
+                                <pre id="js-fetch"><code></code></pre>
+                            </div>
+                        </div>
+
+                        <div class="usage-section">
+                            <h4>🐍 5. Python Requests</h4>
+                            <p class="usage-description">在Python应用中使用requests库</p>
+                            <button class="copy-btn" onclick="copyUsageCode('python-requests')">复制代码</button>
+                            <div class="code-block">
+                                <pre id="python-requests"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeUsageExampleModal()">关闭</button>
                 </div>
             </div>
         </div>
@@ -2707,10 +3312,17 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                     </div>
                     <div class="detail-row">
                         <div class="detail-label" style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>等效curl命令</span>
-                            <button onclick="copyCurlCommand()" class="copy-btn" title="复制命令">📋</button>
+                            <span>目标请求 curl</span>
+                            <button onclick="copyTargetCurlCommand()" class="copy-btn" title="复制目标请求命令">📋</button>
                         </div>
-                        <div class="detail-value" id="detail-curl" style="background: #f8f9fa; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all;"></div>
+                        <div class="detail-value" id="detail-target-curl" style="background: #f8f9fa; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all;"></div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>代理请求 curl</span>
+                            <button onclick="copyProxyCurlCommand()" class="copy-btn" title="复制代理请求命令">📋</button>
+                        </div>
+                        <div class="detail-value" id="detail-proxy-curl" style="background: #e8f5e8; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all;"></div>
                     </div>
                 </div>
             </div>
@@ -2731,10 +3343,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                                 <div class="info-item">
                                     <label>配置名称:</label>
                                     <span id="test-config-name">-</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>子域名:</label>
-                                    <span id="test-config-subdomain">-</span>
                                 </div>
                                 <div class="info-item">
                                     <label>目标URL:</label>
@@ -2890,8 +3498,10 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                     showMainApp();
                     showSuccess('登录成功');
 
-                    // 加载配置数据
-                    switchTab('proxy-config');
+                    // 延迟加载配置数据，避免loading状态冲突
+                    setTimeout(() => {
+                        switchTab('proxy-config');
+                    }, 100);
                 } else {
                     showError('管理员密钥无效，请检查后重试');
                 }
@@ -3014,24 +3624,29 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                         </label>
                     </td>
                     <td><strong>${escapeHtml(config.name)}</strong></td>
-                    <td><code>${escapeHtml(config.subdomain)}</code></td>
                     <td><a href="${escapeHtml(config.target_url)}" target="_blank" class="target-link">${escapeHtml(config.target_url)}</a></td>
                     <td><span class="protocol-badge protocol-${config.protocol}">${config.protocol.toUpperCase()}</span></td>
                     <td><span class="status-badge ${config.enabled ? 'status-enabled' : 'status-disabled'}">${config.enabled ? '已启用' : '已禁用'}</span></td>
                     <td>${formatDate(config.created_at)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-sm btn-primary" onclick="editConfig('${config.id}')" title="编辑">
-                                <span class="icon">✏️</span>
+                            <button class="btn btn-sm btn-primary" onclick="editConfig('${config.id}')" title="编辑配置">
+                                编辑
                             </button>
                             <button class="btn btn-sm btn-info" onclick="testConfig('${config.id}')" title="测试连接">
-                                <span class="icon">🧪</span>
+                                测试
                             </button>
                             <button class="btn btn-sm ${config.enabled ? 'btn-warning' : 'btn-success'}" onclick="toggleConfigStatus('${config.id}')" title="${config.enabled ? '禁用' : '启用'}">
-                                <span class="icon">${config.enabled ? '⏸️' : '▶️'}</span>
+                                ${config.enabled ? '禁用' : '启用'}
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteConfig('${config.id}', '${escapeHtml(config.name)}')" title="删除">
-                                <span class="icon">🗑️</span>
+                            <button class="btn btn-sm btn-secondary" onclick="manageTokens('${config.id}')" title="管理令牌">
+                                🔑 令牌
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="showUsageExample('${config.id}')" title="查看使用示例">
+                                示例
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteConfig('${config.id}', '${escapeHtml(config.name)}')" title="删除配置">
+                                删除
                             </button>
                         </div>
                     </td>
@@ -3103,7 +3718,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
 
             // 填充基本信息
             document.getElementById('config-name').value = config.name || '';
-            document.getElementById('config-subdomain').value = config.subdomain || '';
             document.getElementById('config-target-url').value = config.target_url || '';
             document.getElementById('config-protocol').value = config.protocol || 'https';
             document.getElementById('config-enabled').checked = config.enabled !== false;
@@ -3166,7 +3780,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
 
                 const config = {
                     name: formData.get('name'),
-                    subdomain: formData.get('subdomain'),
                     target_url: formData.get('target_url'),
                     protocol: formData.get('protocol'),
                     enabled: formData.has('enabled'),
@@ -3194,14 +3807,8 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                 };
 
                 // 验证表单
-                if (!config.name || !config.subdomain || !config.target_url) {
+                if (!config.name || !config.target_url) {
                     showError('请填写所有必填字段');
-                    return;
-                }
-
-                // 验证子域名格式
-                if (!/^[a-zA-Z0-9-]+$/.test(config.subdomain)) {
-                    showError('子域名只能包含字母、数字和连字符');
                     return;
                 }
 
@@ -3293,7 +3900,14 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
 
         // 弹框管理
         function showModal(modalId) {
-            document.getElementById(modalId).classList.add('show');
+            console.log('showModal called with modalId:', modalId);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+                console.log('Modal should be visible now');
+            } else {
+                console.error('Modal not found:', modalId);
+            }
         }
 
         function closeConfigModal() {
@@ -3551,7 +4165,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
         function showTestModal(config) {
             // 填充配置信息
             document.getElementById('test-config-name').textContent = config.name;
-            document.getElementById('test-config-subdomain').textContent = config.subdomain;
             document.getElementById('test-config-target').textContent = config.target_url;
             document.getElementById('test-config-protocol').textContent = config.protocol.toUpperCase();
 
@@ -3582,9 +4195,8 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             const startTime = Date.now();
 
             try {
-                // 构建测试URL - 使用子域名方式
-                const port = window.location.port || '10805';
-                const testUrl = `http://${config.subdomain}.localhost:${port}/`;
+                // 构建测试URL - 使用HTTP代理方式
+                const testUrl = `/proxy?target=${encodeURIComponent(config.target_url)}`;
 
                 // 发送测试请求
                 const response = await fetch(testUrl, {
@@ -3614,7 +4226,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                     requestInfo: {
                         method: 'GET',
                         url: testUrl,
-                        subdomain: config.subdomain,
                         target: config.target_url,
                         protocol: config.protocol,
                         timestamp: new Date().toISOString()
@@ -3677,7 +4288,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
         function fillTestDetails(result) {
             // 请求信息
             const requestInfo = `请求方法: ${result.requestInfo.method}
-子域名: ${result.requestInfo.subdomain}
 测试URL: ${result.requestInfo.url}
 目标URL: ${result.requestInfo.target}
 协议: ${result.requestInfo.protocol.toUpperCase()}
@@ -3686,7 +4296,7 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
 
 代理流程:
 1. 客户端请求: ${result.requestInfo.url}
-2. 子域名解析: ${result.requestInfo.subdomain} → ${result.requestInfo.target}
+2. 代理解析: 提取目标URL参数
 3. 协议转换: ${result.requestInfo.protocol.toUpperCase()}
 4. 目标请求: ${result.requestInfo.target}`;
 
@@ -3936,7 +4546,6 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                 <div class="preview-item">
                     <div>
                         <div class="preview-item-name">${escapeHtml(config.name)}</div>
-                        <div class="preview-item-subdomain">${escapeHtml(config.subdomain)}</div>
                     </div>
                     <div>${escapeHtml(config.target_url)}</div>
                 </div>
@@ -4053,9 +4662,13 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
                 document.getElementById('detail-proxy').textContent = window.location.host;
                 document.getElementById('detail-response').textContent = log.response_body || '无响应内容';
 
-                // 生成等效的curl命令
-                const curlCommand = generateCurlCommand(log.method, log.target_host + log.target_path, log.request_headers, log.request_body);
-                document.getElementById('detail-curl').textContent = curlCommand;
+                // 生成目标请求curl命令
+                const targetCurlCommand = generateTargetCurlCommand(log.method, log.target_host + log.target_path, log.request_headers, log.request_body);
+                document.getElementById('detail-target-curl').textContent = targetCurlCommand;
+
+                // 生成代理请求curl命令
+                const proxyCurlCommand = generateProxyCurlCommand(log);
+                document.getElementById('detail-proxy-curl').textContent = proxyCurlCommand;
 
                 document.getElementById('logDetailModal').style.display = 'block';
             } catch (error) {
@@ -4063,8 +4676,8 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             }
         }
 
-        // 生成等效的curl命令
-        function generateCurlCommand(method, target, requestHeaders, requestBody) {
+        // 生成目标请求的curl命令
+        function generateTargetCurlCommand(method, target, requestHeaders, requestBody) {
             let curl = 'curl';
 
             // 添加方法（如果不是GET）
@@ -4094,7 +4707,105 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             return curl;
         }
 
-        // 复制curl命令
+        // 生成代理请求的curl命令
+        function generateProxyCurlCommand(log) {
+            let curl = 'curl';
+
+            // 添加方法（如果不是GET）
+            if (log.method !== 'GET') {
+                curl += ' -X ' + log.method;
+            }
+
+            // 构建代理URL - 使用HTTP代理
+            const targetUrl = log.target_host + (log.target_path || '/');
+            const proxyUrl = `http://${window.location.host}/proxy?target=${encodeURIComponent(targetUrl)}`;
+
+            // 添加URL
+            curl += ` '${proxyUrl}'`;
+
+            // 添加代理相关的请求头
+            const proxyHeaders = {};
+
+            // 添加认证头
+            if (log.auth_method === 'token') {
+                proxyHeaders['X-Proxy-Token'] = 'YOUR_TOKEN';
+            } else if (log.auth_method === 'admin') {
+                proxyHeaders['X-Log-Secret'] = 'YOUR_ADMIN_SECRET';
+            }
+
+            // 添加原始请求头（过滤掉一些代理相关的头）
+            if (log.request_headers) {
+                try {
+                    const headers = typeof log.request_headers === 'string'
+                        ? JSON.parse(log.request_headers)
+                        : log.request_headers;
+
+                    for (const [key, value] of Object.entries(headers)) {
+                        const lowerKey = key.toLowerCase();
+                        // 跳过一些代理相关的头
+                        if (!lowerKey.includes('host') &&
+                            !lowerKey.includes('proxy') &&
+                            !lowerKey.includes('x-log-secret') &&
+                            !lowerKey.includes('authorization') &&
+                            lowerKey !== 'content-length') {
+                            proxyHeaders[key] = value;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('解析请求头失败:', e);
+                }
+            }
+
+            // 添加所有头部
+            for (const [key, value] of Object.entries(proxyHeaders)) {
+                curl += ` -H '${key}: ${value}'`;
+            }
+
+            // 添加请求体
+            if (log.request_body && log.method !== 'GET') {
+                curl += ` -d '${log.request_body}'`;
+            }
+
+            return curl;
+        }
+
+        // 复制目标请求curl命令
+        function copyTargetCurlCommand() {
+            const curlElement = document.getElementById('detail-target-curl');
+            const curlCommand = curlElement.textContent;
+
+            // 使用现代的Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(curlCommand).then(() => {
+                    showSuccess('目标请求curl命令已复制到剪贴板');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopyTextToClipboard(curlCommand);
+                });
+            } else {
+                fallbackCopyTextToClipboard(curlCommand);
+            }
+        }
+
+        // 复制代理请求curl命令
+        function copyProxyCurlCommand() {
+            const curlElement = document.getElementById('detail-proxy-curl');
+            const curlCommand = curlElement.textContent;
+
+            // 使用现代的Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(curlCommand).then(() => {
+                    showSuccess('代理请求curl命令已复制到剪贴板');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopyTextToClipboard(curlCommand);
+                });
+            } else {
+                fallbackCopyTextToClipboard(curlCommand);
+            }
+        }
+
+        // 兼容旧的复制函数名（保持向后兼容）
         function copyCurlCommand() {
             const curlElement = document.getElementById('detail-curl');
             const curlCommand = curlElement.textContent;
@@ -4410,6 +5121,824 @@ PROXY_WHITELIST="proxy1.example.com,proxy2.example.com"  # 代理白名单
             `;
             document.head.appendChild(style);
         });
+
+        // ==================== 令牌管理功能 ====================
+
+        // 令牌管理变量
+
+        // 当前编辑的配置ID和令牌ID
+        let currentConfigId = null;
+        let editingTokenId = null;
+        let deleteTokenId = null;
+
+        // 使用示例变量
+        let currentUsageConfig = null;
+
+        // 加载令牌列表
+        async function loadTokens(configId) {
+            currentConfigId = configId;
+
+            try {
+                // 从API加载真实的令牌数据
+                const response = await apiRequest(`/config/proxy/${configId}/tokens`);
+                const tokens = response.data?.tokens || [];
+
+                // 更新统计信息
+                updateTokenStats(tokens);
+
+                // 渲染令牌列表
+                renderTokenList(tokens);
+            } catch (error) {
+                console.error('加载令牌列表失败:', error);
+                // 如果API调用失败，显示空列表
+                updateTokenStats([]);
+                renderTokenList([]);
+
+                // 显示错误提示
+                showNotification('加载令牌列表失败: ' + error.message, 'error');
+            }
+        }
+
+        // 更新令牌统计信息
+        function updateTokenStats(tokens) {
+            const totalCount = tokens.length;
+            const activeCount = tokens.filter(t => t.enabled).length;
+            const totalRequests = tokens.reduce((sum, t) => sum + t.usage_count, 0);
+
+            document.getElementById('token-total-count').textContent = totalCount;
+            document.getElementById('token-active-count').textContent = activeCount;
+            document.getElementById('token-total-requests').textContent = totalRequests.toLocaleString();
+        }
+
+        // 渲染令牌列表
+        function renderTokenList(tokens) {
+            const tokenList = document.getElementById('token-list');
+
+            if (tokens.length === 0) {
+                tokenList.innerHTML = `
+                    <div class="token-empty">
+                        <span class="empty-icon">🔑</span>
+                        <p>暂无访问令牌</p>
+                        <p class="empty-hint">点击"新增令牌"创建第一个访问令牌</p>
+                    </div>
+                `;
+                return;
+            }
+
+            tokenList.innerHTML = tokens.map(token => `
+                <div class="token-item ${token.enabled ? '' : 'disabled'}">
+                    <div class="token-item-header">
+                        <div class="token-info">
+                            <div class="token-name">${escapeHtml(token.name)}</div>
+                            <div class="token-meta">
+                                <span>创建: ${formatDate(token.created_at)}</span>
+                                <span>使用: ${token.usage_count} 次</span>
+                                ${token.expires_at ? `<span>过期: ${formatDate(token.expires_at)}</span>` : '<span>永不过期</span>'}
+                            </div>
+                        </div>
+                        <div class="token-actions">
+                            <div class="token-status ${getTokenStatus(token)}">
+                                <span class="status-dot"></span>
+                                ${getTokenStatusLabel(token)}
+                            </div>
+                            <button class="btn btn-sm btn-secondary" onclick="event.preventDefault(); event.stopPropagation(); copyTokenFromList('${token.id}'); return false;" title="复制令牌值">
+                                📋
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="event.preventDefault(); event.stopPropagation(); editToken('${token.id}'); return false;" title="编辑">
+                                ✏️
+                            </button>
+                            <button class="btn btn-sm ${token.enabled ? 'btn-warning' : 'btn-success'}"
+                                    onclick="event.preventDefault(); event.stopPropagation(); toggleToken('${token.id}'); return false;"
+                                    title="${token.enabled ? '禁用' : '启用'}">
+                                ${token.enabled ? '⏸️' : '▶️'}
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="event.preventDefault(); event.stopPropagation(); deleteToken('${token.id}', '${escapeHtml(token.name)}'); return false;" title="删除">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    ${token.description ? `<div class="token-description">${escapeHtml(token.description)}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+
+
+        // 获取令牌状态
+        function getTokenStatus(token) {
+            if (!token.enabled) return 'disabled';
+            if (token.expires_at && new Date(token.expires_at) < new Date()) return 'expired';
+            return 'active';
+        }
+
+        // 获取令牌状态标签
+        function getTokenStatusLabel(token) {
+            const status = getTokenStatus(token);
+            const labels = {
+                'active': '活跃',
+                'disabled': '已禁用',
+                'expired': '已过期'
+            };
+            return labels[status] || '未知';
+        }
+
+        // 显示新增令牌弹框
+        function showAddTokenModal() {
+            editingTokenId = null;
+            document.getElementById('token-modal-title').textContent = '新增访问令牌';
+            resetTokenForm();
+            document.getElementById('token-result').style.display = 'none';
+            document.getElementById('save-token-btn').textContent = '创建令牌';
+            showModal('token-modal');
+        }
+
+        // 编辑令牌
+        async function editToken(tokenId) {
+            console.log('editToken called with tokenId:', tokenId);
+            console.log('currentConfigId:', currentConfigId);
+
+            try {
+                // 检查必要的变量
+                if (!currentConfigId) {
+                    console.error('currentConfigId is not set');
+                    showError('配置ID未设置，请重新选择配置');
+                    return;
+                }
+
+                if (!tokenId) {
+                    console.error('tokenId is not provided');
+                    showError('令牌ID未提供');
+                    return;
+                }
+
+                console.log('Making API request to:', `/config/proxy/${currentConfigId}/tokens`);
+
+                // 从API获取最新的令牌数据
+                const response = await apiRequest(`/config/proxy/${currentConfigId}/tokens`);
+                console.log('API response:', response);
+
+                const tokens = response.data?.tokens || [];
+                console.log('Tokens found:', tokens.length);
+
+                const token = tokens.find(t => t.id === tokenId);
+                console.log('Target token found:', token);
+
+                if (!token) {
+                    console.error('Token not found with id:', tokenId);
+                    showError('令牌不存在');
+                    return;
+                }
+
+                editingTokenId = tokenId;
+                console.log('Setting editingTokenId to:', editingTokenId);
+
+                // 检查DOM元素是否存在
+                const titleElement = document.getElementById('token-modal-title');
+                const saveButtonElement = document.getElementById('save-token-btn');
+                const nameElement = document.getElementById('token-name');
+                const descElement = document.getElementById('token-description');
+                const expiresElement = document.getElementById('token-expires-at');
+                const resultElement = document.getElementById('token-result');
+
+                if (!titleElement || !saveButtonElement || !nameElement || !descElement || !expiresElement || !resultElement) {
+                    console.error('Some DOM elements are missing');
+                    showError('页面元素缺失，请刷新页面重试');
+                    return;
+                }
+
+                titleElement.textContent = '编辑访问令牌';
+                saveButtonElement.textContent = '保存修改';
+
+                // 填充表单数据
+                nameElement.value = token.name;
+                descElement.value = token.description || '';
+
+                // 设置过期时间
+                if (token.expires_at) {
+                    const date = new Date(token.expires_at);
+                    expiresElement.value = date.toISOString().slice(0, 16);
+                } else {
+                    expiresElement.value = '';
+                }
+
+                resultElement.style.display = 'none';
+                console.log('About to show modal');
+                showModal('token-modal');
+                console.log('Modal should be shown');
+            } catch (error) {
+                console.error('获取令牌数据失败:', error);
+                showError('获取令牌数据失败: ' + error.message);
+            }
+        }
+
+        // 保存令牌
+        async function saveToken() {
+            try {
+                const formData = new FormData(document.getElementById('token-form'));
+                const name = formData.get('name').trim();
+                const description = formData.get('description').trim();
+                const expiresAt = formData.get('expires_at');
+
+                if (!name) {
+                    showError('请输入令牌名称');
+                    return;
+                }
+
+                showLoading();
+
+                if (editingTokenId) {
+                    // 更新令牌
+                    const tokenData = {
+                        name,
+                        description,
+                        expires_at: expiresAt || null
+                    };
+
+                    await apiRequest(`/config/proxy/${currentConfigId}/tokens/${editingTokenId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(tokenData)
+                    });
+
+                    showSuccess('令牌更新成功');
+                    closeTokenModal();
+                } else {
+                    // 创建新令牌
+                    const tokenData = {
+                        name,
+                        description,
+                        expires_at: expiresAt || null
+                    };
+
+                    const response = await apiRequest(`/config/proxy/${currentConfigId}/tokens`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(tokenData)
+                    });
+
+                    // 显示生成的令牌
+                    const tokenValue = response.data?.token;
+                    if (tokenValue) {
+                        document.getElementById('generated-token').value = tokenValue;
+                        document.getElementById('token-result').style.display = 'block';
+                        document.getElementById('save-token-btn').style.display = 'none';
+                    }
+
+                    showSuccess('令牌创建成功');
+                }
+
+                // 重新加载令牌列表
+                await loadTokens(currentConfigId);
+            } catch (error) {
+                console.error('保存令牌失败:', error);
+                showError('保存令牌失败: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // 生成模拟令牌值
+        function generateMockToken() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+            let result = '';
+            for (let i = 0; i < 64; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // 复制令牌
+        function copyToken() {
+            console.log('copyToken called');
+
+            const tokenInput = document.getElementById('generated-token');
+            if (!tokenInput) {
+                console.error('Token input element not found');
+                showError('找不到令牌输入框');
+                return;
+            }
+
+            const tokenValue = tokenInput.value;
+            if (!tokenValue) {
+                console.error('Token value is empty');
+                showError('令牌值为空');
+                return;
+            }
+
+            console.log('Copying token value of length:', tokenValue.length);
+
+            // 使用现代的Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(tokenValue).then(() => {
+                    console.log('Token copied successfully using Clipboard API');
+                    showSuccess('令牌已复制到剪贴板');
+                }).catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    fallbackCopyToken(tokenInput, tokenValue);
+                });
+            } else {
+                // 降级到传统方法
+                console.log('Using fallback copy method');
+                fallbackCopyToken(tokenInput, tokenValue);
+            }
+        }
+
+        // 降级复制令牌方法
+        function fallbackCopyToken(tokenInput, tokenValue) {
+            try {
+                tokenInput.select();
+                tokenInput.setSelectionRange(0, 99999); // 移动端兼容
+
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    console.log('Token copied successfully using execCommand');
+                    showSuccess('令牌已复制到剪贴板');
+                } else {
+                    console.error('execCommand copy failed');
+                    showError('复制失败，请手动复制令牌');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                showError('复制失败，请手动复制令牌');
+            }
+        }
+
+        // 从列表复制令牌
+        async function copyTokenFromList(tokenId) {
+            console.log('copyTokenFromList called with tokenId:', tokenId);
+
+            try {
+                // 从服务器获取令牌详情
+                const response = await fetch(`/config/proxy/${currentConfigId}/tokens/${tokenId}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Log-Secret': getAdminSecret(),
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('获取令牌详情失败');
+                }
+
+                const result = await response.json();
+                const tokenValue = result.data?.token_value;
+
+                if (!tokenValue) {
+                    showError('无法获取令牌值，请重新创建令牌。');
+                    return;
+                }
+
+                // 复制令牌值到剪贴板
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(tokenValue);
+                    showSuccess('令牌值已复制到剪贴板！');
+                } else {
+                    fallbackCopy(tokenValue);
+                }
+            } catch (error) {
+                console.error('复制令牌失败:', error);
+                showError('复制失败：' + error.message);
+            }
+        }
+
+        // 降级复制方法
+        function fallbackCopy(text) {
+            try {
+                // 创建临时输入框
+                const tempInput = document.createElement('input');
+                tempInput.value = text;
+                tempInput.style.position = 'absolute';
+                tempInput.style.left = '-9999px';
+                document.body.appendChild(tempInput);
+
+                // 选择并复制
+                tempInput.select();
+                tempInput.setSelectionRange(0, 99999);
+
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempInput);
+
+                if (successful) {
+                    showSuccess('令牌值已复制到剪贴板！');
+                } else {
+                    showError('复制失败，请手动复制令牌值: ' + text);
+                }
+            } catch (err) {
+                console.error('降级复制失败:', err);
+                showError('复制失败：' + err.message);
+            }
+        }
+
+        // 切换令牌状态
+        async function toggleToken(tokenId) {
+            try {
+                // 先获取当前令牌状态
+                const response = await apiRequest(`/config/proxy/${currentConfigId}/tokens`);
+                const tokens = response.data?.tokens || [];
+                const token = tokens.find(t => t.id === tokenId);
+
+                if (!token) {
+                    showError('令牌不存在');
+                    return;
+                }
+
+                // 调用API切换令牌状态
+                const newEnabled = !token.enabled;
+                await apiRequest(`/config/proxy/${currentConfigId}/tokens/${tokenId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...token,
+                        enabled: newEnabled
+                    })
+                });
+
+                // 重新加载令牌列表
+                await loadTokens(currentConfigId);
+                showSuccess(`令牌已${newEnabled ? '启用' : '禁用'}`);
+            } catch (error) {
+                console.error('切换令牌状态失败:', error);
+                showError('切换令牌状态失败: ' + error.message);
+            }
+        }
+
+        // 删除令牌
+        function deleteToken(tokenId, tokenName) {
+            deleteTokenId = tokenId;
+            document.getElementById('delete-token-name').textContent = tokenName;
+            showModal('delete-token-modal');
+        }
+
+        // 确认删除令牌
+        async function confirmDeleteToken() {
+            if (!deleteTokenId) return;
+
+            try {
+                // 调用API删除令牌
+                await apiRequest(`/config/proxy/${currentConfigId}/tokens/${deleteTokenId}`, {
+                    method: 'DELETE'
+                });
+
+                // 重新加载令牌列表
+                await loadTokens(currentConfigId);
+                showSuccess('令牌删除成功');
+            } catch (error) {
+                console.error('删除令牌失败:', error);
+                showError('删除令牌失败: ' + error.message);
+            }
+
+            closeDeleteTokenModal();
+        }
+
+        // 重置令牌表单
+        function resetTokenForm() {
+            document.getElementById('token-form').reset();
+        }
+
+        // 关闭令牌弹框
+        function closeTokenModal() {
+            document.getElementById('token-modal').classList.remove('show');
+            document.getElementById('save-token-btn').style.display = 'inline-block';
+            resetTokenForm();
+        }
+
+        // 关闭令牌删除确认弹框
+        function closeDeleteTokenModal() {
+            document.getElementById('delete-token-modal').classList.remove('show');
+            deleteTokenId = null;
+        }
+
+
+
+        // ==================== 独立Token管理功能 ====================
+
+        // Token管理弹框相关变量
+        let tokenManagementConfigId = null;
+
+        // 打开Token管理弹框
+        function manageTokens(configId) {
+            tokenManagementConfigId = configId;
+            currentConfigId = configId; // 保持兼容性
+
+            // 获取配置信息用于显示标题
+            const config = currentConfigs.find(c => c.id === configId);
+            if (config) {
+                document.getElementById('token-management-title').textContent =
+                    `令牌管理 - ${config.name}`;
+            }
+
+            // 加载Token列表
+            loadTokensForManagement(configId);
+
+            // 显示Token管理弹框
+            showModal('token-management-modal');
+        }
+
+        // 为Token管理弹框加载Token列表
+        async function loadTokensForManagement(configId) {
+            try {
+                // 从API加载真实的令牌数据
+                const response = await apiRequest(`/config/proxy/${configId}/tokens`);
+                const tokens = response.data?.tokens || [];
+
+                // 更新统计信息
+                updateTokenManagementStats(tokens);
+
+                // 渲染令牌列表
+                renderTokenManagementList(tokens);
+            } catch (error) {
+                console.error('加载令牌列表失败:', error);
+                // 如果API调用失败，显示空列表
+                updateTokenManagementStats([]);
+                renderTokenManagementList([]);
+
+                // 显示错误提示
+                showError('加载令牌列表失败: ' + error.message);
+            }
+        }
+
+        // 更新Token管理弹框的统计信息
+        function updateTokenManagementStats(tokens) {
+            const totalCount = tokens.length;
+            const activeCount = tokens.filter(t => t.enabled).length;
+            const totalRequests = tokens.reduce((sum, t) => sum + t.usage_count, 0);
+
+            document.getElementById('token-mgmt-total-count').textContent = totalCount;
+            document.getElementById('token-mgmt-active-count').textContent = activeCount;
+            document.getElementById('token-mgmt-total-requests').textContent = totalRequests.toLocaleString();
+        }
+
+        // 渲染Token管理弹框的令牌列表
+        function renderTokenManagementList(tokens) {
+            const tokenList = document.getElementById('token-mgmt-list');
+
+            if (tokens.length === 0) {
+                tokenList.innerHTML = `
+                    <div class="token-empty">
+                        <span class="empty-icon">🔑</span>
+                        <p>暂无访问令牌</p>
+                        <p class="empty-hint">点击"新增令牌"创建第一个访问令牌</p>
+                    </div>
+                `;
+                return;
+            }
+
+            tokenList.innerHTML = tokens.map(token => `
+                <div class="token-item ${token.enabled ? '' : 'disabled'}">
+                    <div class="token-item-header">
+                        <div class="token-info">
+                            <div class="token-name">${escapeHtml(token.name)}</div>
+                            <div class="token-meta">
+                                <span>创建: ${formatDate(token.created_at)}</span>
+                                <span>使用: ${token.usage_count} 次</span>
+                                ${token.expires_at ? `<span>过期: ${formatDate(token.expires_at)}</span>` : '<span>永不过期</span>'}
+                            </div>
+                        </div>
+                        <div class="token-actions">
+                            <div class="token-status ${getTokenStatus(token)}">
+                                <span class="status-dot"></span>
+                                ${getTokenStatusLabel(token)}
+                            </div>
+                            <button class="btn btn-sm btn-secondary" onclick="copyTokenFromList('${token.id}')" title="复制令牌值">
+                                📋
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="editToken('${token.id}')" title="编辑">
+                                ✏️
+                            </button>
+                            <button class="btn btn-sm ${token.enabled ? 'btn-warning' : 'btn-success'}"
+                                    onclick="toggleToken('${token.id}')"
+                                    title="${token.enabled ? '禁用' : '启用'}">
+                                ${token.enabled ? '⏸️' : '▶️'}
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteToken('${token.id}', '${escapeHtml(token.name)}')" title="删除">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    ${token.description ? `<div class="token-description">${escapeHtml(token.description)}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 关闭Token管理弹框
+        function closeTokenManagementModal() {
+            document.getElementById('token-management-modal').classList.remove('show');
+            tokenManagementConfigId = null;
+            currentConfigId = null; // 清理状态
+        }
+
+        // 重新定义loadTokens函数，只用于Token管理弹框
+        loadTokens = async function(configId) {
+            currentConfigId = configId;
+
+            // 如果Token管理弹框是打开的，更新Token管理弹框
+            if (tokenManagementConfigId === configId &&
+                document.getElementById('token-management-modal').classList.contains('show')) {
+                await loadTokensForManagement(configId);
+            }
+            // 不再需要处理配置弹框中的令牌列表
+        };
+
+        // 格式化日期
+        function formatDate(dateString) {
+            if (!dateString) return '从未';
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // 在弹框关闭事件中添加令牌弹框处理
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                if (e.target.id === 'token-modal') {
+                    closeTokenModal();
+                } else if (e.target.id === 'delete-token-modal') {
+                    closeDeleteTokenModal();
+                }
+            }
+        });
+
+        // ==================== 使用示例功能 ====================
+
+        // 显示使用示例弹框
+        async function showUsageExample(configId) {
+            console.log('showUsageExample called with configId:', configId);
+
+            try {
+                // 获取配置信息
+                const response = await apiRequest('/config/proxy');
+                console.log('API response:', response);
+
+                // 修复数据访问路径：API返回的是 {configs: [...]} 而不是 {data: [...]}
+                const configs = response.configs || response.data || [];
+                console.log('Configs found:', configs.length);
+                console.log('Looking for configId:', configId);
+
+                const config = configs.find(c => c.id === configId);
+                console.log('Found config:', config);
+
+                if (!config) {
+                    console.error('Config not found. Available configs:', configs.map(c => ({id: c.id, name: c.name})));
+                    showError('配置不存在');
+                    return;
+                }
+
+                currentUsageConfig = config;
+
+                // 存储配置信息供后续使用
+                currentUsageConfig = config;
+
+                // 更新代码示例
+                updateUsageExamples(config);
+
+                // 显示弹框
+                showModal('usage-example-modal');
+            } catch (error) {
+                console.error('获取配置信息失败:', error);
+                showError('获取配置信息失败: ' + error.message);
+            }
+        }
+
+        // 更新使用示例代码
+        function updateUsageExamples(config) {
+            const targetUrl = config.target_url || 'https://api.example.com/data';
+
+            // HTTP代理的路径和描述生成
+            let exampleDescription = '访问服务';
+
+            try {
+                const url = new URL(targetUrl);
+
+                // 根据目标URL生成描述
+                if (url.pathname.includes('/chat/completions')) {
+                    exampleDescription = '聊天对话接口';
+                } else if (url.pathname.includes('/api/')) {
+                    exampleDescription = 'API接口调用';
+                } else if (url.pathname.includes('/v1/')) {
+                    exampleDescription = 'API v1接口';
+                } else if (url.pathname && url.pathname !== '/') {
+                    exampleDescription = '访问指定端点';
+                } else {
+                    // 目标URL没有路径，根据域名生成描述
+                    if (targetUrl.includes('api.github.com')) {
+                        exampleDescription = '获取GitHub用户信息';
+                    } else if (targetUrl.includes('httpbin.org')) {
+                        exampleDescription = '测试GET请求';
+                    } else if (targetUrl.includes('jsonplaceholder.typicode.com')) {
+                        exampleDescription = '获取示例文章';
+                    } else {
+                        exampleDescription = '访问首页';
+                    }
+                }
+            } catch (error) {
+                // URL解析失败，使用默认值
+                examplePath = '/';
+                exampleDescription = '访问服务';
+            }
+
+            // 1. HTTP头部认证
+            document.getElementById('curl-header').innerHTML = `curl -H "X-Proxy-Token: YOUR_TOKEN" \\
+     "http://localhost:10805/proxy?target=${encodeURIComponent(targetUrl)}"`;
+
+            // 2. 查询参数认证
+            document.getElementById('curl-query').innerHTML = `curl "http://localhost:10805/proxy?target=${encodeURIComponent(targetUrl)}&token=YOUR_TOKEN"`;
+
+            // 3. JavaScript/Fetch API
+            document.getElementById('js-fetch').innerHTML = `const response = await fetch('http://localhost:10805/proxy?target=${encodeURIComponent(targetUrl)}', {
+    method: 'GET',
+    headers: {
+        'X-Proxy-Token': 'YOUR_TOKEN',
+        'Content-Type': 'application/json'
+    }
+});
+
+const data = await response.json();`;
+
+            // 4. Python Requests
+            document.getElementById('python-requests').innerHTML = `import requests
+
+headers = {
+    'X-Proxy-Token': 'YOUR_TOKEN',
+    'Content-Type': 'application/json'
+}
+
+params = {'target': '${targetUrl}'}
+
+response = requests.get(
+    'http://localhost:10805/proxy',
+    headers=headers,
+    params=params
+)
+
+data = response.json()`;
+        }
+
+        // 复制使用示例代码
+        function copyUsageCode(codeId) {
+            console.log('copyUsageCode called with codeId:', codeId);
+
+            const codeElement = document.getElementById(codeId);
+            if (!codeElement) {
+                showError('代码元素不存在');
+                return;
+            }
+
+            const codeText = codeElement.textContent || codeElement.innerText;
+
+            // 使用现代的Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    showSuccess('代码已复制到剪贴板');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopyUsageCode(codeText);
+                });
+            } else {
+                // 降级到传统方法
+                fallbackCopyUsageCode(codeText);
+            }
+        }
+
+        // 降级复制方法
+        function fallbackCopyUsageCode(text) {
+            try {
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = text;
+                tempTextarea.style.position = 'absolute';
+                tempTextarea.style.left = '-9999px';
+                document.body.appendChild(tempTextarea);
+
+                tempTextarea.select();
+                tempTextarea.setSelectionRange(0, 99999);
+
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+
+                if (successful) {
+                    showSuccess('代码已复制到剪贴板');
+                } else {
+                    showError('复制失败，请手动复制代码');
+                }
+            } catch (err) {
+                console.error('降级复制失败:', err);
+                showError('复制失败，请手动复制代码');
+            }
+        }
+
+        // 关闭使用示例弹框
+        function closeUsageExampleModal() {
+            document.getElementById('usage-example-modal').classList.remove('show');
+            currentUsageConfig = null;
+        }
+
+
+
     </script>
 </body>
 </html>

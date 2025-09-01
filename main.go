@@ -1,15 +1,18 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"privacygateway/internal/accesslog"
 	"privacygateway/internal/config"
-	"privacygateway/internal/handler"
 	"privacygateway/internal/logger"
-	"privacygateway/internal/logviewer"
 	"privacygateway/internal/proxyconfig"
+	"privacygateway/internal/router"
 )
 
 func main() {
@@ -49,69 +52,61 @@ func main() {
 		log.Info("persistent config storage initialized", "file", configFile, "auto_save", autoSave)
 	}
 
+	// 创建并设置路由
+	appRouter := router.NewRouter(cfg, log, recorder, configStorage)
+	appRouter.SetupRoutes()
+
+	// 打印路由信息
+	appRouter.PrintRoutes()
+
+	// 创建HTTP服务器
+	server := &http.Server{
+		Addr:         ":" + cfg.Port,
+		Handler:      nil,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		IdleTimeout:  120 * time.Second,
+	}
+
 	log.Info("starting Privacy Gateway", "port", cfg.Port)
 
-	// 设置路由
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		// 检查是否是子域名代理请求
-		if handler.IsSubdomainProxy(r.Host) {
-			handler.HandleSubdomainProxy(w, r, cfg, log, recorder, configStorage)
-			return
+	// 在goroutine中启动服务器
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Error("server failed to start", "error", err)
+			os.Exit(1)
 		}
-		// 否则处理静态文件
-		handler.Static(w, r, log)
-	})
+	}()
 
-	http.HandleFunc("/proxy", func(w http.ResponseWriter, r *http.Request) {
-		handler.HTTPProxy(w, r, cfg, log, recorder)
-	})
+	// 等待中断信号
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		handler.WebSocket(w, r, cfg, log, recorder)
-	})
+	log.Info("shutting down server...")
 
-	// 代理配置管理API
-	http.HandleFunc("/config/proxy", func(w http.ResponseWriter, r *http.Request) {
-		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
-	})
+	// 创建关闭上下文，30秒超时
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
-	// 配置导入导出API
-	http.HandleFunc("/config/proxy/export", func(w http.ResponseWriter, r *http.Request) {
-		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
-	})
+	// 优雅关闭服务器
+	if err := server.Shutdown(ctx); err != nil {
+		log.Error("server forced to shutdown", "error", err)
+	}
 
-	http.HandleFunc("/config/proxy/import", func(w http.ResponseWriter, r *http.Request) {
-		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
-	})
-
-	// 批量操作API
-	http.HandleFunc("/config/proxy/batch", func(w http.ResponseWriter, r *http.Request) {
-		handler.HandleProxyConfigAPI(w, r, cfg, log, configStorage)
-	})
-
-	// 设置日志查看路由
+	// 清理资源
 	if recorder != nil {
-		// 先验证密钥
-		if _, err := logviewer.CreateAuthenticator(cfg.AdminSecret); err != nil {
-			log.Error("log viewer configuration error", "error", err.Error())
-			log.Info("log viewer disabled", "reason", "invalid secret configuration")
-			// 即使配置错误，也要注册路由来显示错误页面
-			logHandler := logviewer.CreateLogViewHandler(recorder, cfg.AdminSecret, log)
-			http.HandleFunc("/logs", logHandler)
-			http.HandleFunc("/logs/", logHandler)
-		} else {
-			logHandler := logviewer.CreateLogViewHandler(recorder, cfg.AdminSecret, log)
-			http.HandleFunc("/logs", logHandler)
-			http.HandleFunc("/logs/", logHandler)
-			log.Info("log viewer enabled", "path", "/logs")
+		if err := recorder.Close(); err != nil {
+			log.Error("failed to close access log recorder", "error", err)
 		}
-	} else {
-		log.Info("log viewer disabled", "reason", "no secret configured")
 	}
 
-	// 启动服务器
-	err := http.ListenAndServe(":"+cfg.Port, nil)
-	if err != nil {
-		log.Error("server failed to start", "error", err)
+	// 如果配置存储实现了Closer接口，也要关闭它
+	if closer, ok := configStorage.(interface{ Close() error }); ok {
+		if err := closer.Close(); err != nil {
+			log.Error("failed to close config storage", "error", err)
+		}
 	}
+
+	log.Info("server exited gracefully")
 }

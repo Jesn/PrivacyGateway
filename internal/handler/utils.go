@@ -36,7 +36,8 @@ func isCORSHeader(headerKey string) bool {
 	return false
 }
 
-// isAuthorizedForProxy 检查代理访问权限
+// isAuthorizedForProxy 检查代理访问权限（保留向后兼容）
+// 注意：这个函数保留用于向后兼容，新代码应该使用 ProxyAuthenticator
 func isAuthorizedForProxy(r *http.Request, adminSecret string) bool {
 	if adminSecret == "" {
 		return false
@@ -53,6 +54,27 @@ func isAuthorizedForProxy(r *http.Request, adminSecret string) bool {
 	}
 
 	return false
+}
+
+// isAuthorizedForProxyWithToken 检查代理访问权限（支持令牌认证）
+func isAuthorizedForProxyWithToken(r *http.Request, configID string, authenticator *ProxyAuthenticator, adminSecret string) *AuthResult {
+	if authenticator == nil {
+		// 回退到旧的认证方式
+		if isAuthorizedForProxy(r, adminSecret) {
+			return &AuthResult{
+				Authenticated: true,
+				Method:        "admin",
+				ConfigID:      configID,
+			}
+		}
+		return &AuthResult{
+			Authenticated: false,
+			Method:        "none",
+			Error:         "Authentication required",
+		}
+	}
+
+	return authenticator.AuthenticateForProxy(r, configID)
 }
 
 // getClientIP 获取客户端IP地址

@@ -12,6 +12,9 @@ RUN go mod download
 # 复制源代码
 COPY . .
 
+# 创建数据目录
+RUN mkdir -p data
+
 # 构建优化的二进制文件
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -a \
@@ -40,6 +43,7 @@ USER 65534:65534
 # 从构建阶段复制编译好的二进制文件和静态文件
 COPY --from=builder --chown=65534:65534 /app/privacy-gateway .
 COPY --from=builder --chown=65534:65534 /app/index.html .
+COPY --from=builder --chown=65534:65534 /app/data ./data
 
 # 暴露网关将要监听的端口 (默认 10805)
 EXPOSE 10805
@@ -49,6 +53,11 @@ EXPOSE 10805
 ENV GATEWAY_PORT=10805
 ENV SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlation-id,x-country,x-region,x-city"
 
+# 持久化存储配置
+ENV PROXY_CONFIG_PERSIST=true
+ENV PROXY_CONFIG_FILE=/app/data/proxy-configs.json
+ENV PROXY_CONFIG_AUTO_SAVE=true
+
 # 日志相关配置（可选）
 # ENV ADMIN_SECRET=""
 # ENV LOG_MAX_ENTRIES=1000
@@ -57,9 +66,15 @@ ENV SENSITIVE_HEADERS="cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlat
 # ENV LOG_MAX_MEMORY_MB=50.0
 # ENV LOG_RECORD_200=false
 
-# 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD ["/app/privacy-gateway", "--health-check"] || exit 1
+# 代理相关配置（可选）
+# ENV DEFAULT_PROXY=""
+# ENV PROXY_WHITELIST=""
+# ENV ALLOW_PRIVATE_PROXY=false
+
+# 创建数据卷
+VOLUME ["/app/data"]
+
+# 健康检查 - 由于使用Distroless镜像，健康检查需要在docker-compose中配置
 
 # 容器启动时运行的命令
 CMD ["./privacy-gateway"]

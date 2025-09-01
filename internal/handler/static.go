@@ -9,10 +9,7 @@ import (
 
 // Static 处理静态文件请求（主要是index.html和favicon）
 func Static(w http.ResponseWriter, r *http.Request, log *logger.Logger) {
-	// 设置CORS头
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	// 注意：CORS头部已在路由层设置，这里不再重复设置
 
 	// 处理预检请求
 	if r.Method == http.MethodOptions {

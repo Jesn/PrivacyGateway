@@ -68,3 +68,4 @@ coverage.html
 # Air live reload
 tmp/
 privacygateway
+data/proxy-configs.json

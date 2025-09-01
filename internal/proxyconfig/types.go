@@ -7,15 +7,16 @@ import (
 
 // ProxyConfig 代理配置结构
 type ProxyConfig struct {
-	ID        string       `json:"id"`
-	Name      string       `json:"name"`
-	Subdomain string       `json:"subdomain"`
-	TargetURL string       `json:"target_url"`
-	Protocol  string       `json:"protocol"`
-	Enabled   bool         `json:"enabled"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
-	Stats     *ConfigStats `json:"stats,omitempty"`
+	ID           string        `json:"id"`
+	Name         string        `json:"name"`
+	TargetURL    string        `json:"target_url"`
+	Protocol     string        `json:"protocol"`
+	Enabled      bool          `json:"enabled"`
+	CreatedAt    time.Time     `json:"created_at"`
+	UpdatedAt    time.Time     `json:"updated_at"`
+	Stats        *ConfigStats  `json:"stats,omitempty"`
+	AccessTokens []AccessToken `json:"access_tokens,omitempty"` // 访问令牌列表
+	TokenStats   *TokenStats   `json:"token_stats,omitempty"`   // 令牌统计信息
 }
 
 // ConfigStats 配置访问统计
@@ -85,8 +86,6 @@ type ImportResult struct {
 var (
 	ErrConfigNotFound     = errors.New("config not found")
 	ErrInvalidConfigID    = errors.New("invalid config id")
-	ErrDuplicateSubdomain = errors.New("subdomain already exists")
-	ErrInvalidSubdomain   = errors.New("invalid subdomain format")
 	ErrInvalidTargetURL   = errors.New("invalid target url")
 	ErrMaxEntriesExceeded = errors.New("maximum entries exceeded")
 )

@@ -22,10 +22,7 @@ func HandleProxyConfigAPI(w http.ResponseWriter, r *http.Request, cfg *config.Co
 		return
 	}
 
-	// 设置CORS头
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Log-Secret")
+	// 注意：CORS头部已在路由层设置，这里不再重复设置
 
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)

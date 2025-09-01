@@ -252,13 +252,17 @@ func (r *Recorder) extractTargetPath(req *http.Request) string {
 	}
 
 	path := parsed.Path
-	if path == "" {
-		path = "/"
-	}
+	// 不强制添加斜杠，保持用户原始意图
+	// 如果用户配置的是 https://example.com，那么路径就是空的
+	// 如果用户配置的是 https://example.com/，那么路径就是 "/"
 
 	// 包含查询参数
 	if parsed.RawQuery != "" {
-		path += "?" + parsed.RawQuery
+		if path == "" {
+			path = "?" + parsed.RawQuery
+		} else {
+			path += "?" + parsed.RawQuery
+		}
 	}
 
 	return path

@@ -110,17 +110,8 @@ func (ps *PersistentStorage) LoadFromFile() error {
 	defer ps.mutex.Unlock()
 
 	ps.configs = configs
-	ps.rebuildSubdomainIndex()
 
 	return nil
-}
-
-// rebuildSubdomainIndex 重建子域名索引
-func (ps *PersistentStorage) rebuildSubdomainIndex() {
-	ps.subdomains = make(map[string]string)
-	for id, config := range ps.configs {
-		ps.subdomains[config.Subdomain] = id
-	}
 }
 
 // StartAutoSave 启动自动保存
@@ -213,5 +204,65 @@ func (ps *PersistentStorage) Shutdown() error {
 	}
 
 	ps.logger.Info("persistent storage shutdown complete")
+	return nil
+}
+
+// ==================== 令牌管理持久化方法 ====================
+
+// AddToken 添加令牌（重写以支持持久化）
+func (ps *PersistentStorage) AddToken(configID string, token *AccessToken) error {
+	if err := ps.MemoryStorage.AddToken(configID, token); err != nil {
+		return err
+	}
+
+	// 立即保存到文件
+	if err := ps.SaveToFile(); err != nil {
+		ps.logger.Error("failed to save after add token", "error", err, "config_id", configID, "token_id", token.ID)
+		// 不返回错误，因为内存操作已经成功
+	}
+
+	return nil
+}
+
+// UpdateToken 更新令牌（重写以支持持久化）
+func (ps *PersistentStorage) UpdateToken(configID, tokenID string, token *AccessToken) error {
+	if err := ps.MemoryStorage.UpdateToken(configID, tokenID, token); err != nil {
+		return err
+	}
+
+	// 立即保存到文件
+	if err := ps.SaveToFile(); err != nil {
+		ps.logger.Error("failed to save after update token", "error", err, "config_id", configID, "token_id", tokenID)
+		// 不返回错误，因为内存操作已经成功
+	}
+
+	return nil
+}
+
+// DeleteToken 删除令牌（重写以支持持久化）
+func (ps *PersistentStorage) DeleteToken(configID, tokenID string) error {
+	if err := ps.MemoryStorage.DeleteToken(configID, tokenID); err != nil {
+		return err
+	}
+
+	// 立即保存到文件
+	if err := ps.SaveToFile(); err != nil {
+		ps.logger.Error("failed to save after delete token", "error", err, "config_id", configID, "token_id", tokenID)
+		// 不返回错误，因为内存操作已经成功
+	}
+
+	return nil
+}
+
+// UpdateTokenUsage 更新令牌使用统计（重写以支持持久化）
+func (ps *PersistentStorage) UpdateTokenUsage(configID, tokenValue string) error {
+	if err := ps.MemoryStorage.UpdateTokenUsage(configID, tokenValue); err != nil {
+		return err
+	}
+
+	// 令牌使用统计更新频繁，不立即保存，依赖自动保存
+	// 这样可以避免过多的磁盘I/O操作
+	ps.logger.Debug("token usage updated", "config_id", configID)
+
 	return nil
 }

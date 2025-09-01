@@ -16,7 +16,7 @@ func Load() *Config {
 
 	sensitiveHeadersStr := os.Getenv("SENSITIVE_HEADERS")
 	if sensitiveHeadersStr == "" {
-		sensitiveHeadersStr = "cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlation-id,x-country,x-region,x-city"
+		sensitiveHeadersStr = "cf-,x-forwarded,proxy,via,x-request-id,x-trace,x-correlation-id,x-country,x-region,x-city,x-proxy-token,x-log-secret,x-config-id,referer,if-none-match,if-modified-since,if-match,if-unmodified-since,if-range"
 	}
 
 	// 加载默认代理配置
