@@ -1,25 +1,46 @@
 {
-  "0c8b1faf-f444-4ee4-8fc8-dd4a4cd66486": {
-    "id": "0c8b1faf-f444-4ee4-8fc8-dd4a4cd66486",
-    "name": "百度搜索",
-    "subdomain": "baidu",
-    "target_url": "https://baidu.com",
+  "369d16f3-d4c3-4e53-ae73-3fda3f282f6f": {
+    "id": "369d16f3-d4c3-4e53-ae73-3fda3f282f6f",
+    "name": "测试配置",
+    "target_url": "https://httpbin.org/get",
     "protocol": "https",
     "enabled": true,
-    "created_at": "2025-08-29T13:08:06.843323+08:00",
-    "updated_at": "2025-08-29T22:42:35.73023+08:00",
-    "stats": {
-      "request_count": 1,
-      "error_count": 0,
-      "avg_response_time": 548.89625,
-      "last_accessed": "2025-08-29T22:43:11.493485+08:00",
-      "total_bytes": 0
+    "created_at": "2025-09-07T08:57:27.864776+08:00",
+    "updated_at": "2025-09-08T10:04:57.536274+08:00",
+    "access_tokens": [
+      {
+        "id": "4cd15b69-e30e-451d-9016-644ad0858d19",
+        "name": "123",
+        "token_hash": "0fae7db2d9e7fea44ed809c4dd19a6fa3ac072f84c1140d942e10dcd692bc836",
+        "token_value": "xlrahwcC4Xs14J9_r90w_lb-gEExCFESEZmCaMa9fYg=",
+        "created_at": "2025-09-07T12:31:24.092053+08:00",
+        "updated_at": "2025-09-08T10:04:57.53627+08:00",
+        "usage_count": 0,
+        "enabled": true,
+        "created_by": "admin"
+      },
+      {
+        "id": "6112e4fb-6822-4a52-a912-202812f2f916",
+        "name": "aaa",
+        "token_hash": "919a6408e2b96b0225d3bbd6c61c7a44ff602c7e673ecb24797243ea12e3566a",
+        "token_value": "WwlnelVZz1Ko31S9sLR3xxaQVmyi8ak3A35eMi2QygU=",
+        "created_at": "2025-09-07T12:45:34.332158+08:00",
+        "updated_at": "2025-09-07T21:36:31.734798+08:00",
+        "usage_count": 0,
+        "enabled": true,
+        "created_by": "admin"
+      }
+    ],
+    "token_stats": {
+      "total_tokens": 2,
+      "active_tokens": 2,
+      "total_requests": 0,
+      "last_token_used": "0001-01-01T00:00:00Z"
     }
   },
   "523d8ea0-1666-4425-bb3c-5ee14a745c29": {
     "id": "523d8ea0-1666-4425-bb3c-5ee14a745c29",
     "name": "GitHub API测试",
-    "subdomain": "github-api",
     "target_url": "https://api.github.com",
     "protocol": "https",
     "enabled": true,
@@ -63,12 +84,11 @@
   "5aebdf32-75d1-4001-825c-d122cd65b6b8": {
     "id": "5aebdf32-75d1-4001-825c-d122cd65b6b8",
     "name": "tbai",
-    "subdomain": "tbai",
     "target_url": "https://tbai.xin/v1/chat/completions",
     "protocol": "https",
     "enabled": true,
     "created_at": "2025-08-30T21:57:30.521586+08:00",
-    "updated_at": "2025-08-30T22:57:15.994738+08:00",
+    "updated_at": "2025-09-07T13:07:40.186689+08:00",
     "stats": {
       "request_count": 5,
       "error_count": 0,
@@ -100,54 +120,14 @@
         "enabled": true,
         "created_by": "admin",
         "description": "For testing tbai proxy"
-      }
-    ],
-    "token_stats": {
-      "total_tokens": 2,
-      "active_tokens": 2,
-      "total_requests": 18,
-      "last_token_used": "2025-08-30T22:57:15.994738+08:00"
-    }
-  },
-  "5af87de8-1203-498b-92f6-08b2a6676186": {
-    "id": "5af87de8-1203-498b-92f6-08b2a6676186",
-    "name": "github",
-    "subdomain": "git",
-    "target_url": "https://github.com",
-    "protocol": "https",
-    "enabled": true,
-    "created_at": "2025-09-01T13:45:02.969823+08:00",
-    "updated_at": "2025-09-01T13:56:00.559492+08:00",
-    "access_tokens": [
-      {
-        "id": "ae236821-daea-40a3-9f02-0f047ba62be8",
-        "name": "1111",
-        "token_hash": "de2205ca4f21cdbfe5af9693f594c391c150175aae53b71adf939b449bd824ef",
-        "token_value": "BJRvVyTyVI_AlUtxlmVDuvsv8NqDg-t0m0zxirnD9-8=",
-        "created_at": "2025-09-01T13:49:43.603569+08:00",
-        "updated_at": "2025-09-01T13:49:43.603569+08:00",
-        "usage_count": 0,
-        "enabled": true,
-        "created_by": "admin"
       },
       {
-        "id": "57d3e94d-26c5-40d5-bd04-4ed96faabd24",
-        "name": "11112",
-        "token_hash": "8fc856b27c4c7170c76470b4f6029a2f6bd138ce5e0eb6c96784fc54eb7fd434",
-        "token_value": "SjuAfP0NhX-HhlAgbXoUS_d-53f9cpzaaZJHOwmglwA=",
-        "created_at": "2025-09-01T13:50:00.869318+08:00",
-        "updated_at": "2025-09-01T13:50:00.869318+08:00",
-        "usage_count": 0,
-        "enabled": true,
-        "created_by": "admin"
-      },
-      {
-        "id": "de41f217-b92d-4b9c-ad1e-81d6e6ad3c0a",
-        "name": "223",
-        "token_hash": "7dc2dab5af0c634d0547fa4db8e74d3b8bc11c09d5bdd3f78e64f446f728c4aa",
-        "token_value": "tv-DHyo1cSzTiCgTd1DKRNkVJLxw7qx5X1C1goq8OMA=",
-        "created_at": "2025-09-01T13:56:00.559481+08:00",
-        "updated_at": "2025-09-01T13:56:00.559481+08:00",
+        "id": "c443df2a-e7ac-4f5a-8d93-9784939c2a47",
+        "name": "zb",
+        "token_hash": "190866fb170ec1b99f1974a0a5c67bf8c9d5eb529e379b56bd5e0c50d0616d14",
+        "token_value": "-f4w0fuMIwr0LcFA2l5Rd9d9UMYtBxTGQrAhrrEmfqc=",
+        "created_at": "2025-09-07T13:07:40.186671+08:00",
+        "updated_at": "2025-09-07T13:07:40.186671+08:00",
         "usage_count": 0,
         "enabled": true,
         "created_by": "admin"
@@ -156,14 +136,13 @@
     "token_stats": {
       "total_tokens": 3,
       "active_tokens": 3,
-      "total_requests": 0,
-      "last_token_used": "0001-01-01T00:00:00Z"
+      "total_requests": 18,
+      "last_token_used": "2025-08-30T22:57:15.994738+08:00"
     }
   },
   "6946a5ba-2a6c-44c9-8c10-11434a9b0361": {
     "id": "6946a5ba-2a6c-44c9-8c10-11434a9b0361",
     "name": "测试API",
-    "subdomain": "test",
     "target_url": "https://jsonplaceholder.typicode.com",
     "protocol": "https",
     "enabled": true,
@@ -177,10 +156,39 @@
       "total_bytes": 0
     }
   },
+  "8393f561-a5e6-4601-9e72-19cabef1d07c": {
+    "id": "8393f561-a5e6-4601-9e72-19cabef1d07c",
+    "name": "E2E测试配置",
+    "target_url": "https://api.test.com",
+    "protocol": "https",
+    "enabled": true,
+    "created_at": "2025-09-07T00:23:41.202957+08:00",
+    "updated_at": "2025-09-07T00:24:05.463472+08:00",
+    "token_stats": {
+      "total_tokens": 0,
+      "active_tokens": 0,
+      "total_requests": 0,
+      "last_token_used": "0001-01-01T00:00:00Z"
+    }
+  },
+  "a980017d-b8d4-43ff-9651-2fe7fc533b67": {
+    "id": "a980017d-b8d4-43ff-9651-2fe7fc533b67",
+    "name": "测试配置",
+    "target_url": "https://httpbin.org/get",
+    "protocol": "https",
+    "enabled": true,
+    "created_at": "2025-09-07T08:43:00.80613+08:00",
+    "updated_at": "2025-09-07T09:01:51.196135+08:00",
+    "token_stats": {
+      "total_tokens": 0,
+      "active_tokens": 0,
+      "total_requests": 0,
+      "last_token_used": "0001-01-01T00:00:00Z"
+    }
+  },
   "b80ccece-6cf7-4de5-9ac7-cdd47195bb8b": {
     "id": "b80ccece-6cf7-4de5-9ac7-cdd47195bb8b",
     "name": "HTTPBin Get测试",
-    "subdomain": "httpbin-get",
     "target_url": "https://httpbin.org/get",
     "protocol": "https",
     "enabled": true,
@@ -215,10 +223,24 @@
       "last_token_used": "2025-08-30T21:56:34.793649+08:00"
     }
   },
+  "e659cc3f-bd90-4394-847f-37fff6eda44c": {
+    "id": "e659cc3f-bd90-4394-847f-37fff6eda44c",
+    "name": "测试配置",
+    "target_url": "https://httpbin.org/get",
+    "protocol": "https",
+    "enabled": false,
+    "created_at": "2025-09-07T08:44:17.665769+08:00",
+    "updated_at": "2025-09-07T08:44:17.665769+08:00",
+    "token_stats": {
+      "total_tokens": 0,
+      "active_tokens": 0,
+      "total_requests": 0,
+      "last_token_used": "0001-01-01T00:00:00Z"
+    }
+  },
   "eff1fdef-32c3-49e0-9942-bd809fcc1e56": {
     "id": "eff1fdef-32c3-49e0-9942-bd809fcc1e56",
     "name": "HTTPBin测试",
-    "subdomain": "httpbin",
     "target_url": "https://httpbin.org/get",
     "protocol": "https",
     "enabled": true,

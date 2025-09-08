@@ -1,0 +1,192 @@
+{
+  "numTotalTestSuites": 8,
+  "numPassedTestSuites": 8,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 14,
+  "numPassedTests": 14,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "startTime": 1757093159632,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "模块加载"
+          ],
+          "fullName": " 基础功能集成测试 模块加载 应该能够加载验证工具",
+          "status": "passed",
+          "title": "应该能够加载验证工具",
+          "duration": 20,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "模块加载"
+          ],
+          "fullName": " 基础功能集成测试 模块加载 应该能够加载日期工具",
+          "status": "passed",
+          "title": "应该能够加载日期工具",
+          "duration": 13,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "模块加载"
+          ],
+          "fullName": " 基础功能集成测试 模块加载 应该能够加载状态管理器",
+          "status": "passed",
+          "title": "应该能够加载状态管理器",
+          "duration": 8,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "模块加载"
+          ],
+          "fullName": " 基础功能集成测试 模块加载 应该能够加载组件基类",
+          "status": "passed",
+          "title": "应该能够加载组件基类",
+          "duration": 14,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "基础验证功能"
+          ],
+          "fullName": " 基础功能集成测试 基础验证功能 应该正确验证空值",
+          "status": "passed",
+          "title": "应该正确验证空值",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "基础验证功能"
+          ],
+          "fullName": " 基础功能集成测试 基础验证功能 应该正确验证邮箱格式",
+          "status": "passed",
+          "title": "应该正确验证邮箱格式",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "基础验证功能"
+          ],
+          "fullName": " 基础功能集成测试 基础验证功能 应该正确验证URL格式",
+          "status": "passed",
+          "title": "应该正确验证URL格式",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "基础日期功能"
+          ],
+          "fullName": " 基础功能集成测试 基础日期功能 应该正确格式化日期",
+          "status": "passed",
+          "title": "应该正确格式化日期",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "基础日期功能"
+          ],
+          "fullName": " 基础功能集成测试 基础日期功能 应该正确计算相对时间",
+          "status": "passed",
+          "title": "应该正确计算相对时间",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "基础状态管理"
+          ],
+          "fullName": " 基础功能集成测试 基础状态管理 应该支持简单的状态管理",
+          "status": "passed",
+          "title": "应该支持简单的状态管理",
+          "duration": 0,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "DOM操作基础"
+          ],
+          "fullName": " 基础功能集成测试 DOM操作基础 应该支持基础的DOM操作",
+          "status": "passed",
+          "title": "应该支持基础的DOM操作",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "DOM操作基础"
+          ],
+          "fullName": " 基础功能集成测试 DOM操作基础 应该支持元素显示隐藏",
+          "status": "passed",
+          "title": "应该支持元素显示隐藏",
+          "duration": 2,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "错误处理"
+          ],
+          "fullName": " 基础功能集成测试 错误处理 应该正确处理异步错误",
+          "status": "passed",
+          "title": "应该正确处理异步错误",
+          "duration": 1,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": [
+            "",
+            "基础功能集成测试",
+            "错误处理"
+          ],
+          "fullName": " 基础功能集成测试 错误处理 应该正确处理回调错误",
+          "status": "passed",
+          "title": "应该正确处理回调错误",
+          "duration": 17,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1757093160072,
+      "endTime": 1757093160151,
+      "status": "passed",
+      "message": "",
+      "name": "/Users/darren/coding/cnb/PrivacyGateway/frontend/tests/integration/basic.test.js"
+    }
+  ]
+}

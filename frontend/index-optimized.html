@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Gateway - 隐私网关</title>
+
+    <!-- 引入Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- 自定义组件样式 -->
+    <link rel="stylesheet" href="/assets/css/components.css">
+
+    <style>
+        /* 临时样式，后续会移到CSS文件中 */
+        .login-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .message.show {
+            transform: translateX(0);
+        }
+
+        .message.success {
+            background: #10b981;
+        }
+
+        .message.error {
+            background: #ef4444;
+        }
+
+        .message.warning {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 登录页面 -->
+    <div id="login-page" class="login-container min-h-screen flex items-center justify-center p-4">
+        <div class="login-card w-full max-w-md p-8 rounded-2xl shadow-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Privacy Gateway</h1>
+                <p class="text-gray-600">隐私网关管理系统</p>
+            </div>
+
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="admin-secret" class="block text-sm font-medium text-gray-700 mb-2">
+                        管理员密钥
+                    </label>
+                    <input
+                        type="password"
+                        id="admin-secret"
+                        name="secret"
+                        placeholder="请输入管理员密钥"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                    <span class="text-lg">🔑</span> 登录
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-sm text-gray-500">
+                <p>请使用管理员密钥登录系统</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用页面 -->
+    <div id="main-app" class="hidden">
+        <div class="container mx-auto px-4 py-6">
+            <!-- 头部 -->
+            <header>
+                <div class="bg-white rounded-lg shadow-sm mb-6">
+                    <div>
+                        <nav class="flex space-x-8 px-6">
+                            <button class="tab-btn py-4 px-2 border-b-2 font-medium border-transparent text-gray-500" data-tab="overview">
+                                项目概览
+                            </button>
+                            <button class="tab-btn py-4 px-2 border-b-2 hover:text-gray-700 border-indigo-500 text-indigo-600" data-tab="proxy-config">
+                                代理配置
+                            </button>
+                            <button class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="logs">
+                                访问日志
+                            </button>
+                            <div class="flex-1"></div>
+                            <button onclick="authModule.logout()" class="py-4 px-2 text-sm text-gray-500 hover:text-gray-700 ml-auto">
+                                退出登录
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+
+
+
+            <!-- 标签页内容 -->
+            <div class="tab-content">
+                <!-- 概览标签页 -->
+                <div id="overview-tab" class="tab-pane">
+
+
+                    <!-- 系统信息卡片 -->
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">🖥️ 系统信息</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <div class="text-2xl font-bold text-blue-600" id="system-uptime">--</div>
+                                <div class="text-sm text-blue-800">运行时间</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <div class="text-2xl font-bold text-green-600" id="system-version">--</div>
+                                <div class="text-sm text-green-800">系统版本</div>
+                            </div>
+                            <div class="bg-purple-50 rounded-lg p-4">
+                                <div class="text-2xl font-bold text-purple-600" id="system-environment">--</div>
+                                <div class="text-sm text-purple-800">运行环境</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="text-lg font-bold text-gray-600" id="system-current-time">--</div>
+                                <div class="text-sm text-gray-800">当前时间</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 统计数据网格 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- 配置统计 -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">⚙️ 代理配置</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">总配置数</span>
+                                    <span class="text-2xl font-bold text-blue-600" id="configs-total">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">已启用</span>
+                                    <span class="text-xl font-semibold text-green-600" id="configs-enabled">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">已禁用</span>
+                                    <span class="text-xl font-semibold text-red-600" id="configs-disabled">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">最近创建</span>
+                                    <span class="text-xl font-semibold text-purple-600" id="configs-recent">0</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t">
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">协议分布</h4>
+                                <div class="flex justify-center mb-3">
+                                    <div id="protocols-pie-chart" class="w-24 h-24">
+                                        <svg viewBox="0 0 100 100" class="w-full h-full transform -rotate-90">
+                                            <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+                                            <circle id="protocols-pie-segment" cx="50" cy="50" r="40" fill="none" stroke="#3b82f6" stroke-width="8"
+                                                    stroke-dasharray="0 251.2" stroke-linecap="round" class="transition-all duration-500"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div id="protocols-chart" class="space-y-1">
+                                    <div class="text-gray-500 text-center py-2">加载中...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 令牌统计 -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">🔑 访问令牌</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">总令牌数</span>
+                                    <span class="text-2xl font-bold text-blue-600" id="tokens-total">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">活跃令牌</span>
+                                    <span class="text-xl font-semibold text-green-600" id="tokens-active">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">已禁用</span>
+                                    <span class="text-xl font-semibold text-red-600" id="tokens-disabled">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">已过期</span>
+                                    <span class="text-xl font-semibold text-yellow-600" id="tokens-expired">0</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t">
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">令牌状态分布</h4>
+                                <div class="flex justify-center mb-3">
+                                    <div id="tokens-donut-chart" class="w-20 h-20 relative">
+                                        <svg viewBox="0 0 100 100" class="w-full h-full transform -rotate-90">
+                                            <circle cx="50" cy="50" r="35" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+                                            <circle id="tokens-active-segment" cx="50" cy="50" r="35" fill="none" stroke="#10b981" stroke-width="10"
+                                                    stroke-dasharray="0 219.8" stroke-linecap="round" class="transition-all duration-700"/>
+                                            <circle id="tokens-disabled-segment" cx="50" cy="50" r="35" fill="none" stroke="#ef4444" stroke-width="10"
+                                                    stroke-dasharray="0 219.8" stroke-linecap="round" class="transition-all duration-700"/>
+                                            <circle id="tokens-expired-segment" cx="50" cy="50" r="35" fill="none" stroke="#f59e0b" stroke-width="10"
+                                                    stroke-dasharray="0 219.8" stroke-linecap="round" class="transition-all duration-700"/>
+                                        </svg>
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <span id="tokens-center-text" class="text-xs font-bold text-gray-700">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-indigo-600" id="tokens-usage">0</div>
+                                        <div class="text-xs text-gray-600">总使用次数</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-teal-600" id="tokens-recent">0</div>
+                                        <div class="text-xs text-gray-600">24h内使用</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 日志统计 -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 访问日志</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">总日志数</span>
+                                    <span class="text-2xl font-bold text-blue-600" id="logs-total">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">内存使用</span>
+                                    <span class="text-xl font-semibold text-purple-600"><span id="logs-memory">0</span>MB</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">24h内日志</span>
+                                    <span class="text-xl font-semibold text-green-600" id="logs-recent">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">错误率</span>
+                                    <span class="text-xl font-semibold text-red-600"><span id="logs-error-rate">0</span>%</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t">
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">状态码分布</h4>
+                                <div id="status-bar-chart" class="mb-3 h-16 flex items-end justify-center gap-1">
+                                    <div class="flex flex-col items-center">
+                                        <div id="status-2xx-bar" class="w-6 bg-green-500 rounded-t transition-all duration-500" style="height: 0%"></div>
+                                        <span class="text-xs text-gray-600 mt-1">2xx</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div id="status-3xx-bar" class="w-6 bg-blue-500 rounded-t transition-all duration-500" style="height: 0%"></div>
+                                        <span class="text-xs text-gray-600 mt-1">3xx</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div id="status-4xx-bar" class="w-6 bg-yellow-500 rounded-t transition-all duration-500" style="height: 0%"></div>
+                                        <span class="text-xs text-gray-600 mt-1">4xx</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div id="status-5xx-bar" class="w-6 bg-red-500 rounded-t transition-all duration-500" style="height: 0%"></div>
+                                        <span class="text-xs text-gray-600 mt-1">5xx</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-orange-600" id="logs-hourly">0</div>
+                                        <div class="text-xs text-gray-600">1h内请求</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-cyan-600"><span id="logs-avg-response">0</span>ms</div>
+                                        <div class="text-xs text-gray-600">平均响应时间</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 趋势图表区域 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- 请求趋势图 -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">📈 请求趋势</h3>
+                            <div class="h-32 relative">
+                                <svg id="requests-trend-chart" viewBox="0 0 300 100" class="w-full h-full">
+                                    <defs>
+                                        <linearGradient id="requestsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3" />
+                                            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- 网格线 -->
+                                    <g stroke="#e5e7eb" stroke-width="0.5" opacity="0.5">
+                                        <line x1="0" y1="25" x2="300" y2="25"/>
+                                        <line x1="0" y1="50" x2="300" y2="50"/>
+                                        <line x1="0" y1="75" x2="300" y2="75"/>
+                                    </g>
+                                    <!-- 趋势线 -->
+                                    <path id="requests-trend-line" d="" fill="url(#requestsGradient)" stroke="#3b82f6" stroke-width="2" opacity="0"/>
+                                    <path id="requests-trend-stroke" d="" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0"/>
+                                </svg>
+                                <div id="requests-trend-loading" class="absolute inset-0 flex items-center justify-center text-gray-500 text-sm">
+                                    加载中...
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-2">
+                                <span>24小时前</span>
+                                <span>现在</span>
+                            </div>
+                        </div>
+
+                        <!-- 响应时间趋势图 -->
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">⚡ 响应时间趋势</h3>
+                            <div class="h-32 relative">
+                                <svg id="response-time-chart" viewBox="0 0 300 100" class="w-full h-full">
+                                    <defs>
+                                        <linearGradient id="responseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3" />
+                                            <stop offset="100%" style="stop-color:#10b981;stop-opacity:0.1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- 网格线 -->
+                                    <g stroke="#e5e7eb" stroke-width="0.5" opacity="0.5">
+                                        <line x1="0" y1="25" x2="300" y2="25"/>
+                                        <line x1="0" y1="50" x2="300" y2="50"/>
+                                        <line x1="0" y1="75" x2="300" y2="75"/>
+                                    </g>
+                                    <!-- 趋势线 -->
+                                    <path id="response-trend-line" d="" fill="url(#responseGradient)" stroke="#10b981" stroke-width="2" opacity="0"/>
+                                    <path id="response-trend-stroke" d="" fill="none" stroke="#10b981" stroke-width="2" opacity="0"/>
+                                </svg>
+                                <div id="response-trend-loading" class="absolute inset-0 flex items-center justify-center text-gray-500 text-sm">
+                                    加载中...
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-2">
+                                <span>24小时前</span>
+                                <span>现在</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 详细图表区域 -->
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 详细统计图表</h3>
+
+                        <!-- 图表切换标签 -->
+                        <div class="flex border-b border-gray-200 mb-4">
+                            <button id="chart-tab-methods" onclick="businessManager.switchChartTab('methods')"
+                                    class="chart-tab-btn py-2 px-4 border-b-2 border-blue-500 text-blue-600 font-medium text-sm">
+                                HTTP方法分布
+                            </button>
+                            <button id="chart-tab-domains" onclick="businessManager.switchChartTab('domains')"
+                                    class="chart-tab-btn py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm">
+                                域名分布
+                            </button>
+                            <button id="chart-tab-hourly" onclick="businessManager.switchChartTab('hourly')"
+                                    class="chart-tab-btn py-2 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm">
+                                小时分布
+                            </button>
+                        </div>
+
+                        <!-- 图表内容区域 -->
+                        <div class="chart-tab-content">
+                            <!-- HTTP方法分布图表 -->
+                            <div id="methods-chart-tab" class="chart-tab-pane">
+                                <div class="flex justify-center">
+                                    <div id="methods-pie-chart" class="w-48 h-48 relative">
+                                        <svg viewBox="0 0 200 200" class="w-full h-full">
+                                            <g id="methods-pie-segments"></g>
+                                        </svg>
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-gray-700" id="methods-total-count">0</div>
+                                                <div class="text-xs text-gray-500">总请求</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="methods-legend" class="mt-4 flex flex-wrap justify-center gap-4">
+                                    <!-- 图例将通过JavaScript生成 -->
+                                </div>
+                            </div>
+
+                            <!-- 域名分布图表 -->
+                            <div id="domains-chart-tab" class="chart-tab-pane hidden">
+                                <div id="domains-bar-chart" class="h-64">
+                                    <!-- 域名柱状图将通过JavaScript生成 -->
+                                </div>
+                            </div>
+
+                            <!-- 小时分布图表 -->
+                            <div id="hourly-chart-tab" class="chart-tab-pane hidden">
+                                <div id="hourly-bar-chart" class="h-64">
+                                    <!-- 小时分布图将通过JavaScript生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 代理配置标签页 -->
+                <div id="proxy-config-tab" class="tab-pane hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-semibold text-gray-800">代理配置管理</h2>
+                            <div class="flex space-x-2">
+                                <button onclick="businessManager.showAddConfigModal()"
+                                        class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                                    <span>➕</span> 新增配置
+                                </button>
+                                <!-- 批量操作下拉菜单 -->
+                                <div class="relative">
+                                    <button onclick="businessManager.toggleBatchDropdown()"
+                                            class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                                        <span>⚡</span> 批量操作 <span class="ml-1">▼</span>
+                                    </button>
+                                    <div id="batch-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden">
+                                        <div class="py-1">
+                                            <button onclick="businessManager.batchOperation('enable')"
+                                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                <span>▶️</span> 批量启用
+                                            </button>
+                                            <button onclick="businessManager.batchOperation('disable')"
+                                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                <span>⏸️</span> 批量禁用
+                                            </button>
+                                            <button onclick="businessManager.batchOperation('delete')"
+                                                    class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                                <span>🗑️</span> 批量删除
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 导入导出下拉菜单 -->
+                                <div class="relative">
+                                    <button onclick="businessManager.toggleImportExportDropdown()"
+                                            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                                        <span>📁</span> 导入导出 <span class="ml-1">▼</span>
+                                    </button>
+                                    <div id="import-export-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden">
+                                        <div class="py-1">
+                                            <button onclick="businessManager.exportConfigs()"
+                                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                <span>📤</span> 导出配置
+                                            </button>
+                                            <button onclick="businessManager.showImportModal()"
+                                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                <span>📥</span> 导入配置
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 搜索和筛选 -->
+                        <div class="mb-4 flex space-x-4">
+                            <div class="flex-1">
+                                <input type="text" id="config-search" placeholder="搜索配置名称或目标URL..."
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+                            <button onclick="businessManager.searchConfigs()"
+                                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                                搜索
+                            </button>
+                        </div>
+
+                        <!-- 批量操作 -->
+                        <div class="mb-4 flex space-x-2" id="batch-operations" style="display: none;">
+                            <button onclick="businessManager.batchEnableConfigs()"
+                                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
+                                批量启用
+                            </button>
+                            <button onclick="businessManager.batchDisableConfigs()"
+                                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
+                                批量禁用
+                            </button>
+                            <button onclick="businessManager.batchDeleteConfigs()"
+                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                批量删除
+                            </button>
+                        </div>
+
+                        <div id="config-table-container">
+                            <!-- 配置表格 -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <input type="checkbox" id="select-all-configs" class="rounded">
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                名称
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                目标URL
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                状态
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                创建时间
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                请求数
+                                            </th>
+                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                操作
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="config-tbody" class="bg-white divide-y divide-gray-200">
+                                        <!-- 配置行将通过JavaScript动态生成 -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 分页 -->
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="text-sm text-gray-700">
+                                    显示第 <span id="config-start">1</span> 到 <span id="config-end">10</span> 条，
+                                    共 <span id="config-total">0</span> 条记录
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="businessManager.prevConfigPage()"
+                                            id="config-prev-btn"
+                                            class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50">
+                                        上一页
+                                    </button>
+                                    <span class="px-3 py-1 text-sm">
+                                        第 <span id="config-current-page">1</span> / <span id="config-total-pages">1</span> 页
+                                    </span>
+                                    <button onclick="businessManager.nextConfigPage()"
+                                            id="config-next-btn"
+                                            class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50">
+                                        下一页
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 访问日志标签页 -->
+                <div id="logs-tab" class="tab-pane hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-6">📊 访问日志</h2>
+
+                        <!-- 日志统计信息 -->
+                        <div id="log-stats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 hidden">
+                            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-4 rounded-lg">
+                                <div class="text-2xl font-bold mb-1" id="log-total-entries">0</div>
+                                <div class="text-blue-100 text-sm">总日志数</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-500 to-teal-600 text-white p-4 rounded-lg">
+                                <div class="text-2xl font-bold mb-1" id="log-memory-usage">0</div>
+                                <div class="text-green-100 text-sm">内存使用(MB)</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-500 to-pink-600 text-white p-4 rounded-lg">
+                                <div class="text-2xl font-bold mb-1" id="log-cleanup-count">0</div>
+                                <div class="text-purple-100 text-sm">清理次数</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-orange-500 to-red-600 text-white p-4 rounded-lg">
+                                <div class="text-2xl font-bold mb-1" id="log-newest-entry">-</div>
+                                <div class="text-orange-100 text-sm">最新日志</div>
+                            </div>
+                        </div>
+
+                        <!-- 日志过滤器 -->
+                        <div id="log-filters" class="bg-gray-50 rounded-lg p-4 mb-6 hidden">
+                            <!-- 基础筛选 -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <label for="log-filter-method" class="block text-sm font-medium text-gray-700 mb-1">请求方法</label>
+                                    <select id="log-filter-method" onchange="businessManager.filterLogs()"
+                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                        <option value="">全部</option>
+                                        <option value="GET">GET</option>
+                                        <option value="POST">POST</option>
+                                        <option value="PUT">PUT</option>
+                                        <option value="DELETE">DELETE</option>
+                                        <option value="PATCH">PATCH</option>
+                                        <option value="HEAD">HEAD</option>
+                                        <option value="OPTIONS">OPTIONS</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="log-filter-status" class="block text-sm font-medium text-gray-700 mb-1">状态码</label>
+                                    <select id="log-filter-status" onchange="businessManager.filterLogs()"
+                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                        <option value="">全部</option>
+                                        <option value="2xx">2xx 成功</option>
+                                        <option value="3xx">3xx 重定向</option>
+                                        <option value="4xx">4xx 客户端错误</option>
+                                        <option value="5xx">5xx 服务器错误</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="log-filter-domain" class="block text-sm font-medium text-gray-700 mb-1">目标域名</label>
+                                    <input type="text" id="log-filter-domain" placeholder="例如: example.com" onkeyup="businessManager.filterLogs()"
+                                           class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                </div>
+                                <div>
+                                    <label for="log-filter-search" class="block text-sm font-medium text-gray-700 mb-1">搜索</label>
+                                    <input type="text" id="log-filter-search" placeholder="搜索URL、IP等..." onkeyup="businessManager.filterLogs()"
+                                           class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                </div>
+                            </div>
+
+                            <!-- 高级筛选 -->
+                            <div class="border-t border-gray-200 pt-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="text-sm font-medium text-gray-700">高级筛选</h4>
+                                    <button onclick="businessManager.toggleAdvancedFilters()" id="advanced-toggle-btn"
+                                            class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                                        <span>展开</span>
+                                        <svg class="w-4 h-4 transform transition-transform duration-200" id="advanced-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div id="advanced-filters" class="hidden">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                                        <!-- 时间范围筛选 -->
+                                        <div>
+                                            <label for="log-filter-start-time" class="block text-sm font-medium text-gray-700 mb-1">开始时间</label>
+                                            <input type="datetime-local" id="log-filter-start-time" onchange="businessManager.filterLogs()"
+                                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                        </div>
+                                        <div>
+                                            <label for="log-filter-end-time" class="block text-sm font-medium text-gray-700 mb-1">结束时间</label>
+                                            <input type="datetime-local" id="log-filter-end-time" onchange="businessManager.filterLogs()"
+                                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                        </div>
+                                        <div>
+                                            <label for="log-filter-client-ip" class="block text-sm font-medium text-gray-700 mb-1">客户端IP</label>
+                                            <input type="text" id="log-filter-client-ip" placeholder="例如: 192.168.1.1" onkeyup="businessManager.filterLogs()"
+                                                   class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                                        </div>
+                                    </div>
+
+                                    <!-- 快速时间选择 -->
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">快速时间选择</label>
+                                        <div class="flex flex-wrap gap-2">
+                                            <button onclick="businessManager.setQuickTimeFilter('1h')"
+                                                    class="px-3 py-1 text-xs bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                                                最近1小时
+                                            </button>
+                                            <button onclick="businessManager.setQuickTimeFilter('6h')"
+                                                    class="px-3 py-1 text-xs bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                                                最近6小时
+                                            </button>
+                                            <button onclick="businessManager.setQuickTimeFilter('24h')"
+                                                    class="px-3 py-1 text-xs bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                                                最近24小时
+                                            </button>
+                                            <button onclick="businessManager.setQuickTimeFilter('7d')"
+                                                    class="px-3 py-1 text-xs bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                                                最近7天
+                                            </button>
+                                            <button onclick="businessManager.setQuickTimeFilter('30d')"
+                                                    class="px-3 py-1 text-xs bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200">
+                                                最近30天
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 筛选操作 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex space-x-2">
+                                    <button onclick="businessManager.loadLogs()"
+                                            class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md text-sm transition-colors duration-200 flex items-center gap-2">
+                                        <span>🔄</span> 刷新
+                                    </button>
+                                    <button onclick="businessManager.clearLogFilters()"
+                                            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm transition-colors duration-200 flex items-center gap-2">
+                                        <span>🧹</span> 清空筛选
+                                    </button>
+                                    <button onclick="businessManager.saveFilterPreset()"
+                                            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm transition-colors duration-200 flex items-center gap-2">
+                                        <span>💾</span> 保存筛选
+                                    </button>
+                                </div>
+
+                                <!-- 筛选结果统计 -->
+                                <div id="filter-stats" class="text-sm text-gray-600 hidden">
+                                    找到 <span id="filtered-count" class="font-medium text-indigo-600">0</span> 条匹配记录
+                                </div>
+
+                            </div>
+
+                            <!-- 保存的筛选预设 -->
+                            <div id="filter-presets" class="mt-4 pt-4 border-t border-gray-200 hidden">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">筛选预设</label>
+                                <div id="preset-list" class="flex flex-wrap gap-2">
+                                    <!-- 预设按钮将通过JavaScript动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 日志表格 -->
+                        <div id="log-table-container" class="hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">方法</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">类型</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">目标</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态码</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">耗时</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">客户端IP</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">时间</th>
+                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="log-tbody" class="bg-white divide-y divide-gray-200">
+                                        <!-- 日志行将通过JavaScript动态生成 -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- 分页 -->
+                            <div id="log-pagination" class="mt-4 flex items-center justify-between hidden">
+                                <div class="text-sm text-gray-700">
+                                    显示第 <span id="log-start">1</span> 到 <span id="log-end">20</span> 条，
+                                    共 <span id="log-total">0</span> 条记录
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="businessManager.changeLogPage(-1)"
+                                            id="log-prev-btn"
+                                            class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50">
+                                        上一页
+                                    </button>
+                                    <span class="px-3 py-1 text-sm">
+                                        第 <span id="log-current-page">1</span> / <span id="log-total-pages">1</span> 页
+                                    </span>
+                                    <button onclick="businessManager.changeLogPage(1)"
+                                            id="log-next-btn"
+                                            class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50">
+                                        下一页
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 加载状态 -->
+                        <div id="log-loading" class="text-center py-12 text-gray-500 hidden">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mb-4"></div>
+                            <p>加载日志数据中...</p>
+                        </div>
+
+                        <!-- 无数据状态 -->
+                        <div id="log-no-data" class="text-center py-12 text-gray-500">
+                            <div class="text-4xl mb-4">📋</div>
+                            <p class="text-lg mb-2">暂无访问日志</p>
+                            <p class="text-sm">当有代理请求时，日志将显示在这里</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 消息提示容器 -->
+    <div id="message-container"></div>
+
+    <!-- 配置模态框 -->
+    <div id="config-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <!-- 模态框头部 -->
+                <div class="flex items-center justify-between pb-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900" id="config-modal-title">新增代理配置</h3>
+                    <button onclick="businessManager.closeConfigModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- 模态框内容 -->
+                <form id="config-form" class="mt-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- 基本信息 -->
+                        <div class="md:col-span-2">
+                            <h4 class="text-md font-medium text-gray-900 mb-3">基本信息</h4>
+                        </div>
+
+                        <div>
+                            <label for="config-name" class="block text-sm font-medium text-gray-700 mb-1">配置名称 *</label>
+                            <input type="text" id="config-name" name="name" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                   placeholder="请输入配置名称">
+                        </div>
+
+                        <div>
+                            <label for="config-target-url" class="block text-sm font-medium text-gray-700 mb-1">目标URL *</label>
+                            <input type="url" id="config-target-url" name="target_url" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                   placeholder="https://example.com">
+                        </div>
+
+                        <div>
+                            <label for="config-protocol" class="block text-sm font-medium text-gray-700 mb-1">协议</label>
+                            <select id="config-protocol" name="protocol"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="https">HTTPS</option>
+                                <option value="http">HTTP</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" id="config-enabled" name="enabled" checked
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="config-enabled" class="ml-2 block text-sm text-gray-900">启用配置</label>
+                        </div>
+                    </div>
+
+                    <!-- 高级设置 -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-medium text-gray-900 mb-3">高级设置</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="config-timeout" class="block text-sm font-medium text-gray-700 mb-1">超时时间(秒)</label>
+                                <input type="number" id="config-timeout" name="timeout" value="30" min="1" max="300"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+
+                            <div>
+                                <label for="config-max-retries" class="block text-sm font-medium text-gray-700 mb-1">最大重试次数</label>
+                                <input type="number" id="config-max-retries" name="max_retries" value="3" min="0" max="10"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            </div>
+
+                            <div class="flex items-center">
+                                <input type="checkbox" id="config-follow-redirects" name="follow_redirects" checked
+                                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="config-follow-redirects" class="ml-2 block text-sm text-gray-900">跟随重定向</label>
+                            </div>
+
+                            <div class="flex items-center">
+                                <input type="checkbox" id="config-verify-ssl" name="verify_ssl" checked
+                                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="config-verify-ssl" class="ml-2 block text-sm text-gray-900">验证SSL证书</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 模态框底部 -->
+                    <div class="flex items-center justify-end pt-6 border-t mt-6 space-x-3">
+                        <button type="button" onclick="businessManager.closeConfigModal()"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200">
+                            取消
+                        </button>
+                        <button type="button" onclick="businessManager.testConfigInModal()"
+                                class="px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-md transition-colors duration-200">
+                            测试连接
+                        </button>
+                        <button type="submit"
+                                class="px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-md transition-colors duration-200">
+                            保存配置
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认模态框 -->
+    <div id="delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mt-2">确认删除</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">
+                        确定要删除配置 "<span id="delete-config-name" class="font-medium text-gray-900"></span>" 吗？
+                    </p>
+                    <p class="text-sm text-gray-500 mt-1">此操作不可撤销。</p>
+                </div>
+                <div class="flex items-center justify-center pt-4 space-x-3">
+                    <button onclick="businessManager.closeDeleteModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="businessManager.confirmDelete()"
+                            class="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors duration-200">
+                        确认删除
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量操作确认模态框 -->
+    <div id="batch-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-orange-100">
+                    <span class="text-2xl" id="batch-warning-icon">⚡</span>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mt-2" id="batch-modal-title">批量操作确认</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500" id="batch-warning-text">
+                        确定要对选中的配置执行此操作吗？
+                    </p>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-700">已选择 <strong id="selected-count">0</strong> 个配置：</p>
+                        <div class="mt-2 max-h-32 overflow-y-auto bg-gray-50 rounded-md p-2" id="selected-list">
+                            <!-- 选中的配置列表 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center pt-4 space-x-3">
+                    <button onclick="businessManager.closeBatchModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="businessManager.confirmBatchOperation()" id="batch-confirm-btn"
+                            class="px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-md transition-colors duration-200">
+                        确认
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 配置测试结果模态框 -->
+    <div id="test-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <!-- 模态框头部 -->
+                <div class="flex items-center justify-between pb-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">🧪 配置测试结果</h3>
+                    <button onclick="businessManager.closeTestModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- 模态框内容 -->
+                <div class="mt-4">
+                    <!-- 测试配置信息 -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <h4 class="text-md font-medium text-gray-900 mb-3">测试配置</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-600">配置名称:</span>
+                                <span class="ml-2 font-medium" id="test-config-name">-</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">目标URL:</span>
+                                <span class="ml-2 font-medium" id="test-config-target">-</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">协议:</span>
+                                <span class="ml-2 font-medium" id="test-config-protocol">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 测试结果摘要 -->
+                    <div class="bg-white border rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-center mb-4" id="test-result-status">
+                            <div class="flex items-center">
+                                <span class="text-2xl mr-2" id="test-status-icon">⏳</span>
+                                <span class="text-lg font-medium" id="test-status-text">测试中...</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 text-sm" id="test-result-metrics" style="display: none;">
+                            <div class="text-center">
+                                <div class="text-gray-600">响应时间</div>
+                                <div class="text-lg font-semibold text-blue-600" id="test-response-time">-</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-gray-600">状态码</div>
+                                <div class="text-lg font-semibold text-green-600" id="test-status-code">-</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-gray-600">响应大小</div>
+                                <div class="text-lg font-semibold text-purple-600" id="test-response-size">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 测试详情标签页 -->
+                    <div id="test-details" style="display: none;">
+                        <div class="border-b border-gray-200 mb-4">
+                            <nav class="flex space-x-8">
+                                <button class="test-tab-btn py-2 px-1 border-b-2 border-blue-500 text-blue-600 font-medium"
+                                        data-tab="request" onclick="businessManager.switchTestTab('request')">
+                                    请求信息
+                                </button>
+                                <button class="test-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+                                        data-tab="response" onclick="businessManager.switchTestTab('response')">
+                                    响应信息
+                                </button>
+                                <button class="test-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700"
+                                        data-tab="headers" onclick="businessManager.switchTestTab('headers')">
+                                    响应头
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div class="test-tab-content">
+                            <div id="test-request-tab" class="test-tab-pane">
+                                <h5 class="text-md font-medium text-gray-900 mb-2">请求详情</h5>
+                                <div class="bg-gray-100 rounded-md p-3 overflow-x-auto">
+                                    <pre class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono" id="test-request-info"></pre>
+                                </div>
+                            </div>
+
+                            <div id="test-response-tab" class="test-tab-pane hidden">
+                                <h5 class="text-md font-medium text-gray-900 mb-2">响应内容</h5>
+                                <div class="bg-gray-100 rounded-md p-3 overflow-x-auto max-h-64">
+                                    <pre class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono" id="test-response-content"></pre>
+                                </div>
+                            </div>
+
+                            <div id="test-headers-tab" class="test-tab-pane hidden">
+                                <h5 class="text-md font-medium text-gray-900 mb-2">响应头信息</h5>
+                                <div class="bg-gray-100 rounded-md p-3 overflow-x-auto">
+                                    <pre class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono" id="test-response-headers"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模态框底部 -->
+                <div class="flex items-center justify-end pt-6 border-t mt-6 space-x-3">
+                    <button onclick="businessManager.closeTestModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200">
+                        关闭
+                    </button>
+                    <button onclick="businessManager.retestConfig()" id="retest-btn" style="display: none;"
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md transition-colors duration-200 flex items-center gap-2">
+                        <span>🔄</span> 重新测试
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入配置模态框 -->
+    <div id="import-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <!-- 模态框头部 -->
+                <div class="flex items-center justify-between pb-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">📥 导入配置</h3>
+                    <button onclick="businessManager.closeImportModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- 模态框内容 -->
+                <div class="mt-4">
+                    <form id="import-form">
+                        <!-- 文件选择 -->
+                        <div class="mb-4">
+                            <label for="import-file" class="block text-sm font-medium text-gray-700 mb-2">
+                                选择配置文件
+                            </label>
+                            <input type="file" id="import-file" accept=".json" required
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <p class="mt-1 text-sm text-gray-500">请选择之前导出的JSON配置文件</p>
+                        </div>
+
+                        <!-- 导入模式 -->
+                        <div class="mb-4">
+                            <label for="import-mode" class="block text-sm font-medium text-gray-700 mb-2">
+                                导入模式
+                            </label>
+                            <select id="import-mode" name="mode"
+                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                <option value="error">遇到冲突时报错</option>
+                                <option value="skip">跳过冲突的配置</option>
+                                <option value="replace">替换冲突的配置</option>
+                            </select>
+                            <p class="mt-1 text-sm text-gray-500">当配置名称冲突时的处理方式</p>
+                        </div>
+
+                        <!-- 导入预览 -->
+                        <div id="import-preview" class="hidden">
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <h4 class="text-md font-medium text-gray-900 mb-3">预览导入内容</h4>
+
+                                <!-- 统计信息 -->
+                                <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                                    <div>
+                                        <span class="text-gray-600">配置数量:</span>
+                                        <span class="ml-2 font-semibold text-blue-600" id="preview-count">0</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-600">版本:</span>
+                                        <span class="ml-2 font-semibold text-green-600" id="preview-version">-</span>
+                                    </div>
+                                </div>
+
+                                <!-- 配置列表预览 -->
+                                <div class="max-h-48 overflow-y-auto">
+                                    <div class="text-sm text-gray-700">
+                                        <div class="font-medium mb-2">将要导入的配置:</div>
+                                        <div id="preview-list" class="space-y-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 模态框底部 -->
+                <div class="flex items-center justify-end pt-6 border-t mt-6 space-x-3">
+                    <button onclick="businessManager.closeImportModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200">
+                        取消
+                    </button>
+                    <button onclick="businessManager.importConfigs()" id="import-btn" disabled
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md transition-colors duration-200">
+                        导入
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日志详情模态框 -->
+    <div id="log-detail-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-5 mx-auto p-5 border w-11/12 max-w-6xl shadow-lg rounded-md bg-white max-h-screen overflow-y-auto">
+            <div class="mt-3">
+                <!-- 模态框头部 -->
+                <div class="flex items-center justify-between pb-4 border-b">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-lg font-semibold text-gray-900">📋 日志详情</h3>
+
+                    </div>
+                    <button onclick="businessManager.closeLogDetailModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- 模态框内容 -->
+                <div class="mt-4">
+                    <!-- 基本信息 -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-md font-medium text-gray-900">基本信息</h4>
+                            <div class="flex gap-2">
+                                <span id="detail-method-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">-</span>
+                                <span id="detail-status-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">-</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-600">请求ID:</span>
+                                <div id="detail-id" class="font-medium text-gray-900 mt-1 font-mono text-xs">-</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">请求时间:</span>
+                                <div id="detail-time" class="font-medium text-gray-900 mt-1">-</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">处理耗时:</span>
+                                <div id="detail-duration" class="font-medium text-gray-900 mt-1">-</div>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">客户端IP:</span>
+                                <div id="detail-client-ip" class="font-medium text-gray-900 mt-1">-</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-blue-100">
+                            <span class="text-gray-600">目标地址:</span>
+                            <div id="detail-target" class="font-medium text-gray-900 mt-1 break-all bg-white px-3 py-2 rounded border">-</div>
+                        </div>
+                        <div class="mt-3">
+                            <span class="text-gray-600">用户代理:</span>
+                            <div id="detail-user-agent" class="font-medium text-gray-900 mt-1 bg-white px-3 py-2 rounded border text-xs break-all">-</div>
+                        </div>
+                    </div>
+
+                    <!-- 相关日志快速跳转 -->
+                    <div id="related-logs-section" class="bg-yellow-50 rounded-lg p-4 mb-4 hidden">
+                        <h4 class="text-sm font-medium text-gray-700 mb-3">🔗 相关日志</h4>
+                        <div class="flex flex-wrap gap-2" id="related-logs-list">
+                            <!-- 相关日志链接将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 详细信息标签页 -->
+                    <div class="border-b border-gray-200 mb-4">
+                        <nav class="flex space-x-8">
+                            <button class="log-detail-tab-btn py-2 px-1 border-b-2 border-blue-500 text-blue-600 font-medium text-sm"
+                                    data-tab="request" onclick="businessManager.switchLogDetailTab('request')">
+                                📥 请求信息
+                            </button>
+                            <button class="log-detail-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm"
+                                    data-tab="response" onclick="businessManager.switchLogDetailTab('response')">
+                                📤 响应信息
+                            </button>
+                            <button class="log-detail-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm"
+                                    data-tab="headers" onclick="businessManager.switchLogDetailTab('headers')">
+                                📋 请求头
+                            </button>
+                            <button class="log-detail-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm"
+                                    data-tab="curl" onclick="businessManager.switchLogDetailTab('curl')">
+                                💻 cURL命令
+                            </button>
+                            <button class="log-detail-tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 text-sm"
+                                    data-tab="timeline" onclick="businessManager.switchLogDetailTab('timeline')">
+                                ⏱️ 时间线
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="log-detail-tab-content">
+                        <!-- 请求信息标签 -->
+                        <div id="log-detail-request-tab" class="log-detail-tab-pane">
+                            <div class="space-y-4">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="text-sm font-medium text-gray-700 mb-2">请求详情</h5>
+                                    <pre id="detail-request-info" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono">加载中...</pre>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="text-sm font-medium text-gray-700 mb-2">请求体 (如果有)</h5>
+                                    <pre id="detail-request-body" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono">无请求体</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 响应信息标签 -->
+                        <div id="log-detail-response-tab" class="log-detail-tab-pane hidden">
+                            <div class="space-y-4">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="text-sm font-medium text-gray-700 mb-2">响应详情</h5>
+                                    <pre id="detail-response-info" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono">加载中...</pre>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="text-sm font-medium text-gray-700">响应头</h5>
+                                        <button onclick="businessManager.copyResponseHeaders()"
+                                                class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors duration-200">
+                                            📋 复制
+                                        </button>
+                                    </div>
+                                    <pre id="detail-response-headers" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono">无响应头信息</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 请求头标签 -->
+                        <div id="log-detail-headers-tab" class="log-detail-tab-pane hidden">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h5 class="text-sm font-medium text-gray-700">请求头信息</h5>
+                                    <button onclick="businessManager.copyRequestHeaders()"
+                                            class="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs transition-colors duration-200">
+                                        📋 复制
+                                    </button>
+                                </div>
+                                <pre id="detail-headers-info" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono">加载中...</pre>
+                            </div>
+                        </div>
+
+                        <!-- cURL命令标签 -->
+                        <div id="log-detail-curl-tab" class="log-detail-tab-pane hidden">
+                            <div class="space-y-4">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="text-sm font-medium text-gray-700">🎯 直接请求目标服务器</h5>
+                                        <button onclick="businessManager.copyCurlCommand()"
+                                                class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200">
+                                            📋 复制
+                                        </button>
+                                    </div>
+                                    <pre id="detail-curl-command" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono">加载中...</pre>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="text-sm font-medium text-gray-700">🔄 通过代理服务器请求</h5>
+                                        <button onclick="businessManager.copyProxyCurlCommand()"
+                                                class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200">
+                                            📋 复制
+                                        </button>
+                                    </div>
+                                    <pre id="detail-proxy-curl-command" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono">加载中...</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 时间线标签 -->
+                        <div id="log-detail-timeline-tab" class="log-detail-tab-pane hidden">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h5 class="text-sm font-medium text-gray-700 mb-4">请求处理时间线</h5>
+                                <div id="detail-timeline" class="space-y-3">
+                                    <!-- 时间线将通过JavaScript动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 模态框底部 -->
+                <div class="flex items-center justify-end pt-6 border-t mt-6">
+                    <button onclick="businessManager.closeLogDetailModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors duration-200">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 令牌管理弹框 -->
+    <div id="token-management-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-5 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white max-h-screen overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="token-management-title" class="text-lg font-semibold text-gray-900">🔑 令牌管理</h3>
+                <button onclick="businessManager.hideModal('token-management-modal')" class="text-gray-400 hover:text-gray-600">
+                    <span class="sr-only">关闭</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 mb-6">
+                <!-- 统计信息 -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex gap-8">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600" id="token-mgmt-total-count">0</div>
+                            <div class="text-sm text-gray-600">总数</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600" id="token-mgmt-active-count">0</div>
+                            <div class="text-sm text-gray-600">活跃</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600" id="token-mgmt-total-requests">0</div>
+                            <div class="text-sm text-gray-600">总请求</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="businessManager.showTokenUsageExamples(businessManager.currentConfigId)" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                            🚀 使用示例
+                        </button>
+                        <button onclick="businessManager.exportTokens()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            📤 导出
+                        </button>
+                        <button onclick="businessManager.showAddTokenModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            ➕ 新增令牌
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 搜索和批量操作 -->
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <input type="text" id="token-search" placeholder="搜索令牌名称或描述..."
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                               oninput="businessManager.searchTokens(this.value)">
+                    </div>
+                    <div id="token-batch-actions" class="flex gap-2 hidden">
+                        <span class="text-sm text-gray-600 flex items-center">
+                            已选择 <span id="selected-token-count" class="font-semibold mx-1">0</span> 个令牌
+                        </span>
+                        <button onclick="businessManager.batchEnableTokens()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
+                            ✅ 批量启用
+                        </button>
+                        <button onclick="businessManager.batchDisableTokens()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">
+                            ⏸️ 批量禁用
+                        </button>
+                        <button onclick="businessManager.batchDeleteTokens()" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                            🗑️ 批量删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 令牌列表 -->
+            <div class="bg-white rounded-lg border border-gray-200">
+                <!-- 列表头部 -->
+                <div class="border-b border-gray-200 p-4 bg-gray-50">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="select-all-tokens"
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                               onchange="businessManager.toggleSelectAllTokens(this.checked)">
+                        <label for="select-all-tokens" class="text-sm font-medium text-gray-700">全选</label>
+                        <div class="flex-1"></div>
+                        <div class="text-sm text-gray-500">
+                            <span id="token-list-status">令牌列表</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="token-mgmt-list" class="max-h-96 overflow-y-auto">
+                    <div class="text-center py-12 text-gray-500">
+                        <div class="text-4xl mb-4">🔑</div>
+                        <p class="text-lg mb-2">暂无访问令牌</p>
+                        <p class="text-sm">点击"新增令牌"创建第一个访问令牌</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-6">
+                <button onclick="businessManager.hideModal('token-management-modal')" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 令牌创建/编辑弹框 -->
+    <div id="token-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 9999;">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="token-modal-title" class="text-lg font-semibold text-gray-900">🔑 新增访问令牌</h3>
+                <button onclick="businessManager.hideModal('token-modal')" class="text-gray-400 hover:text-gray-600">
+                    <span class="sr-only">关闭</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <form id="token-form" class="space-y-4">
+                <div>
+                    <label for="token-name" class="block text-sm font-medium text-gray-700">令牌名称 *</label>
+                    <input type="text" id="token-name" name="name" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="例如: 移动端API">
+                    <p class="mt-1 text-sm text-gray-500">为令牌设置一个易于识别的名称</p>
+                </div>
+
+                <div>
+                    <label for="token-expires-at" class="block text-sm font-medium text-gray-700">过期时间 (可选)</label>
+                    <input type="datetime-local" id="token-expires-at" name="expires_at"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <p class="mt-1 text-sm text-gray-500">留空表示永不过期</p>
+                </div>
+
+                <div>
+                    <label for="token-description" class="block text-sm font-medium text-gray-700">描述信息</label>
+                    <textarea id="token-description" name="description" rows="3"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="令牌的用途和使用说明"></textarea>
+                </div>
+
+                <!-- 令牌创建成功显示区域 -->
+                <div id="token-result" class="hidden bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h4 class="text-green-800 font-semibold mb-3">🎉 令牌创建成功！</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-green-700">访问令牌</label>
+                            <div class="flex gap-2 mt-1">
+                                <input type="text" id="generated-token" readonly
+                                       class="flex-1 px-3 py-2 bg-white border border-green-300 rounded-md font-mono text-sm">
+                                <button type="button" onclick="businessManager.copyToken()"
+                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                    📋 复制
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-green-100 border border-green-300 rounded p-3">
+                            <span class="text-green-600">✅</span>
+                            <strong class="text-green-800">提示：</strong>
+                            <span class="text-green-700">令牌创建成功！您可以随时从令牌列表中复制此令牌值。</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="businessManager.hideModal('token-modal')" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    取消
+                </button>
+                <button id="save-token-btn" onclick="businessManager.saveToken()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    创建令牌
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 令牌删除确认弹框 -->
+    <div id="delete-token-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 9999;">
+        <div class="relative top-1/3 mx-auto p-5 border w-11/12 max-w-md shadow-lg rounded-md bg-white">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">⚠️ 确认删除令牌</h3>
+                <button onclick="businessManager.hideModal('delete-token-modal')" class="text-gray-400 hover:text-gray-600">
+                    <span class="sr-only">关闭</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div class="flex items-start">
+                    <div class="text-yellow-400 text-xl mr-3">⚠️</div>
+                    <div>
+                        <p class="text-gray-900">确定要删除令牌 "<span id="delete-token-name" class="font-semibold"></span>" 吗？</p>
+                        <p class="text-red-600 text-sm mt-2">删除后使用此令牌的应用将无法访问代理服务！</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button onclick="businessManager.hideModal('delete-token-modal')" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    取消
+                </button>
+                <button onclick="businessManager.confirmDeleteToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    删除令牌
+                </button>
+    <div id="toast" class="message hidden"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入模块化JavaScript -->
+    <script type="module">
+        // 导入核心模块
+        import { authModule } from './assets/js/modules/auth.js';
+        import { DOMUtils } from './assets/js/utils/dom.js';
+        import { componentManager } from './assets/js/utils/ComponentManager.js';
+        import { stateManager } from './assets/js/utils/StateManager.js';
+        import { eventBus } from './assets/js/utils/EventBus.js';
+
+        // 导入API模块
+        import { proxyAPI } from './assets/js/api/proxy.js';
+        import { logsAPI } from './assets/js/api/logs.js';
+        import { tokensAPI } from './assets/js/api/tokens.js';
+
+        // 导入业务管理器
+        import { businessManager } from './assets/js/business/BusinessManager.js';
+
+        // 导入组件
+        import { Modal } from './assets/js/components/Modal.js';
+        import { DataTable } from './assets/js/components/DataTable.js';
+        import { Form } from './assets/js/components/Form.js';
+
+        // 注册组件
+        componentManager.registerBatch({
+            'modal': Modal,
+            'data-table': DataTable,
+            'form': Form
+        });
+
+        // 全局变量，供模板中的onclick使用
+        window.authModule = authModule;
+        window.businessManager = businessManager;
+        window.componentManager = componentManager;
+        window.stateManager = stateManager;
+        window.eventBus = eventBus;
+        window.proxyAPI = proxyAPI;
+        window.logsAPI = logsAPI;
+        window.tokensAPI = tokensAPI;
+
+        // 标签页切换功能 - 使用业务管理器
+        class TabManager {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                // 绑定标签页点击事件（使用 currentTarget/this 确保获取按钮本身）
+                DOMUtils.delegate(document, '.tab-btn', 'click', function(e) {
+                    const tabName = this?.dataset?.tab || (e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.tab);
+                    if (!tabName) return;
+                    // 使用业务管理器处理标签页切换
+                    businessManager.switchTab(tabName);
+                });
+            }
+        }
+
+        // 消息提示功能（连接 eventBus: 'ui:message'）
+        class MessageManager {
+            constructor() {
+                this.ensureContainer();
+                this.init();
+            }
+
+            ensureContainer() {
+                this.container = document.getElementById('message-container');
+                if (!this.container) {
+                    this.container = document.createElement('div');
+                    this.container.id = 'message-container';
+                    this.container.style.position = 'fixed';
+                    this.container.style.top = '20px';
+                    this.container.style.right = '20px';
+                    this.container.style.zIndex = '1000';
+                    document.body.appendChild(this.container);
+                }
+            }
+
+            init() {
+                // 监听全局事件总线消息
+                if (window.eventBus && typeof window.eventBus.on === 'function') {
+                    window.eventBus.on('ui:message', (payload) => {
+                        const { type = 'info', message = '' } = payload || {};
+                        this.show(message, type);
+                    });
+                }
+
+                // 兼容旧的 window 事件
+                window.addEventListener('showMessage', (e) => {
+                    const { message, type } = e.detail || {};
+                    this.show(message, type || 'info');
+                });
+            }
+
+            show(message, type = 'info') {
+                const messageEl = DOMUtils.create('div', {
+                    className: `message ${type}`,
+                    textContent: message
+                });
+
+                this.container.appendChild(messageEl);
+
+                // 显示动画
+                requestAnimationFrame(() => {
+                    messageEl.classList.add('show');
+                });
+
+                // 自动隐藏
+                setTimeout(() => {
+                    messageEl.classList.remove('show');
+                    setTimeout(() => {
+                        if (messageEl.parentNode) {
+                            messageEl.parentNode.removeChild(messageEl);
+                        }
+                    }, 300);
+                }, 1500);
+            }
+        }
+
+        // 初始化应用
+        DOMUtils.ready(() => {
+            console.log('Privacy Gateway Dashboard Loaded (Component System)');
+
+            // 初始化管理器
+            const tabManager = new TabManager();
+            const messageManager = new MessageManager();
+
+            // 启用组件自动清理
+            componentManager.enableAutoCleanup();
+
+            // 自动初始化页面中的组件
+            componentManager.autoInit();
+
+            // 初始化状态管理
+            stateManager.restore(['settings']);
+
+            // 监听认证状态变化
+            stateManager.subscribe('auth', (authState) => {
+                console.log('认证状态变化:', authState);
+            });
+
+            // 全局暴露，供调试使用
+            window.tabManager = tabManager;
+            window.messageManager = messageManager;
+
+            // 调试信息
+            if (window.location.search.includes('debug=true')) {
+                componentManager.debug();
+                stateManager.debug();
+                eventBus.debug();
+            }
+        });
+    </script>
+
+    <!-- 使用示例弹框 -->
+    <div id="usage-example-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-gray-900">🚀 令牌使用示例</h3>
+                <button onclick="businessManager.closeUsageExampleModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="max-h-96 overflow-y-auto">
+                <div class="space-y-6">
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">📋 1. HTTP头部认证</h4>
+                        <p class="text-sm text-gray-600 mb-2">使用X-Proxy-Token头部进行认证</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('curl-header')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="curl-header" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">🌐 2. 查询参数认证</h4>
+                        <p class="text-sm text-gray-600 mb-2">将令牌作为URL查询参数传递</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('curl-query')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="curl-query" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">📝 3. cURL POST请求</h4>
+                        <p class="text-sm text-gray-600 mb-2">发送POST请求数据</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('curl-post')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="curl-post" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">💻 4. JavaScript/Fetch API</h4>
+                        <p class="text-sm text-gray-600 mb-2">在Web应用中使用Fetch API</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('js-fetch')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="js-fetch" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">📦 5. Axios库</h4>
+                        <p class="text-sm text-gray-600 mb-2">使用流行的HTTP客户端库</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('js-axios')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="js-axios" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">🐍 6. Python Requests</h4>
+                        <p class="text-sm text-gray-600 mb-2">在Python应用中使用requests库</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('python-requests')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="python-requests" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">🐍 7. Python httpx (异步)</h4>
+                        <p class="text-sm text-gray-600 mb-2">使用现代异步HTTP客户端</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('python-httpx')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="python-httpx" class="text-xs text-gray-700 whitespace-pre-wrap bg-white p-3 rounded border font-mono"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">🟢 8. Node.js HTTP模块</h4>
+                        <p class="text-sm text-gray-600 mb-2">使用Node.js原生HTTP模块</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('node-http')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="node-http" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">🟢 9. Node.js Axios</h4>
+                        <p class="text-sm text-gray-600 mb-2">在Node.js中使用Axios</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('node-axios')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="node-axios" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="usage-section">
+                        <h4 class="text-md font-semibold text-gray-800 mb-2">🔷 10. Go HTTP客户端</h4>
+                        <p class="text-sm text-gray-600 mb-2">使用Go语言标准库</p>
+                        <div class="relative">
+                            <button onclick="businessManager.copyUsageCode('go-http')"
+                                    class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
+                                📋 复制
+                            </button>
+                            <div class="bg-gray-100 border rounded p-3 pr-16">
+                                <pre id="go-http" class="text-sm text-gray-800 whitespace-pre-wrap"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-6 pt-4 border-t">
+                <div class="flex gap-2">
+                    <button onclick="businessManager.generateTokenUsageReport(businessManager.currentConfigId)"
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
+                        📊 生成使用报告
+                    </button>
+                </div>
+                <button onclick="businessManager.closeUsageExampleModal()"
+                        class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    关闭
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

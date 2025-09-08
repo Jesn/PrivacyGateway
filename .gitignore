@@ -69,3 +69,5 @@ coverage.html
 tmp/
 privacygateway
 data/proxy-configs.json
+frontend/node_modules/**/*
+frontend/playwright-report/*

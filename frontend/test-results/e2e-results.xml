@@ -1,0 +1,1466 @@
+<testsuites id="" name="" tests="80" failures="44" skipped="0" errors="0" time="81.583354">
+<testsuite name="auth.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="chromium" tests="7" failures="2" skipped="0" time="15.986" errors="0">
+<testcase name="认证功能 › 应该显示登录页面" classname="auth.spec.js" time="1.783">
+<failure message="auth.spec.js:13:3 应该显示登录页面" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.js:13:3 › 认证功能 › 应该显示登录页面 ─────────────────────────────────────────────────
+
+    Error: expect.toContainText: Error: strict mode violation: locator('h1') resolved to 2 elements:
+        1) <h1 class="text-3xl font-bold text-gray-800 mb-2">Privacy Gateway</h1> aka getByRole('heading', { name: 'Privacy Gateway' })
+        2) <h1 class="text-2xl font-bold text-gray-800 mb-1">Privacy Gateway</h1> aka locator('#main-app').getByText('Privacy Gateway')
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('h1')
+
+
+      13 |   test('应该显示登录页面', async ({ page }) => {
+      14 |     // 检查登录页面元素
+    > 15 |     await expect(page.locator('h1')).toContainText('Privacy Gateway');
+         |                                      ^
+      16 |     await expect(page.locator('input[name="secret"]')).toBeVisible();
+      17 |     await expect(page.locator('button[type="submit"]')).toBeVisible();
+      18 |     
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/auth.spec.js:15:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该显示登录页面-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该显示登录页面-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/auth-认证功能-应该显示登录页面-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-chromium/video.webm]]
+
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="认证功能 › 应该拒绝无效的密钥" classname="auth.spec.js" time="6.672">
+<failure message="auth.spec.js:23:3 应该拒绝无效的密钥" type="FAILURE">
+<![CDATA[  [chromium] › auth.spec.js:23:3 › 认证功能 › 应该拒绝无效的密钥 ────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('.text-red-500, .error')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.text-red-500, .error')
+
+
+      27 |     
+      28 |     // 等待错误消息出现
+    > 29 |     await expect(page.locator('.text-red-500, .error')).toBeVisible();
+         |                                                         ^
+      30 |     
+      31 |     // 确保仍在登录页面
+      32 |     await expect(page.locator('input[name="secret"]')).toBeVisible();
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/auth.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该拒绝无效的密钥-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该拒绝无效的密钥-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/auth-认证功能-应该拒绝无效的密钥-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-chromium/video.webm]]
+
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="认证功能 › 应该接受有效的密钥并跳转到主页面" classname="auth.spec.js" time="1.931">
+</testcase>
+<testcase name="认证功能 › 应该正确处理会话恢复" classname="auth.spec.js" time="1.981">
+</testcase>
+<testcase name="认证功能 › 应该正确处理退出登录" classname="auth.spec.js" time="1.387">
+</testcase>
+<testcase name="认证功能 › 应该在密钥输入框按回车时提交表单" classname="auth.spec.js" time="1.059">
+</testcase>
+<testcase name="认证功能 › 应该显示加载状态" classname="auth.spec.js" time="1.173">
+</testcase>
+</testsuite>
+<testsuite name="components.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="chromium" tests="9" failures="2" skipped="0" time="31.992" errors="0">
+<testcase name="组件系统测试 › 应该正确显示测试按钮" classname="components.spec.js" time="1.074">
+</testcase>
+<testcase name="组件系统测试 › Modal组件测试" classname="components.spec.js" time="2.06">
+</testcase>
+<testcase name="组件系统测试 › DataTable组件测试" classname="components.spec.js" time="1.444">
+<failure message="components.spec.js:49:3 DataTable组件测试" type="FAILURE">
+<![CDATA[  [chromium] › components.spec.js:49:3 › 组件系统测试 › DataTable组件测试 ────────────────────────────────────
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('table') resolved to 4 elements:
+        1) <table class="data-table">…</table> aka locator('#config-table-container table')
+        2) <table class="data-table">…</table> aka locator('#log-table-container table')
+        3) <table class="data-table">…</table> aka getByText('ID 名称 状态 1 测试配置1 启用 2 测试配置2').first()
+        4) <table class="data-table">…</table> aka getByText('ID 名称 状态 1 测试配置1 启用 2 测试配置2').nth(1)
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('table')
+
+
+      53 |     // 检查Modal和表格是否出现
+      54 |     await expect(page.locator('h3:has-text("DataTable 组件测试")')).toBeVisible();
+    > 55 |     await expect(page.locator('table')).toBeVisible();
+         |                                         ^
+      56 |     
+      57 |     // 检查表格内容
+      58 |     await expect(page.locator('th:has-text("ID")')).toBeVisible();
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/components.spec.js:55:41
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-DataTable组件测试-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-DataTable组件测试-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/components-组件系统测试-DataTable组件测试-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-chromium/video.webm]]
+
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="组件系统测试 › 状态管理测试" classname="components.spec.js" time="12.22">
+<failure message="components.spec.js:82:3 状态管理测试" type="FAILURE">
+<![CDATA[  [chromium] › components.spec.js:82:3 › 组件系统测试 › 状态管理测试 ───────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('text=状态管理测试完成')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('text=状态管理测试完成')
+
+
+       99 |     
+      100 |     // 检查完成消息
+    > 101 |     await expect(page.locator('text=状态管理测试完成')).toBeVisible();
+          |                                                 ^
+      102 |     
+      103 |     // 验证控制台消息（应该有5个计数器变化消息）
+      104 |     expect(consoleMessages.length).toBeGreaterThanOrEqual(5);
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/components.spec.js:101:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-状态管理测试-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-状态管理测试-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/components-组件系统测试-状态管理测试-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|components-组件系统测试-状态管理测试-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|components-组件系统测试-状态管理测试-chromium/video.webm]]
+
+[[ATTACHMENT|components-组件系统测试-状态管理测试-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="组件系统测试 › 标签页切换功能" classname="components.spec.js" time="1.629">
+</testcase>
+<testcase name="组件系统测试 › 消息提示功能" classname="components.spec.js" time="6.541">
+</testcase>
+<testcase name="组件系统测试 › 响应式设计测试" classname="components.spec.js" time="1.965">
+</testcase>
+<testcase name="组件系统测试 › 键盘导航测试" classname="components.spec.js" time="2.405">
+</testcase>
+<testcase name="组件系统测试 › 错误处理测试" classname="components.spec.js" time="2.654">
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="firefox" tests="7" failures="2" skipped="0" time="38.208" errors="0">
+<testcase name="认证功能 › 应该显示登录页面" classname="auth.spec.js" time="6.241">
+<failure message="auth.spec.js:13:3 应该显示登录页面" type="FAILURE">
+<![CDATA[  [firefox] › auth.spec.js:13:3 › 认证功能 › 应该显示登录页面 ──────────────────────────────────────────────────
+
+    Error: expect.toContainText: Error: strict mode violation: locator('h1') resolved to 2 elements:
+        1) <h1 class="text-3xl font-bold text-gray-800 mb-2">Privacy Gateway</h1> aka getByRole('heading', { name: 'Privacy Gateway' })
+        2) <h1 class="text-2xl font-bold text-gray-800 mb-1">Privacy Gateway</h1> aka locator('#main-app').getByText('Privacy Gateway')
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('h1')
+
+
+      13 |   test('应该显示登录页面', async ({ page }) => {
+      14 |     // 检查登录页面元素
+    > 15 |     await expect(page.locator('h1')).toContainText('Privacy Gateway');
+         |                                      ^
+      16 |     await expect(page.locator('input[name="secret"]')).toBeVisible();
+      17 |     await expect(page.locator('button[type="submit"]')).toBeVisible();
+      18 |     
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/auth.spec.js:15:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该显示登录页面-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该显示登录页面-firefox/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/auth-认证功能-应该显示登录页面-firefox/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-firefox/test-failed-1.png]]
+
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-firefox/video.webm]]
+
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-firefox/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="认证功能 › 应该拒绝无效的密钥" classname="auth.spec.js" time="12.507">
+<failure message="auth.spec.js:23:3 应该拒绝无效的密钥" type="FAILURE">
+<![CDATA[  [firefox] › auth.spec.js:23:3 › 认证功能 › 应该拒绝无效的密钥 ─────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('.text-red-500, .error')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.text-red-500, .error')
+
+
+      27 |     
+      28 |     // 等待错误消息出现
+    > 29 |     await expect(page.locator('.text-red-500, .error')).toBeVisible();
+         |                                                         ^
+      30 |     
+      31 |     // 确保仍在登录页面
+      32 |     await expect(page.locator('input[name="secret"]')).toBeVisible();
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/auth.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该拒绝无效的密钥-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该拒绝无效的密钥-firefox/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/auth-认证功能-应该拒绝无效的密钥-firefox/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-firefox/test-failed-1.png]]
+
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-firefox/video.webm]]
+
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-firefox/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="认证功能 › 应该接受有效的密钥并跳转到主页面" classname="auth.spec.js" time="6.836">
+</testcase>
+<testcase name="认证功能 › 应该正确处理会话恢复" classname="auth.spec.js" time="4.126">
+</testcase>
+<testcase name="认证功能 › 应该正确处理退出登录" classname="auth.spec.js" time="2.78">
+</testcase>
+<testcase name="认证功能 › 应该在密钥输入框按回车时提交表单" classname="auth.spec.js" time="3.533">
+</testcase>
+<testcase name="认证功能 › 应该显示加载状态" classname="auth.spec.js" time="2.185">
+</testcase>
+</testsuite>
+<testsuite name="components.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="firefox" tests="9" failures="2" skipped="0" time="44.34" errors="0">
+<testcase name="组件系统测试 › 应该正确显示测试按钮" classname="components.spec.js" time="2.032">
+</testcase>
+<testcase name="组件系统测试 › Modal组件测试" classname="components.spec.js" time="3.774">
+</testcase>
+<testcase name="组件系统测试 › DataTable组件测试" classname="components.spec.js" time="3.896">
+<failure message="components.spec.js:49:3 DataTable组件测试" type="FAILURE">
+<![CDATA[  [firefox] › components.spec.js:49:3 › 组件系统测试 › DataTable组件测试 ─────────────────────────────────────
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('table') resolved to 4 elements:
+        1) <table class="data-table">…</table> aka locator('#config-table-container table')
+        2) <table class="data-table">…</table> aka locator('#log-table-container table')
+        3) <table class="data-table">…</table> aka getByText('ID 名称 状态 1 测试配置1 启用 2 测试配置2').first()
+        4) <table class="data-table">…</table> aka getByText('ID 名称 状态 1 测试配置1 启用 2 测试配置2').nth(1)
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('table')
+
+
+      53 |     // 检查Modal和表格是否出现
+      54 |     await expect(page.locator('h3:has-text("DataTable 组件测试")')).toBeVisible();
+    > 55 |     await expect(page.locator('table')).toBeVisible();
+         |                                         ^
+      56 |     
+      57 |     // 检查表格内容
+      58 |     await expect(page.locator('th:has-text("ID")')).toBeVisible();
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/components.spec.js:55:41
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-DataTable组件测试-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-DataTable组件测试-firefox/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/components-组件系统测试-DataTable组件测试-firefox/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-firefox/test-failed-1.png]]
+
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-firefox/video.webm]]
+
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-firefox/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="组件系统测试 › 状态管理测试" classname="components.spec.js" time="13.313">
+<failure message="components.spec.js:82:3 状态管理测试" type="FAILURE">
+<![CDATA[  [firefox] › components.spec.js:82:3 › 组件系统测试 › 状态管理测试 ────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('text=状态管理测试完成')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('text=状态管理测试完成')
+
+
+       99 |     
+      100 |     // 检查完成消息
+    > 101 |     await expect(page.locator('text=状态管理测试完成')).toBeVisible();
+          |                                                 ^
+      102 |     
+      103 |     // 验证控制台消息（应该有5个计数器变化消息）
+      104 |     expect(consoleMessages.length).toBeGreaterThanOrEqual(5);
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/components.spec.js:101:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-状态管理测试-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-状态管理测试-firefox/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/components-组件系统测试-状态管理测试-firefox/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|components-组件系统测试-状态管理测试-firefox/test-failed-1.png]]
+
+[[ATTACHMENT|components-组件系统测试-状态管理测试-firefox/video.webm]]
+
+[[ATTACHMENT|components-组件系统测试-状态管理测试-firefox/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="组件系统测试 › 标签页切换功能" classname="components.spec.js" time="5.189">
+</testcase>
+<testcase name="组件系统测试 › 消息提示功能" classname="components.spec.js" time="7.605">
+</testcase>
+<testcase name="组件系统测试 › 响应式设计测试" classname="components.spec.js" time="3.645">
+</testcase>
+<testcase name="组件系统测试 › 键盘导航测试" classname="components.spec.js" time="2.876">
+</testcase>
+<testcase name="组件系统测试 › 错误处理测试" classname="components.spec.js" time="2.01">
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="webkit" tests="7" failures="7" skipped="0" time="0.038" errors="0">
+<testcase name="认证功能 › 应该显示登录页面" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:13:3 应该显示登录页面" type="FAILURE">
+<![CDATA[  [webkit] › auth.spec.js:13:3 › 认证功能 › 应该显示登录页面 ───────────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12315
+    [pid=12315][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12356 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12315
+      - [pid=12315][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12356 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12315] <gracefully close start>
+      - [pid=12315] <kill>
+      - [pid=12315] <will force kill>
+      - [pid=12315] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12315] <process did exit: exitCode=138, signal=null>
+      - [pid=12315] starting temporary directories cleanup
+      - [pid=12315] finished temporary directories cleanup
+      - [pid=12315] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该拒绝无效的密钥" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:23:3 应该拒绝无效的密钥" type="FAILURE">
+<![CDATA[  [webkit] › auth.spec.js:23:3 › 认证功能 › 应该拒绝无效的密钥 ──────────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12362
+    [pid=12362][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12368 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12362
+      - [pid=12362][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12368 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12362] <gracefully close start>
+      - [pid=12362] <kill>
+      - [pid=12362] <will force kill>
+      - [pid=12362] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12362] <process did exit: exitCode=138, signal=null>
+      - [pid=12362] starting temporary directories cleanup
+      - [pid=12362] finished temporary directories cleanup
+      - [pid=12362] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该接受有效的密钥并跳转到主页面" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:35:3 应该接受有效的密钥并跳转到主页面" type="FAILURE">
+<![CDATA[  [webkit] › auth.spec.js:35:3 › 认证功能 › 应该接受有效的密钥并跳转到主页面 ───────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12369
+    [pid=12369][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12375 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12369
+      - [pid=12369][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12375 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12369] <gracefully close start>
+      - [pid=12369] <kill>
+      - [pid=12369] <will force kill>
+      - [pid=12369] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12369] <process did exit: exitCode=138, signal=null>
+      - [pid=12369] starting temporary directories cleanup
+      - [pid=12369] finished temporary directories cleanup
+      - [pid=12369] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该正确处理会话恢复" classname="auth.spec.js" time="0.027">
+<failure message="auth.spec.js:56:3 应该正确处理会话恢复" type="FAILURE">
+<![CDATA[  [webkit] › auth.spec.js:56:3 › 认证功能 › 应该正确处理会话恢复 ─────────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12416
+    [pid=12416][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12424 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12416
+      - [pid=12416][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12424 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12416] <gracefully close start>
+      - [pid=12416] <kill>
+      - [pid=12416] <will force kill>
+      - [pid=12416] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12416] <process did exit: exitCode=138, signal=null>
+      - [pid=12416] starting temporary directories cleanup
+      - [pid=12416] finished temporary directories cleanup
+      - [pid=12416] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该正确处理退出登录" classname="auth.spec.js" time="0.001">
+<failure message="auth.spec.js:70:3 应该正确处理退出登录" type="FAILURE">
+<![CDATA[  [webkit] › auth.spec.js:70:3 › 认证功能 › 应该正确处理退出登录 ─────────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12570
+    [pid=12570][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12576 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12570
+      - [pid=12570][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12576 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12570] <gracefully close start>
+      - [pid=12570] <kill>
+      - [pid=12570] <will force kill>
+      - [pid=12570] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12570] <process did exit: exitCode=138, signal=null>
+      - [pid=12570] starting temporary directories cleanup
+      - [pid=12570] finished temporary directories cleanup
+      - [pid=12570] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该在密钥输入框按回车时提交表单" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:88:3 应该在密钥输入框按回车时提交表单" type="FAILURE">
+<![CDATA[  [webkit] › auth.spec.js:88:3 › 认证功能 › 应该在密钥输入框按回车时提交表单 ───────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12577
+    [pid=12577][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12583 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12577
+      - [pid=12577][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12583 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12577] <gracefully close start>
+      - [pid=12577] <kill>
+      - [pid=12577] <will force kill>
+      - [pid=12577] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12577] <process did exit: exitCode=138, signal=null>
+      - [pid=12577] starting temporary directories cleanup
+      - [pid=12577] finished temporary directories cleanup
+      - [pid=12577] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该显示加载状态" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:98:3 应该显示加载状态" type="FAILURE">
+<![CDATA[  [webkit] › auth.spec.js:98:3 › 认证功能 › 应该显示加载状态 ───────────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12586
+    [pid=12586][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12592 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12586
+      - [pid=12586][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12592 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12586] <gracefully close start>
+      - [pid=12586] <kill>
+      - [pid=12586] <will force kill>
+      - [pid=12586] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12586] <process did exit: exitCode=138, signal=null>
+      - [pid=12586] starting temporary directories cleanup
+      - [pid=12586] finished temporary directories cleanup
+      - [pid=12586] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="components.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="webkit" tests="9" failures="9" skipped="0" time="0.023" errors="0">
+<testcase name="组件系统测试 › 应该正确显示测试按钮" classname="components.spec.js" time="0.003">
+<failure message="components.spec.js:16:3 应该正确显示测试按钮" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:16:3 › 组件系统测试 › 应该正确显示测试按钮 ─────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12596
+    [pid=12596][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12602 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12596
+      - [pid=12596][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12602 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12596] <gracefully close start>
+      - [pid=12596] <kill>
+      - [pid=12596] <will force kill>
+      - [pid=12596] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12596] <process did exit: exitCode=138, signal=null>
+      - [pid=12596] starting temporary directories cleanup
+      - [pid=12596] finished temporary directories cleanup
+      - [pid=12596] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › Modal组件测试" classname="components.spec.js" time="0.005">
+<failure message="components.spec.js:24:3 Modal组件测试" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:24:3 › 组件系统测试 › Modal组件测试 ──────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12604
+    [pid=12604][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12611 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12604
+      - [pid=12604][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12611 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12604] <gracefully close start>
+      - [pid=12604] <kill>
+      - [pid=12604] <will force kill>
+      - [pid=12604] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12604] <process did exit: exitCode=138, signal=null>
+      - [pid=12604] starting temporary directories cleanup
+      - [pid=12604] finished temporary directories cleanup
+      - [pid=12604] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › DataTable组件测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:49:3 DataTable组件测试" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:49:3 › 组件系统测试 › DataTable组件测试 ──────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12612
+    [pid=12612][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12618 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12612
+      - [pid=12612][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12618 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12612] <gracefully close start>
+      - [pid=12612] <kill>
+      - [pid=12612] <will force kill>
+      - [pid=12612] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12612] <process did exit: exitCode=138, signal=null>
+      - [pid=12612] starting temporary directories cleanup
+      - [pid=12612] finished temporary directories cleanup
+      - [pid=12612] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 状态管理测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:82:3 状态管理测试" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:82:3 › 组件系统测试 › 状态管理测试 ─────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12620
+    [pid=12620][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12626 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12620
+      - [pid=12620][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12626 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12620] <gracefully close start>
+      - [pid=12620] <kill>
+      - [pid=12620] <will force kill>
+      - [pid=12620] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12620] <process did exit: exitCode=138, signal=null>
+      - [pid=12620] starting temporary directories cleanup
+      - [pid=12620] finished temporary directories cleanup
+      - [pid=12620] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 标签页切换功能" classname="components.spec.js" time="0.003">
+<failure message="components.spec.js:107:3 标签页切换功能" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:107:3 › 组件系统测试 › 标签页切换功能 ───────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12630
+    [pid=12630][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12636 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12630
+      - [pid=12630][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12636 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12630] <gracefully close start>
+      - [pid=12630] <kill>
+      - [pid=12630] <will force kill>
+      - [pid=12630] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12630] <process did exit: exitCode=138, signal=null>
+      - [pid=12630] starting temporary directories cleanup
+      - [pid=12630] finished temporary directories cleanup
+      - [pid=12630] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 消息提示功能" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:131:3 消息提示功能" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:131:3 › 组件系统测试 › 消息提示功能 ────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12654
+    [pid=12654][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12660 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12654
+      - [pid=12654][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12660 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12654] <gracefully close start>
+      - [pid=12654] <kill>
+      - [pid=12654] <will force kill>
+      - [pid=12654] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12654] <process did exit: exitCode=138, signal=null>
+      - [pid=12654] starting temporary directories cleanup
+      - [pid=12654] finished temporary directories cleanup
+      - [pid=12654] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 响应式设计测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:150:3 响应式设计测试" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:150:3 › 组件系统测试 › 响应式设计测试 ───────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12678
+    [pid=12678][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12684 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12678
+      - [pid=12678][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12684 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12678] <gracefully close start>
+      - [pid=12678] <kill>
+      - [pid=12678] <will force kill>
+      - [pid=12678] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12678] <process did exit: exitCode=138, signal=null>
+      - [pid=12678] starting temporary directories cleanup
+      - [pid=12678] finished temporary directories cleanup
+      - [pid=12678] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 键盘导航测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:168:3 键盘导航测试" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:168:3 › 组件系统测试 › 键盘导航测试 ────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12686
+    [pid=12686][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12692 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12686
+      - [pid=12686][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12692 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12686] <gracefully close start>
+      - [pid=12686] <kill>
+      - [pid=12686] <will force kill>
+      - [pid=12686] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12686] <process did exit: exitCode=138, signal=null>
+      - [pid=12686] starting temporary directories cleanup
+      - [pid=12686] finished temporary directories cleanup
+      - [pid=12686] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 错误处理测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:184:3 错误处理测试" type="FAILURE">
+<![CDATA[  [webkit] › components.spec.js:184:3 › 组件系统测试 › 错误处理测试 ────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=12695
+    [pid=12695][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12701 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=12695
+      - [pid=12695][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 12701 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=12695] <gracefully close start>
+      - [pid=12695] <kill>
+      - [pid=12695] <will force kill>
+      - [pid=12695] exception while trying to kill process: Error: kill ESRCH
+      - [pid=12695] <process did exit: exitCode=138, signal=null>
+      - [pid=12695] starting temporary directories cleanup
+      - [pid=12695] finished temporary directories cleanup
+      - [pid=12695] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="Mobile Chrome" tests="7" failures="2" skipped="0" time="17.165" errors="0">
+<testcase name="认证功能 › 应该显示登录页面" classname="auth.spec.js" time="1.935">
+<failure message="auth.spec.js:13:3 应该显示登录页面" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › auth.spec.js:13:3 › 认证功能 › 应该显示登录页面 ────────────────────────────────────────────
+
+    Error: expect.toContainText: Error: strict mode violation: locator('h1') resolved to 2 elements:
+        1) <h1 class="text-3xl font-bold text-gray-800 mb-2">Privacy Gateway</h1> aka getByRole('heading', { name: 'Privacy Gateway' })
+        2) <h1 class="text-2xl font-bold text-gray-800 mb-1">Privacy Gateway</h1> aka locator('#main-app').getByText('Privacy Gateway')
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('h1')
+
+
+      13 |   test('应该显示登录页面', async ({ page }) => {
+      14 |     // 检查登录页面元素
+    > 15 |     await expect(page.locator('h1')).toContainText('Privacy Gateway');
+         |                                      ^
+      16 |     await expect(page.locator('input[name="secret"]')).toBeVisible();
+      17 |     await expect(page.locator('button[type="submit"]')).toBeVisible();
+      18 |     
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/auth.spec.js:15:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该显示登录页面-Mobile-Chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该显示登录页面-Mobile-Chrome/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/auth-认证功能-应该显示登录页面-Mobile-Chrome/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-Mobile-Chrome/test-failed-1.png]]
+
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-Mobile-Chrome/video.webm]]
+
+[[ATTACHMENT|auth-认证功能-应该显示登录页面-Mobile-Chrome/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="认证功能 › 应该拒绝无效的密钥" classname="auth.spec.js" time="7.101">
+<failure message="auth.spec.js:23:3 应该拒绝无效的密钥" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › auth.spec.js:23:3 › 认证功能 › 应该拒绝无效的密钥 ───────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('.text-red-500, .error')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.text-red-500, .error')
+
+
+      27 |     
+      28 |     // 等待错误消息出现
+    > 29 |     await expect(page.locator('.text-red-500, .error')).toBeVisible();
+         |                                                         ^
+      30 |     
+      31 |     // 确保仍在登录页面
+      32 |     await expect(page.locator('input[name="secret"]')).toBeVisible();
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/auth.spec.js:29:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该拒绝无效的密钥-Mobile-Chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/auth-认证功能-应该拒绝无效的密钥-Mobile-Chrome/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/auth-认证功能-应该拒绝无效的密钥-Mobile-Chrome/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-Mobile-Chrome/test-failed-1.png]]
+
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-Mobile-Chrome/video.webm]]
+
+[[ATTACHMENT|auth-认证功能-应该拒绝无效的密钥-Mobile-Chrome/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="认证功能 › 应该接受有效的密钥并跳转到主页面" classname="auth.spec.js" time="1.892">
+</testcase>
+<testcase name="认证功能 › 应该正确处理会话恢复" classname="auth.spec.js" time="1.628">
+</testcase>
+<testcase name="认证功能 › 应该正确处理退出登录" classname="auth.spec.js" time="2.058">
+</testcase>
+<testcase name="认证功能 › 应该在密钥输入框按回车时提交表单" classname="auth.spec.js" time="1.117">
+</testcase>
+<testcase name="认证功能 › 应该显示加载状态" classname="auth.spec.js" time="1.434">
+</testcase>
+</testsuite>
+<testsuite name="components.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="Mobile Chrome" tests="9" failures="2" skipped="0" time="31.187" errors="0">
+<testcase name="组件系统测试 › 应该正确显示测试按钮" classname="components.spec.js" time="1.42">
+</testcase>
+<testcase name="组件系统测试 › Modal组件测试" classname="components.spec.js" time="2.619">
+</testcase>
+<testcase name="组件系统测试 › DataTable组件测试" classname="components.spec.js" time="1.93">
+<failure message="components.spec.js:49:3 DataTable组件测试" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › components.spec.js:49:3 › 组件系统测试 › DataTable组件测试 ───────────────────────────────
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('table') resolved to 4 elements:
+        1) <table class="data-table">…</table> aka locator('#config-table-container table')
+        2) <table class="data-table">…</table> aka locator('#log-table-container table')
+        3) <table class="data-table">…</table> aka getByText('ID 名称 状态 1 测试配置1 启用 2 测试配置2').first()
+        4) <table class="data-table">…</table> aka getByText('ID 名称 状态 1 测试配置1 启用 2 测试配置2').nth(1)
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('table')
+
+
+      53 |     // 检查Modal和表格是否出现
+      54 |     await expect(page.locator('h3:has-text("DataTable 组件测试")')).toBeVisible();
+    > 55 |     await expect(page.locator('table')).toBeVisible();
+         |                                         ^
+      56 |     
+      57 |     // 检查表格内容
+      58 |     await expect(page.locator('th:has-text("ID")')).toBeVisible();
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/components.spec.js:55:41
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-DataTable组件测试-Mobile-Chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-DataTable组件测试-Mobile-Chrome/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/components-组件系统测试-DataTable组件测试-Mobile-Chrome/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-Mobile-Chrome/test-failed-1.png]]
+
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-Mobile-Chrome/video.webm]]
+
+[[ATTACHMENT|components-组件系统测试-DataTable组件测试-Mobile-Chrome/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="组件系统测试 › 状态管理测试" classname="components.spec.js" time="13.156">
+<failure message="components.spec.js:82:3 状态管理测试" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › components.spec.js:82:3 › 组件系统测试 › 状态管理测试 ──────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('text=状态管理测试完成')
+    Expected: visible
+    Received: <element(s) not found>
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('text=状态管理测试完成')
+
+
+       99 |     
+      100 |     // 检查完成消息
+    > 101 |     await expect(page.locator('text=状态管理测试完成')).toBeVisible();
+          |                                                 ^
+      102 |     
+      103 |     // 验证控制台消息（应该有5个计数器变化消息）
+      104 |     expect(consoleMessages.length).toBeGreaterThanOrEqual(5);
+        at /Users/darren/coding/cnb/PrivacyGateway/frontend/tests/e2e/components.spec.js:101:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-状态管理测试-Mobile-Chrome/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/components-组件系统测试-状态管理测试-Mobile-Chrome/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/components-组件系统测试-状态管理测试-Mobile-Chrome/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|components-组件系统测试-状态管理测试-Mobile-Chrome/test-failed-1.png]]
+
+[[ATTACHMENT|components-组件系统测试-状态管理测试-Mobile-Chrome/video.webm]]
+
+[[ATTACHMENT|components-组件系统测试-状态管理测试-Mobile-Chrome/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="组件系统测试 › 标签页切换功能" classname="components.spec.js" time="1.56">
+</testcase>
+<testcase name="组件系统测试 › 消息提示功能" classname="components.spec.js" time="6.142">
+</testcase>
+<testcase name="组件系统测试 › 响应式设计测试" classname="components.spec.js" time="1.402">
+</testcase>
+<testcase name="组件系统测试 › 键盘导航测试" classname="components.spec.js" time="1.665">
+</testcase>
+<testcase name="组件系统测试 › 错误处理测试" classname="components.spec.js" time="1.293">
+</testcase>
+</testsuite>
+<testsuite name="auth.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="Mobile Safari" tests="7" failures="7" skipped="0" time="0.014" errors="0">
+<testcase name="认证功能 › 应该显示登录页面" classname="auth.spec.js" time="0.001">
+<failure message="auth.spec.js:13:3 应该显示登录页面" type="FAILURE">
+<![CDATA[  [Mobile Safari] › auth.spec.js:13:3 › 认证功能 › 应该显示登录页面 ────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13065
+    [pid=13065][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13071 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13065
+      - [pid=13065][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13071 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13065] <gracefully close start>
+      - [pid=13065] <kill>
+      - [pid=13065] <will force kill>
+      - [pid=13065] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13065] <process did exit: exitCode=138, signal=null>
+      - [pid=13065] starting temporary directories cleanup
+      - [pid=13065] finished temporary directories cleanup
+      - [pid=13065] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该拒绝无效的密钥" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:23:3 应该拒绝无效的密钥" type="FAILURE">
+<![CDATA[  [Mobile Safari] › auth.spec.js:23:3 › 认证功能 › 应该拒绝无效的密钥 ───────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13073
+    [pid=13073][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13080 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13073
+      - [pid=13073][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13080 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13073] <gracefully close start>
+      - [pid=13073] <kill>
+      - [pid=13073] <will force kill>
+      - [pid=13073] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13073] <process did exit: exitCode=138, signal=null>
+      - [pid=13073] starting temporary directories cleanup
+      - [pid=13073] finished temporary directories cleanup
+      - [pid=13073] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该接受有效的密钥并跳转到主页面" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:35:3 应该接受有效的密钥并跳转到主页面" type="FAILURE">
+<![CDATA[  [Mobile Safari] › auth.spec.js:35:3 › 认证功能 › 应该接受有效的密钥并跳转到主页面 ────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13088
+    [pid=13088][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13094 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13088
+      - [pid=13088][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13094 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13088] <gracefully close start>
+      - [pid=13088] <kill>
+      - [pid=13088] <will force kill>
+      - [pid=13088] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13088] <process did exit: exitCode=138, signal=null>
+      - [pid=13088] starting temporary directories cleanup
+      - [pid=13088] finished temporary directories cleanup
+      - [pid=13088] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该正确处理会话恢复" classname="auth.spec.js" time="0.003">
+<failure message="auth.spec.js:56:3 应该正确处理会话恢复" type="FAILURE">
+<![CDATA[  [Mobile Safari] › auth.spec.js:56:3 › 认证功能 › 应该正确处理会话恢复 ──────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13095
+    [pid=13095][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13101 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13095
+      - [pid=13095][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13101 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13095] <gracefully close start>
+      - [pid=13095] <kill>
+      - [pid=13095] <will force kill>
+      - [pid=13095] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13095] <process did exit: exitCode=138, signal=null>
+      - [pid=13095] starting temporary directories cleanup
+      - [pid=13095] finished temporary directories cleanup
+      - [pid=13095] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该正确处理退出登录" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:70:3 应该正确处理退出登录" type="FAILURE">
+<![CDATA[  [Mobile Safari] › auth.spec.js:70:3 › 认证功能 › 应该正确处理退出登录 ──────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13122
+    [pid=13122][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13134 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13122
+      - [pid=13122][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13134 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13122] <gracefully close start>
+      - [pid=13122] <kill>
+      - [pid=13122] <will force kill>
+      - [pid=13122] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13122] <process did exit: exitCode=138, signal=null>
+      - [pid=13122] starting temporary directories cleanup
+      - [pid=13122] finished temporary directories cleanup
+      - [pid=13122] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该在密钥输入框按回车时提交表单" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:88:3 应该在密钥输入框按回车时提交表单" type="FAILURE">
+<![CDATA[  [Mobile Safari] › auth.spec.js:88:3 › 认证功能 › 应该在密钥输入框按回车时提交表单 ────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13121
+    [pid=13121][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13132 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13121
+      - [pid=13121][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13132 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13121] <gracefully close start>
+      - [pid=13121] <kill>
+      - [pid=13121] <will force kill>
+      - [pid=13121] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13121] <process did exit: exitCode=138, signal=null>
+      - [pid=13121] starting temporary directories cleanup
+      - [pid=13121] finished temporary directories cleanup
+      - [pid=13121] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="认证功能 › 应该显示加载状态" classname="auth.spec.js" time="0.002">
+<failure message="auth.spec.js:98:3 应该显示加载状态" type="FAILURE">
+<![CDATA[  [Mobile Safari] › auth.spec.js:98:3 › 认证功能 › 应该显示加载状态 ────────────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13135
+    [pid=13135][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13142 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13135
+      - [pid=13135][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13142 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13135] <gracefully close start>
+      - [pid=13135] <kill>
+      - [pid=13135] <will force kill>
+      - [pid=13135] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13135] <process did exit: exitCode=138, signal=null>
+      - [pid=13135] starting temporary directories cleanup
+      - [pid=13135] finished temporary directories cleanup
+      - [pid=13135] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="components.spec.js" timestamp="2025-09-05T17:39:27.037Z" hostname="Mobile Safari" tests="9" failures="9" skipped="0" time="0.036" errors="0">
+<testcase name="组件系统测试 › 应该正确显示测试按钮" classname="components.spec.js" time="0.015">
+<failure message="components.spec.js:16:3 应该正确显示测试按钮" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:16:3 › 组件系统测试 › 应该正确显示测试按钮 ──────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13168
+    [pid=13168][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13176 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13168
+      - [pid=13168][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13176 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13168] <gracefully close start>
+      - [pid=13168] <kill>
+      - [pid=13168] <will force kill>
+      - [pid=13168] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13168] <process did exit: exitCode=138, signal=null>
+      - [pid=13168] starting temporary directories cleanup
+      - [pid=13168] finished temporary directories cleanup
+      - [pid=13168] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › Modal组件测试" classname="components.spec.js" time="0.008">
+<failure message="components.spec.js:24:3 Modal组件测试" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:24:3 › 组件系统测试 › Modal组件测试 ───────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13227
+    [pid=13227][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13237 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13227
+      - [pid=13227][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13237 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13227] <gracefully close start>
+      - [pid=13227] <kill>
+      - [pid=13227] <will force kill>
+      - [pid=13227] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13227] <process did exit: exitCode=138, signal=null>
+      - [pid=13227] starting temporary directories cleanup
+      - [pid=13227] finished temporary directories cleanup
+      - [pid=13227] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › DataTable组件测试" classname="components.spec.js" time="0.003">
+<failure message="components.spec.js:49:3 DataTable组件测试" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:49:3 › 组件系统测试 › DataTable组件测试 ───────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13239
+    [pid=13239][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13245 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13239
+      - [pid=13239][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13245 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13239] <gracefully close start>
+      - [pid=13239] <kill>
+      - [pid=13239] <will force kill>
+      - [pid=13239] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13239] <process did exit: exitCode=138, signal=null>
+      - [pid=13239] starting temporary directories cleanup
+      - [pid=13239] finished temporary directories cleanup
+      - [pid=13239] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 状态管理测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:82:3 状态管理测试" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:82:3 › 组件系统测试 › 状态管理测试 ──────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13248
+    [pid=13248][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13254 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13248
+      - [pid=13248][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13254 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13248] <gracefully close start>
+      - [pid=13248] <kill>
+      - [pid=13248] <will force kill>
+      - [pid=13248] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13248] <process did exit: exitCode=138, signal=null>
+      - [pid=13248] starting temporary directories cleanup
+      - [pid=13248] finished temporary directories cleanup
+      - [pid=13248] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 标签页切换功能" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:107:3 标签页切换功能" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:107:3 › 组件系统测试 › 标签页切换功能 ────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13255
+    [pid=13255][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13261 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13255
+      - [pid=13255][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13261 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13255] <gracefully close start>
+      - [pid=13255] <kill>
+      - [pid=13255] <will force kill>
+      - [pid=13255] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13255] <process did exit: exitCode=138, signal=null>
+      - [pid=13255] starting temporary directories cleanup
+      - [pid=13255] finished temporary directories cleanup
+      - [pid=13255] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 消息提示功能" classname="components.spec.js" time="0.001">
+<failure message="components.spec.js:131:3 消息提示功能" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:131:3 › 组件系统测试 › 消息提示功能 ─────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13263
+    [pid=13263][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13269 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13263
+      - [pid=13263][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13269 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13263] <gracefully close start>
+      - [pid=13263] <kill>
+      - [pid=13263] <will force kill>
+      - [pid=13263] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13263] <process did exit: exitCode=138, signal=null>
+      - [pid=13263] starting temporary directories cleanup
+      - [pid=13263] finished temporary directories cleanup
+      - [pid=13263] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 响应式设计测试" classname="components.spec.js" time="0.001">
+<failure message="components.spec.js:150:3 响应式设计测试" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:150:3 › 组件系统测试 › 响应式设计测试 ────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13291
+    [pid=13291][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13297 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13291
+      - [pid=13291][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13297 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13291] <gracefully close start>
+      - [pid=13291] <kill>
+      - [pid=13291] <will force kill>
+      - [pid=13291] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13291] <process did exit: exitCode=138, signal=null>
+      - [pid=13291] starting temporary directories cleanup
+      - [pid=13291] finished temporary directories cleanup
+      - [pid=13291] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 键盘导航测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:168:3 键盘导航测试" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:168:3 › 组件系统测试 › 键盘导航测试 ─────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13301
+    [pid=13301][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13307 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13301
+      - [pid=13301][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13307 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13301] <gracefully close start>
+      - [pid=13301] <kill>
+      - [pid=13301] <will force kill>
+      - [pid=13301] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13301] <process did exit: exitCode=138, signal=null>
+      - [pid=13301] starting temporary directories cleanup
+      - [pid=13301] finished temporary directories cleanup
+      - [pid=13301] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+<testcase name="组件系统测试 › 错误处理测试" classname="components.spec.js" time="0.002">
+<failure message="components.spec.js:184:3 错误处理测试" type="FAILURE">
+<![CDATA[  [Mobile Safari] › components.spec.js:184:3 › 组件系统测试 › 错误处理测试 ─────────────────────────────────────
+
+    Error: browserType.launch: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+    <launched> pid=13308
+    [pid=13308][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13314 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+    Call log:
+      - <launching> /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh --inspector-pipe --headless --no-startup-window
+      - <launched> pid=13308
+      - [pid=13308][err] /Users/darren/Library/Caches/ms-playwright/webkit-2203/pw_run.sh: line 7: 13314 Bus error: 10           DYLD_FRAMEWORK_PATH="$DYLIB_PATH" DYLD_LIBRARY_PATH="$DYLIB_PATH" "$PLAYWRIGHT" "$@"
+      - [pid=13308] <gracefully close start>
+      - [pid=13308] <kill>
+      - [pid=13308] <will force kill>
+      - [pid=13308] exception while trying to kill process: Error: kill ESRCH
+      - [pid=13308] <process did exit: exitCode=138, signal=null>
+      - [pid=13308] starting temporary directories cleanup
+      - [pid=13308] finished temporary directories cleanup
+      - [pid=13308] <gracefully close end>
+
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - heading "Privacy Gateway" [level=1] [ref=e7]
+          - paragraph [ref=e8]: 服务正在运行
+        - generic [ref=e10]:
+          - generic [ref=e12]: 会话有效
+          - button "🚪 退出登录" [ref=e13] [cursor=pointer]:
+            - generic [ref=e14] [cursor=pointer]: 🚪
+            - text: 退出登录
+    - navigation [ref=e17]:
+      - button "📊 项目概览" [ref=e18] [cursor=pointer]
+      - button "⚙️ 代理配置" [ref=e19] [cursor=pointer]
+      - button "📋 访问日志" [ref=e20] [cursor=pointer]
+    - generic [ref=e23]:
+      - heading "系统概览" [level=2] [ref=e24]
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: "0"
+          - generic [ref=e28]: 代理配置总数
+        - generic [ref=e29]:
+          - generic [ref=e30]: "0"
+          - generic [ref=e31]: 活跃配置
+        - generic [ref=e32]:
+          - generic [ref=e33]: "0"
+          - generic [ref=e34]: 总请求数
+      - generic [ref=e35]:
+        - heading "🧪 组件系统测试" [level=3] [ref=e36]
+        - generic [ref=e37]:
+          - button "测试 Modal 组件" [ref=e38] [cursor=pointer]
+          - button "测试 DataTable 组件" [ref=e39] [cursor=pointer]
+          - button "测试 Form 组件" [ref=e40] [cursor=pointer]
+          - button "测试状态管理" [ref=e41] [cursor=pointer]
+  - generic [ref=e43]: 登录成功
+  - generic [ref=e45]:
+    - generic [ref=e47]:
+      - textbox "搜索..." [ref=e48]
+      - button "搜索" [ref=e49] [cursor=pointer]
+    - table [ref=e51]:
+      - rowgroup [ref=e52]:
+        - row "ID 名称 状态" [ref=e53]:
+          - cell [ref=e54]:
+            - checkbox [ref=e55]
+          - cell "ID" [ref=e56]:
+            - generic [ref=e57]: ID
+          - cell "名称" [ref=e58]:
+            - generic [ref=e59]: 名称
+          - cell "状态" [ref=e60]:
+            - generic [ref=e61]: 状态
+      - rowgroup [ref=e62]:
+        - row "1 测试配置1 启用" [ref=e63]:
+          - cell [ref=e64]:
+            - checkbox [ref=e65]
+          - cell "1" [ref=e66]
+          - cell "测试配置1" [ref=e67]
+          - cell "启用" [ref=e68]:
+            - generic [ref=e69]: 启用
+        - row "2 测试配置2 禁用" [ref=e70]:
+          - cell [ref=e71]:
+            - checkbox [ref=e72]
+          - cell "2" [ref=e73]
+          - cell "测试配置2" [ref=e74]
+          - cell "禁用" [ref=e75]:
+            - generic [ref=e76]: 禁用
+        - row "3 测试配置3 启用" [ref=e77]:
+          - cell [ref=e78]:
+            - checkbox [ref=e79]
+          - cell "3" [ref=e80]
+          - cell "测试配置3" [ref=e81]
+          - cell "启用" [ref=e82]:
+            - generic [ref=e83]: 启用
+  - generic [ref=e86]:
+    - generic [ref=e87]:
+      - heading "📊 DataTable 组件测试" [level=3] [ref=e88]
+      - button "关闭" [ref=e89] [cursor=pointer]: ×
+    - generic [ref=e92]:
+      - generic [ref=e94]:
+        - textbox "搜索..." [active] [ref=e95]
+        - button "搜索" [ref=e96] [cursor=pointer]
+      - table [ref=e98]:
+        - rowgroup [ref=e99]:
+          - row "ID 名称 状态" [ref=e100]:
+            - cell [ref=e101]:
+              - checkbox [ref=e102]
+            - cell "ID" [ref=e103]:
+              - generic [ref=e104]: ID
+            - cell "名称" [ref=e105]:
+              - generic [ref=e106]: 名称
+            - cell "状态" [ref=e107]:
+              - generic [ref=e108]: 状态
+        - rowgroup [ref=e109]:
+          - row "1 测试配置1 启用" [ref=e110]:
+            - cell [ref=e111]:
+              - checkbox [ref=e112]
+            - cell "1" [ref=e113]
+            - cell "测试配置1" [ref=e114]
+            - cell "启用" [ref=e115]:
+              - generic [ref=e116]: 启用
+          - row "2 测试配置2 禁用" [ref=e117]:
+            - cell [ref=e118]:
+              - checkbox [ref=e119]
+            - cell "2" [ref=e120]
+            - cell "测试配置2" [ref=e121]
+            - cell "禁用" [ref=e122]:
+              - generic [ref=e123]: 禁用
+          - row "3 测试配置3 启用" [ref=e124]:
+            - cell [ref=e125]:
+              - checkbox [ref=e126]
+            - cell "3" [ref=e127]
+            - cell "测试配置3" [ref=e128]
+            - cell "启用" [ref=e129]:
+              - generic [ref=e130]: 启用
+    - button "确定" [ref=e132] [cursor=pointer]
+```
